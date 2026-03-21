@@ -1,67 +1,88 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>포토 카드 배틀 - V20 최종 완벽판</title>
-<style>
-:root{--sss:#ffea00;--ss:#00f2ff;--s:#ff00e5;--a:#26ff00;--b:#ff9800;--c:#a0a0a0;--bg:#121212}
-body{margin:0;background:var(--bg);color:#fff;font-family:'Pretendard',sans-serif;text-align:center;padding-bottom:70px;overflow-x:hidden}
-header{background:rgba(0,0,0,0.9);padding:15px;position:sticky;top:0;z-index:100;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
-.stats-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center}
-.money{font-size:1.1rem;color:var(--sss);font-weight:bold}
-#notification-banner{display:none;background:#ff3366;color:white;padding:15px;font-weight:bold;cursor:pointer;animation:flash 1s infinite alternate;font-size:1rem;line-height:1.4;position:fixed;top:0;left:0;width:100%;z-index:9999;box-sizing:border-box}
-@keyframes flash{from{opacity:1}to{opacity:0.7}}
-#login-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;box-sizing:border-box}
-.google-btn{background:white;color:#444;font-weight:bold;padding:15px 30px;border-radius:30px;font-size:1.1rem;border:none;cursor:pointer;display:flex;align-items:center;gap:10px;width:100%;max-width:300px;justify-content:center}
-.tabs{display:flex;justify-content:center;gap:2px;position:fixed;bottom:0;left:0;width:100%;background:#000;padding:10px 5px;box-sizing:border-box;z-index:90;border-top:1px solid #333}
-.tab{padding:12px 5px;background:#222;border-radius:5px;cursor:pointer;font-weight:bold;transition:0.2s;font-size:0.8rem;flex:1;min-width:0;text-overflow:ellipsis;white-space:nowrap;overflow:hidden}
-.tab.active{background:#ff006e;color:white}
-.section{display:none;padding:15px;padding-top:20px;max-width:1000px;margin:0 auto;box-sizing:border-box}
-.section.active{display:block}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;margin-top:15px}
-.card{position:relative;border-radius:8px;background:#000;border:2px solid #444;overflow:hidden;aspect-ratio:2/3;display:flex;flex-direction:column;cursor:pointer;transition:transform 0.1s;-webkit-tap-highlight-color:transparent}
-.card:active{transform:scale(0.95)}
-.card img{width:100%;height:100%;object-fit:cover;pointer-events:none}
-.card-grade{position:absolute;bottom:4px;right:4px;font-size:1.2rem;font-weight:900;font-style:italic;-webkit-text-stroke:1px #000;z-index:2;text-shadow:2px 2px 4px rgba(0,0,0,0.8);pointer-events:none}
-.card.sss{border-color:var(--sss);box-shadow:0 0 12px var(--sss)} .card.ss{border-color:var(--ss);box-shadow:0 0 8px var(--ss)} .card.s{border-color:var(--s)} .card.a{border-color:var(--a)} .card.b{border-color:var(--b)} .card.c{border-color:var(--c)}
-.locked-icon{position:absolute;top:35%;left:50%;transform:translate(-50%,-50%);font-size:2.5rem;text-shadow:0 0 10px #000;pointer-events:none;z-index:5;opacity:0.8}
-button{padding:10px 15px;border:none;border-radius:6px;background:#ff006e;color:white;font-weight:bold;cursor:pointer;transition:0.2s;font-size:0.9rem;-webkit-tap-highlight-color:transparent}
-button:active{transform:scale(0.97);filter:brightness(1.1)} button:disabled{background:#555;cursor:not-allowed;transform:none;opacity:0.7}
-.gacha-box{background:#1a1a1a;padding:15px;border-radius:12px;margin:10px 0;border:1px solid #333}
-.vs-board{display:flex;justify-content:space-around;align-items:center;flex-wrap:wrap;background:#111;padding:15px 5px;border-radius:12px;margin-top:15px;border:2px solid #ff006e;gap:5px}
-.pvp-deck{display:flex;gap:5px;width:100%;justify-content:center}
-.pvp-slot{width:30%;max-width:100px;aspect-ratio:2/3;border:2px dashed #666;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:0.75rem;background:#000;cursor:pointer;position:relative;color:#aaa;transition:0.2s;-webkit-tap-highlight-color:transparent}
-.pvp-slot:active{background:#222;border-color:#999} .pvp-slot.filled{border-style:solid;color:#fff;border-width:1px} .slot-add-icon{font-size:2rem;margin-bottom:5px;color:#555;pointer-events:none}
-.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);display:none;z-index:1000;flex-direction:column;align-items:center;justify-content:center;padding:20px;box-sizing:border-box}
-.zoom-card{width:100%;max-width:260px;height:auto;aspect-ratio:2/3;border-radius:12px;border:3px solid #fff}
-.item-toggle-container{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
-.item-toggle{display:flex;align-items:center;gap:6px;background:#2a2a2a;padding:8px 10px;border-radius:6px;cursor:pointer;font-size:0.8rem;border:1px solid #333}
-.item-toggle input{transform:scale(1.1);cursor:pointer;margin:0}
-::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:#111;border-radius:4px} ::-webkit-scrollbar-thumb{background:#555;border-radius:4px} ::-webkit-scrollbar-thumb:hover{background:#ff006e}
-.battle-log-container{background:#000;padding:15px;margin:10px 0;height:120px;overflow-y:auto;text-align:left;font-size:0.8rem;color:#aaa;border-radius:8px;border:1px solid #333;line-height:1.4}
-.mail-btn,.chat-btn{background:#3d0036;border:1px solid #ff00e5;padding:5px 10px;border-radius:6px;color:white;font-size:0.8rem;cursor:pointer;position:relative}
-.mail-badge{position:absolute;top:-5px;right:-5px;font-size:0.7rem;background:red;color:white;border-radius:50%;padding:2px 5px;display:none;font-weight:bold}
-.mail-item{background:#222;border:1px solid #444;padding:10px;margin-bottom:10px;border-radius:8px;text-align:left}
-#chat-container{width:100%;height:350px;background:#000;border:1px solid #333;border-radius:8px;overflow-y:auto;padding:10px;box-sizing:border-box;text-align:left;margin-bottom:10px;display:flex;flex-direction:column;gap:8px}
-.chat-msg{font-size:0.85rem;line-height:1.4;padding:6px 10px;border-radius:8px;background:#222;width:fit-content;max-width:90%;word-break:break-word}
-.chat-msg.me{background:#004d40;align-self:flex-end;border:1px solid #009688}
-.chat-msg.system{background:rgba(255,0,229,0.2);border:1px solid #ff00e5;color:#ffea00;align-self:center;text-align:center;max-width:95%;font-weight:bold}
-.chat-name{font-size:0.7rem;color:#aaa;margin-bottom:2px}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>포토 카드 배틀 - V21 최종 무결점 에디션</title>
+    <style>
+        :root { --sss: #ffea00; --ss: #00f2ff; --s: #ff00e5; --a: #26ff00; --b: #ff9800; --c: #a0a0a0; --bg: #121212; }
+        body { margin: 0; background: var(--bg); color: #fff; font-family: 'Pretendard', sans-serif; text-align: center; padding-bottom: 70px; overflow-x: hidden; }
+        header { background: rgba(0,0,0,0.9); padding: 15px; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .stats-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center; }
+        .money { font-size: 1.1rem; color: var(--sss); font-weight: bold; }
+        #notification-banner { display: none; background: #ff3366; color: white; padding: 15px; font-weight: bold; cursor: pointer; animation: flash 1s infinite alternate; font-size: 1rem; line-height: 1.4; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; box-sizing: border-box;}
+        @keyframes flash { from { opacity: 1; } to { opacity: 0.7; } }
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+        .google-btn { background: white; color: #444; font-weight: bold; padding: 15px 30px; border-radius: 30px; font-size: 1.1rem; border: none; cursor: pointer; display: flex; align-items: center; gap: 10px; width: 100%; max-width: 300px; justify-content: center; }
+        .tabs { display: flex; justify-content: center; gap: 2px; position: fixed; bottom: 0; left: 0; width: 100%; background: #000; padding: 10px 5px; box-sizing: border-box; z-index: 90; border-top: 1px solid #333; }
+        .tab { padding: 12px 5px; background: #222; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.2s; font-size: 0.8rem; flex: 1; min-width: 0; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;}
+        .tab.active { background: #ff006e; color: white; }
+        .section { display: none; padding: 15px; padding-top: 20px; max-width: 1000px; margin: 0 auto; box-sizing: border-box; }
+        .section.active { display: block; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 15px; }
+        .card { position: relative; border-radius: 8px; background: #000; border: 2px solid #444; overflow: hidden; aspect-ratio: 2/3; display: flex; flex-direction: column; cursor: pointer; transition: transform 0.1s; -webkit-tap-highlight-color: transparent;}
+        .card:active { transform: scale(0.95); }
+        .card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        .card-grade { position: absolute; bottom: 4px; right: 4px; font-size: 1.2rem; font-weight: 900; font-style: italic; -webkit-text-stroke: 1px #000; z-index: 2; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); pointer-events: none;}
+        .card.sss { border-color: var(--sss); box-shadow: 0 0 12px var(--sss); }
+        .card.ss { border-color: var(--ss); box-shadow: 0 0 8px var(--ss); }
+        .card.s { border-color: var(--s); }
+        .card.a { border-color: var(--a); }
+        .card.b { border-color: var(--b); }
+        .card.c { border-color: var(--c); }
+        .locked-icon { position: absolute; top: 35%; left: 50%; transform: translate(-50%, -50%); font-size: 2.5rem; text-shadow: 0 0 10px #000; pointer-events: none; z-index: 5; opacity: 0.8;}
+        
+        button { padding: 10px 15px; border: none; border-radius: 6px; background: #ff006e; color: white; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.9rem; -webkit-tap-highlight-color: transparent;}
+        button:active { transform: scale(0.97); filter: brightness(1.1); }
+        button:disabled { background: #555; cursor: not-allowed; transform: none; opacity: 0.7;}
+        .gacha-box { background: #1a1a1a; padding: 15px; border-radius: 12px; margin: 10px 0; border: 1px solid #333; }
+        .vs-board { display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; background: #111; padding: 15px 5px; border-radius: 12px; margin-top: 15px; border: 2px solid #ff006e; gap: 5px; }
+        .pvp-deck { display: flex; gap: 5px; width: 100%; justify-content: center; }
+        .pvp-slot { width: 30%; max-width: 100px; aspect-ratio: 2/3; border: 2px dashed #666; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.75rem; background:#000; cursor: pointer; position: relative; color:#aaa; transition: 0.2s; -webkit-tap-highlight-color: transparent;}
+        .pvp-slot:active { background: #222; border-color: #999; }
+        .pvp-slot.filled { border-style: solid; color: #fff; border-width: 1px;}
+        .slot-add-icon { font-size: 2rem; margin-bottom: 5px; color: #555; pointer-events: none;}
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; z-index: 1000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+        .zoom-card { width: 100%; max-width: 260px; height: auto; aspect-ratio: 2/3; border-radius: 12px; border: 3px solid #fff; }
+        .item-toggle-container { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+        .item-toggle { display: flex; align-items: center; gap: 6px; background: #2a2a2a; padding: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; border: 1px solid #333; }
+        .item-toggle input { transform: scale(1.1); cursor: pointer; margin: 0; }
+        #selection-notice { display: none; position: fixed; top: 70px; left: 0; width: 100%; background: #4CAF50; color: white; padding: 10px; font-weight: bold; z-index: 80; font-size: 0.9rem; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #111; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff006e; }
+        .battle-log-container { background:#000; padding:15px; margin:10px 0; height:120px; overflow-y:auto; text-align:left; font-size:0.8rem; color:#aaa; border-radius: 8px; border:1px solid #333; line-height:1.4; }
+        
+        .mail-btn, .chat-btn { background: #3d0036; border: 1px solid #ff00e5; padding: 5px 10px; border-radius: 6px; color: white; font-size: 0.8rem; cursor: pointer; position: relative; }
+        .mail-badge { position: absolute; top: -5px; right: -5px; font-size: 0.7rem; background: red; color: white; border-radius: 50%; padding: 2px 5px; display: none; font-weight:bold; }
+        .mail-item { background: #222; border: 1px solid #444; padding: 10px; margin-bottom: 10px; border-radius: 8px; text-align: left; }
+        
+        #chat-container { width: 100%; height: 350px; background: #000; border: 1px solid #333; border-radius: 8px; overflow-y: auto; padding: 10px; box-sizing: border-box; text-align: left; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; }
+        .chat-msg { font-size: 0.85rem; line-height: 1.4; padding: 6px 10px; border-radius: 8px; background: #222; width: fit-content; max-width: 90%; word-break: break-word; }
+        .chat-msg.me { background: #004d40; align-self: flex-end; border: 1px solid #009688; }
+        .chat-msg.system { background: rgba(255, 0, 229, 0.2); border: 1px solid #ff00e5; color: #ffea00; align-self: center; text-align: center; max-width: 95%; font-weight: bold; }
+        .chat-name { font-size: 0.7rem; color: #aaa; margin-bottom: 2px; }
+    </style>
 </head>
 <body>
 
-<div id="login-overlay"><h1 style="font-size:2.2rem;color:#ff006e;font-style:italic;margin-bottom:30px;">초강력 멀티 배틀</h1><button class="google-btn" onclick="window.loginWithGoogle()">🌐 Google 계정으로 시작</button></div>
+<div id="login-overlay">
+    <h1 style="font-size: 2.2rem; color: #ff006e; font-style: italic; margin-bottom: 30px;">초강력 멀티 배틀</h1>
+    <button class="google-btn" onclick="window.loginWithGoogle()">🌐 Google 계정으로 시작</button>
+</div>
+
 <div id="notification-banner" onclick="window.clearNotification()"></div>
+<div id="selection-notice">장착할 카드를 아래에서 터치하세요.</div>
 
 <header id="main-header">
-    <div style="font-weight:bold;font-size:1rem;width:100%;text-align:center;margin-bottom:5px;">👑 <span id="player-name">유저</span>님의 덱</div>
-    <div class="stats-bar" style="width:100%;">
+    <div style="font-weight: bold; font-size: 1rem; width: 100%; text-align: center; margin-bottom: 5px;">👑 <span id="player-name">유저</span>님의 덱</div>
+    <div class="stats-bar" style="width: 100%;">
         <div class="money">💰 <span id="money">1000</span></div>
-        <div style="color:#00f2ff;font-size:0.85rem;">🛡️<span id="potion-count">0</span></div>
-        <div style="color:#ff3366;font-size:0.85rem;">💊<span id="atk-potion-count">0</span></div>
-        <button class="chat-btn" onclick="window.openChat()" style="background:#004d40;border-color:#009688;">💬 채팅</button>
+        <div style="color:#00f2ff; font-size: 0.85rem;">🛡️<span id="potion-count">0</span></div>
+        <div style="color:#ff3366; font-size: 0.85rem;">💊<span id="atk-potion-count">0</span></div>
+        <button class="chat-btn" onclick="window.openChat()" style="background:#004d40; border-color:#009688;">💬 채팅</button>
         <button class="mail-btn" onclick="window.openMailbox()">📬 우편 <span id="mail-badge" class="mail-badge">N</span></button>
     </div>
 </header>
@@ -73,115 +94,119 @@ button:active{transform:scale(0.97);filter:brightness(1.1)} button:disabled{back
     <div class="tab" onclick="window.switchTab(3)" style="color:#00f2ff;">🤖AI</div>
     <div class="tab" onclick="window.switchTab(4)" style="color:#ff006e;">🔥PvP</div>
     <div class="tab" onclick="window.switchTab(5)" style="color:#8338ec;">탐험</div>
-    <div class="tab" id="tab-gm" onclick="window.switchTab(6)" style="display:none;background:#ff00e5;color:white;font-weight:900;">👑GM</div>
+    <div class="tab" id="tab-gm" onclick="window.switchTab(6)" style="display:none; background:#ff00e5; color:white; font-weight:900;">👑GM</div>
 </div>
 
 <div id="section-0" class="section active">
-    <div class="gacha-box" style="border-color:#ffea00;">
-        <h2 style="font-size:1.2rem;margin-top:0;">🎁 영웅 뽑기 (51종)</h2>
-        <p style="font-size:0.75rem;color:#aaa;margin-bottom:10px;">스탯이 랜덤 부여됩니다!<br>SSS 중복 시 800G 환전</p>
-        <div style="background:#000;padding:10px;border-radius:8px;margin-bottom:12px;border:1px solid #333;">
-            <label style="color:#ffea00;font-weight:bold;display:block;margin-bottom:5px;font-size:0.85rem;">✨ SSS 확률강화권 (보유: <span id="rateup-cnt">0</span>장)</label>
-            <div style="display:flex;justify-content:center;align-items:center;gap:10px;">
-                <button onclick="window.adjustRateUp(-1)" style="background:#333;padding:5px 12px;">-</button>
-                <input type="number" id="use-rate-up" min="0" value="0" readonly style="width:40px;text-align:center;background:#000;color:#fff;border:1px solid #555;padding:6px;font-size:1rem;border-radius:4px;">
-                <button onclick="window.adjustRateUp(1)" style="background:#333;padding:5px 12px;">+</button>
+    <div class="gacha-box" style="border-color: #ffea00;">
+        <h2 style="font-size: 1.2rem; margin-top:0;">🎁 영웅 뽑기 (51종)</h2>
+        <p style="font-size:0.75rem; color:#aaa; margin-bottom:10px;">동일 등급이라도 스탯 랜덤 부여!<br>SSS 중복 시 800G 환전</p>
+        <div style="background:#000; padding:10px; border-radius:8px; margin-bottom:12px; border:1px solid #333;">
+            <label style="color:#ffea00; font-weight:bold; display:block; margin-bottom:5px; font-size:0.85rem;">✨ SSS 확률강화권 (보유: <span id="rateup-cnt">0</span>장)</label>
+            <div style="display:flex; justify-content:center; align-items:center; gap:10px;">
+                <button onclick="window.adjustRateUp(-1)" style="background:#333; padding:5px 12px;">-</button>
+                <input type="number" id="use-rate-up" min="0" value="0" readonly style="width:40px; text-align:center; background:#000; color:#fff; border:1px solid #555; padding:6px; font-size:1rem; border-radius:4px;">
+                <button onclick="window.adjustRateUp(1)" style="background:#333; padding:5px 12px;">+</button>
             </div>
-            <div style="color:#26ff00;margin-top:5px;font-size:0.8rem;font-weight:bold;">(SSS 확률 +<span id="rateup-pct">0</span>%)</div>
+            <div style="color:#26ff00; margin-top:5px; font-size:0.8rem; font-weight:bold;">(SSS 확률 +<span id="rateup-pct">0</span>%)</div>
         </div>
-        <button onclick="window.pullGacha()" style="font-size:1.1rem;padding:12px;width:100%;">1회 뽑기 (100G)</button>
+        <button onclick="window.pullGacha()" style="font-size: 1.1rem; padding: 12px; width: 100%;">1회 뽑기 (100G)</button>
     </div>
-    <div class="gacha-box" style="border-color:#00f2ff;display:flex;justify-content:center;flex-wrap:wrap;gap:8px;">
-        <button onclick="window.buyItem('shield', 200)" style="background:#00f2ff;color:#000;flex:1 1 45%;font-size:0.8rem;">🛡️방어약 (200)</button>
-        <button onclick="window.buyItem('attack', 300)" style="background:#ff3366;flex:1 1 45%;font-size:0.8rem;">💊강화제 (300)</button>
-        <button onclick="window.buyItem('scroll', 300)" style="background:#ff9800;flex:1 1 45%;font-size:0.8rem;">✨부적 (300)</button>
-        <button onclick="window.buyItem('capture', 4000)" style="background:#ff00e5;flex:1 1 45%;font-size:0.8rem;">🪤AI포획 (4k)</button>
-        <button onclick="window.buyItem('rateup', 1000)" style="background:#ffea00;color:#000;flex:1 1 100%;font-size:0.85rem;">✨ SSS 확률강화권 구매 (1000G)</button>
+    <div class="gacha-box" style="border-color: #00f2ff; display: flex; justify-content: center; flex-wrap: wrap; gap: 8px;">
+        <button onclick="window.buyItem('shield', 200)" style="background: #00f2ff; color: #000; flex: 1 1 45%; font-size:0.8rem;">🛡️방어약 (200)</button>
+        <button onclick="window.buyItem('attack', 300)" style="background: #ff3366; flex: 1 1 45%; font-size:0.8rem;">💊강화제 (300)</button>
+        <button onclick="window.buyItem('scroll', 300)" style="background: #ff9800; flex: 1 1 45%; font-size:0.8rem;">✨부적 (300)</button>
+        <button onclick="window.buyItem('capture', 4000)" style="background: #ff00e5; flex: 1 1 45%; font-size:0.8rem;">🪤AI포획 (4k)</button>
+        <button onclick="window.buyItem('rateup', 1000)" style="background: #ffea00; color:#000; flex: 1 1 100%; font-size:0.85rem;">✨ SSS 확률강화권 구매 (1000G)</button>
     </div>
 </div>
 
 <div id="section-1" class="section">
-    <h2 style="font-size:1.1rem;margin-top:0;">🗂️ 내 컬렉션 (<span id="card-count">0</span>장)</h2>
-    <div style="display:flex;justify-content:center;gap:5px;margin-bottom:10px;">
-        <button onclick="window.bulkSell('C')" style="background:#555;padding:8px;font-size:0.8rem;flex:1;">C 일괄판매</button>
-        <button onclick="window.bulkSell('B')" style="background:#ff9800;padding:8px;font-size:0.8rem;flex:1;">B 일괄판매</button>
-        <button onclick="window.bulkSell('A')" style="background:#26ff00;padding:8px;font-size:0.8rem;color:#000;flex:1;">A 일괄판매</button>
+    <h2 style="font-size: 1.1rem; margin-top:0;">🗂️ 내 컬렉션 (<span id="card-count">0</span>장)</h2>
+    <div style="display:flex; justify-content:center; gap:5px; margin-bottom:10px;">
+        <button onclick="window.bulkSell('C')" style="background:#555; padding:8px; font-size:0.8rem; flex:1;">C 일괄판매</button>
+        <button onclick="window.bulkSell('B')" style="background:#ff9800; padding:8px; font-size:0.8rem; flex:1;">B 일괄판매</button>
+        <button onclick="window.bulkSell('A')" style="background:#26ff00; padding:8px; font-size:0.8rem; color:#000; flex:1;">A 일괄판매</button>
     </div>
     <div class="grid" id="my-deck-grid"></div>
 </div>
 
 <div id="section-2" class="section">
-    <h2 style="font-size:1.1rem;margin-top:0;">🧪 카드 합성소</h2>
-    <p style="font-size:0.75rem;color:#ff3366;font-weight:bold;margin-bottom:10px;">⚠️ S등급(10%), SS등급(3%) 극악 성공률!</p>
-    <div style="display:flex;justify-content:center;gap:8px;align-items:center;margin:15px 0;">
+    <h2 style="font-size: 1.1rem; margin-top:0;">🧪 카드 합성소</h2>
+    <p style="font-size:0.75rem; color:#ff3366; font-weight:bold; margin-bottom:10px;">⚠️ S등급(10%), SS등급(3%) 극악 성공률!</p>
+    <div style="display:flex; justify-content:center; gap:8px; align-items:center; margin: 15px 0;">
         <div id="fusion-slot1" class="pvp-slot" onclick="window.openCardSelector('fusion', 1)"><div class="slot-add-icon">+</div>재료1</div>
-        <div style="font-size:1.5rem;font-weight:bold;color:#555;">+</div>
+        <div style="font-size: 1.5rem; font-weight: bold; color:#555;">+</div>
         <div id="fusion-slot2" class="pvp-slot" onclick="window.openCardSelector('fusion', 2)"><div class="slot-add-icon">+</div>재료2</div>
     </div>
-    <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:15px;">
-        <button onclick="window.executeFusion(false)" style="background:#555;flex:1;">수동 합성</button>
-        <button onclick="window.executeFusion(true)" style="background:#ff9800;flex:1;">✨ 부적 합성(+25%)</button>
+    <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom:15px;">
+        <button onclick="window.executeFusion(false)" style="background:#555; flex: 1;">수동 합성</button>
+        <button onclick="window.executeFusion(true)" style="background:#ff9800; flex: 1;">✨ 부적 합성(+25%)</button>
     </div>
-    <div style="background:#1a1a1a;padding:15px;border-radius:12px;border:1px solid #333;">
-        <h3 style="color:#26ff00;margin-top:0;font-size:1rem;">⚡ 일괄 자동 합성</h3>
-        <p style="font-size:0.75rem;color:#aaa;margin-bottom:5px;">중복 카드를 자동 합성합니다.</p>
-        <p style="font-size:0.7rem;color:#ffea00;margin-bottom:10px;">* 전체 연쇄 합성 시 +20% 확률 보너스</p>
-        <button onclick="window.batchFusion()" style="background:#4CAF50;width:100%;">전체 연쇄 합성 시작</button>
+    <div style="background: #1a1a1a; padding: 15px; border-radius: 12px; border: 1px solid #333;">
+        <h3 style="color: #26ff00; margin-top: 0; font-size: 1rem;">⚡ 일괄 자동 합성</h3>
+        <p style="font-size:0.75rem; color:#aaa; margin-bottom:5px;">보호되지 않은 중복 카드를 자동 합성합니다.</p>
+        <button onclick="window.batchFusion()" style="background:#4CAF50; width: 100%;">전체 연쇄 합성 시작 (+20% 확률업)</button>
     </div>
 </div>
 
 <div id="section-3" class="section">
-    <h2 style="font-size:1.1rem;margin-top:0;color:#00f2ff;">🤖 AI 기사단 (<span id="ai-win-ui">0</span>승 진행중)</h2>
-    <p style="font-size:0.75rem;color:#aaa;margin-bottom:10px;">
-        🔥 연승: <span id="ai-streak-ui" style="color:#ffea00;font-weight:bold;">0</span> / 4 
-        <br><span style="color:#ff3366;font-weight:bold;">⚠️ 4% 확률로 AI 진영에 SSS 괴물 난입!</span>
+    <h2 style="font-size: 1.1rem; margin-top:0; color:#00f2ff;">🤖 AI 기사단 (<span id="ai-win-ui">0</span>승 진행중)</h2>
+    <p style="font-size:0.75rem; color:#aaa; margin-bottom:10px;">
+        🔥 연승 횟수: <span id="ai-streak-ui" style="color:#ffea00; font-weight:bold;">0</span> / 4 
+        <br>(4연승 시 탐험 횟수 10회로 초기화!)<br>
+        <span style="color:#ff3366; font-weight:bold;">⚠️ 4% 확률로 AI 진영에 SSS 괴물 난입!</span>
     </p>
-    <div class="item-toggle-container"><label class="item-toggle"><input type="checkbox" id="use-ai-cap"> 🪤 AI포획권 (<span id="ai-cap-cnt">0</span>)</label></div>
+    <div class="item-toggle-container">
+        <label class="item-toggle"><input type="checkbox" id="use-ai-cap"> 🪤 AI포획권 (<span id="ai-cap-cnt">0</span>)</label>
+    </div>
     <div class="vs-board" style="border-color:#00f2ff;">
-        <div style="width:100%;"><div class="pvp-deck">
+        <div style="width: 100%;"><div class="pvp-deck">
             <div id="ai-atk-slot1" class="pvp-slot" onclick="window.openCardSelector('ai', 1)"><div class="slot-add-icon">+</div>선택</div>
             <div id="ai-atk-slot2" class="pvp-slot" onclick="window.openCardSelector('ai', 2)"><div class="slot-add-icon">+</div>선택</div>
         </div></div>
-        <div style="font-size:1.2rem;color:#00f2ff;font-weight:900;margin:5px 0;">VS</div>
-        <div style="width:100%;"><div class="pvp-deck">
-            <div id="ai-def-slot1" class="pvp-slot" style="border-color:#00f2ff;border-style:solid;">?</div>
-            <div id="ai-def-slot2" class="pvp-slot" style="border-color:#00f2ff;border-style:solid;">?</div>
+        <div style="font-size: 1.2rem; color:#00f2ff; font-weight:900; margin: 5px 0;">VS</div>
+        <div style="width: 100%;"><div class="pvp-deck">
+            <div id="ai-def-slot1" class="pvp-slot" style="border-color:#00f2ff; border-style:solid;">?</div>
+            <div id="ai-def-slot2" class="pvp-slot" style="border-color:#00f2ff; border-style:solid;">?</div>
         </div></div>
     </div>
-    <button onclick="window.startAIPvP()" style="width:100%;padding:12px;background:#00f2ff;color:#000;margin-top:10px;">AI와 실시간 결투 시작!</button>
+    <div id="ai-pvp-log" class="battle-log-container">전투 기록 (실시간 중계는 모달창 진행)</div>
+    <button onclick="window.startAIPvP()" style="width: 100%; padding: 12px; background:#00f2ff; color:#000; margin-top:10px;">AI와 실시간 결투 시작!</button>
 </div>
 
 <div id="section-4" class="section">
-    <h2 style="font-size:1.2rem;margin-top:0;color:#ff006e;">🔥 명예의 아레나 & 유저 약탈</h2>
-    <div style="background:#1a1a1a;padding:15px;border-radius:10px;border:1px solid #ffea00;margin-bottom:15px;">
-        <h3 style="margin:0 0 5px 0;color:#ffea00;font-size:1rem;">👑 아레나 챔피언 도전</h3>
-        <p style="font-size:0.7rem;color:#aaa;margin-top:0;">서버 최강의 덱을 쓰러뜨리세요!</p>
+    <h2 style="font-size: 1.2rem; margin-top:0; color:#ff006e;">🔥 명예의 아레나 & 유저 약탈</h2>
+    
+    <div style="background:#1a1a1a; padding:15px; border-radius:10px; border:1px solid #ffea00; margin-bottom:15px;">
+        <h3 style="margin:0 0 5px 0; color:#ffea00; font-size:1rem;">👑 아레나 챔피언 도전</h3>
+        <p style="font-size:0.7rem; color:#aaa; margin-top:0;">서버 최강의 덱을 쓰러뜨리고 왕좌를 차지하세요!</p>
         <div class="item-toggle-container" style="margin-top:10px;">
             <label class="item-toggle"><input type="checkbox" id="use-win-ticket-arena"> 🏆 승리권 (<span id="win-t-cnt-arena">0</span>)</label>
-            <label class="item-toggle" style="background:#3d0036;border-color:#ff00e5;"><input type="checkbox" id="use-user-capture-arena"> 👿 포획권 (<span id="user-cap-cnt-arena">0</span>)</label>
+            <label class="item-toggle" style="background:#3d0036; border-color:#ff00e5;"><input type="checkbox" id="use-user-capture-arena"> 👿 포획권 (<span id="user-cap-cnt-arena">0</span>)</label>
         </div>
         <div class="vs-board" style="border-color:#ffea00;">
-            <div style="width:100%;"><div class="pvp-deck">
+            <div style="width: 100%;"><div class="pvp-deck">
                 <div id="atk-slot1" class="pvp-slot" onclick="window.openCardSelector('pvp', 1)"><div class="slot-add-icon">+</div>공격1</div>
                 <div id="atk-slot2" class="pvp-slot" onclick="window.openCardSelector('pvp', 2)"><div class="slot-add-icon">+</div>공격2</div>
                 <div id="atk-slot3" class="pvp-slot" onclick="window.openCardSelector('pvp', 3)"><div class="slot-add-icon">+</div>공격3</div>
             </div></div>
-            <div style="font-size:1.2rem;color:#ffea00;font-weight:900;margin:8px 0;">VS</div>
-            <div style="width:100%;">
-                <h3 style="color:#ffea00;font-size:0.9rem;margin-top:0;" id="defender-name-ui">챔피언 탐색 중...</h3>
+            <div style="font-size: 1.2rem; color:#ffea00; font-weight:900; margin: 8px 0;">VS</div>
+            <div style="width: 100%;">
+                <h3 style="color:#ffea00; font-size: 0.9rem; margin-top:0;" id="defender-name-ui">챔피언 탐색 중...</h3>
                 <div class="pvp-deck">
-                    <div id="def-slot1" class="pvp-slot" style="border-color:#ffea00;border-style:solid;">?</div>
-                    <div id="def-slot2" class="pvp-slot" style="border-color:#ffea00;border-style:solid;">?</div>
-                    <div id="def-slot3" class="pvp-slot" style="border-color:#ffea00;border-style:solid;">?</div>
+                    <div id="def-slot1" class="pvp-slot" style="border-color:#ffea00; border-style:solid;">?</div>
+                    <div id="def-slot2" class="pvp-slot" style="border-color:#ffea00; border-style:solid;">?</div>
+                    <div id="def-slot3" class="pvp-slot" style="border-color:#ffea00; border-style:solid;">?</div>
                 </div>
             </div>
         </div>
-        <button onclick="window.startArenaPvP()" style="width:100%;padding:12px;margin-top:10px;background:#ffea00;color:#000;">챔피언에게 도전!</button>
+        <button onclick="window.startArenaPvP()" style="width: 100%; padding: 12px; margin-top:10px; background:#ffea00; color:#000;">챔피언에게 도전!</button>
     </div>
 
-    <div style="background:#1a1a1a;padding:15px;border-radius:10px;border:1px solid #00f2ff;margin-bottom:15px;">
-        <h3 style="margin:0 0 5px 0;color:#00f2ff;font-size:1rem;">🛡️ 나의 방어 덱 설정</h3>
-        <p style="font-size:0.7rem;color:#aaa;margin-top:0;">접속 종료 시 적의 약탈을 방어합니다.</p>
+    <div style="background:#1a1a1a; padding:15px; border-radius:10px; border:1px solid #00f2ff; margin-bottom:15px;">
+        <h3 style="margin:0 0 5px 0; color:#00f2ff; font-size:1rem;">🛡️ 나의 방어 덱 설정</h3>
+        <p style="font-size:0.7rem; color:#aaa; margin-top:0;">접속 종료 시 적의 약탈을 방어합니다. (필수)</p>
         <div class="pvp-deck">
             <div id="def-setup-slot1" class="pvp-slot" onclick="window.openCardSelector('defense', 1)"><div class="slot-add-icon">+</div>방어1</div>
             <div id="def-setup-slot2" class="pvp-slot" onclick="window.openCardSelector('defense', 2)"><div class="slot-add-icon">+</div>방어2</div>
@@ -189,64 +214,62 @@ button:active{transform:scale(0.97);filter:brightness(1.1)} button:disabled{back
         </div>
     </div>
 
-    <div style="background:#1a1a1a;padding:15px;border-radius:10px;border:1px solid #ff3366;">
-        <h3 style="margin:0 0 5px 0;color:#ff3366;font-size:1rem;">⚔️ 일반 유저 약탈 (리스트)</h3>
-        <p style="font-size:0.7rem;color:#aaa;margin-top:0;">유저를 골라 골드/아이템/카드를 훔치세요!</p>
-        <div id="user-list-container" style="max-height:250px;overflow-y:auto;background:#000;border:1px solid #444;border-radius:8px;padding:10px;text-align:left;">
-            유저 목록 로딩중...
-        </div>
+    <div style="background:#1a1a1a; padding:15px; border-radius:10px; border:1px solid #ff3366;">
+        <h3 style="margin:0 0 5px 0; color:#ff3366; font-size:1rem;">⚔️ 일반 유저 약탈 리스트</h3>
+        <div id="user-list-container" style="max-height:250px; overflow-y:auto; background:#000; border:1px solid #444; border-radius:8px; padding:10px; text-align:left;"></div>
     </div>
 </div>
 
 <div id="section-5" class="section">
-    <h2 style="font-size:1.1rem;margin-top:0;color:#8338ec;">🗺️ 파견 탐험대</h2>
-    <p style="color:#aaa;font-size:0.75rem;margin-bottom:10px;">10회 소진 시 AI 4연승 필요!</p>
-    <div class="vs-board" style="background:#1a0f2e;border-color:#8338ec;padding:15px 5px;">
+    <h2 style="font-size: 1.1rem; margin-top:0; color:#8338ec;">🗺️ 파견 탐험대</h2>
+    <p style="color:#aaa; font-size:0.75rem; margin-bottom:10px;">점수 비례 전리품 획득! 10회 소진 시 AI 연승 필요!</p>
+    <div class="vs-board" style="background:#1a0f2e; border-color:#8338ec; padding: 15px 5px;">
         <div class="pvp-deck">
             <div id="explore-slot1" class="pvp-slot" onclick="window.openCardSelector('explore', 1)"><div class="slot-add-icon">+</div>대원1</div>
             <div id="explore-slot2" class="pvp-slot" onclick="window.openCardSelector('explore', 2)"><div class="slot-add-icon">+</div>대원2</div>
             <div id="explore-slot3" class="pvp-slot" onclick="window.openCardSelector('explore', 3)"><div class="slot-add-icon">+</div>대원3</div>
         </div>
     </div>
-    <div id="explore-result" style="font-size:0.9rem;margin:10px 0;font-weight:bold;min-height:30px;color:#ffea00;"></div>
-    <button id="explore-btn" onclick="window.startExplore()" style="background:#8338ec;width:100%;padding:12px;">탐험 출발! (잔여: <span id="exp-cnt-ui">10</span>회)</button>
+    <div id="explore-result" style="font-size: 0.9rem; margin: 10px 0; font-weight: bold; min-height: 30px; color:#ffea00;"></div>
+    <button id="explore-btn" onclick="window.startExplore()" style="background:#8338ec; width: 100%; padding: 12px;">탐험 출발! (잔여: <span id="exp-cnt-ui">10</span>회)</button>
 </div>
 
 <div id="section-6" class="section">
-    <h2 style="font-size:1.5rem;margin-top:0;color:#ff00e5;">🛠️ 개발자(GM) 콘솔</h2>
-    <div style="background:#1a1a1a;padding:15px;border-radius:10px;margin-bottom:15px;border:1px solid #ff00e5;">
-        <h3 style="margin-top:0;color:#fff;">🎁 유저 우편 발송</h3>
-        <div style="display:flex;flex-direction:column;gap:8px;align-items:center;text-align:left;width:100%;">
-            <select id="gm-target-user" style="padding:10px;width:100%;border-radius:5px;background:#000;color:#fff;border:1px solid #555;"><option value="ALL">📢 서버 전체 유저</option></select>
-            <input type="text" id="gm-mail-title" placeholder="우편 제목" style="padding:10px;width:100%;box-sizing:border-box;border-radius:5px;background:#000;color:#fff;border:1px solid #555;">
-            <div style="display:flex;gap:5px;width:100%;">
-                <input type="number" id="gm-mail-gold" placeholder="지급 골드" style="padding:10px;width:50%;box-sizing:border-box;border-radius:5px;background:#000;color:#fff;border:1px solid #555;">
-                <input type="number" id="gm-mail-rateup" placeholder="확률업 티켓" style="padding:10px;width:50%;box-sizing:border-box;border-radius:5px;background:#000;color:#fff;border:1px solid #555;">
+    <h2 style="font-size: 1.5rem; margin-top:0; color:#ff00e5;">🛠️ 개발자(GM) 콘솔</h2>
+    <div style="background:#1a1a1a; padding:15px; border-radius:10px; margin-bottom:15px; border:1px solid #ff00e5;">
+        <h3 style="margin-top:0; color:#fff;">🎁 유저 우편 발송</h3>
+        <div style="display:flex; flex-direction:column; gap:8px; align-items:center; text-align:left; width:100%;">
+            <select id="gm-target-user" style="padding:10px; width:100%; border-radius:5px; background:#000; color:#fff; border:1px solid #555;"><option value="ALL">📢 서버 전체 유저</option></select>
+            <input type="text" id="gm-mail-title" placeholder="우편 제목" style="padding:10px; width:100%; box-sizing:border-box; border-radius:5px; background:#000; color:#fff; border:1px solid #555;">
+            <div style="display:flex; gap:5px; width:100%;">
+                <input type="number" id="gm-mail-gold" placeholder="지급 골드" style="padding:10px; width:50%; box-sizing:border-box; border-radius:5px; background:#000; color:#fff; border:1px solid #555;">
+                <input type="number" id="gm-mail-rateup" placeholder="확률업 티켓" style="padding:10px; width:50%; box-sizing:border-box; border-radius:5px; background:#000; color:#fff; border:1px solid #555;">
             </div>
-            <div style="width:100%;border-top:1px dashed #444;padding-top:10px;margin-top:5px;">
-                <label style="font-size:0.8rem;color:#ffea00;margin-bottom:5px;display:block;">🃏 특정 카드 지급 (선택)</label>
-                <div style="display:flex;gap:5px;">
-                    <select id="gm-mail-card-id" style="padding:10px;width:60%;border-radius:5px;background:#000;color:#fff;border:1px solid #555;"><option value="">지급안함</option></select>
-                    <select id="gm-mail-card-grade" style="padding:10px;width:40%;border-radius:5px;background:#000;color:#fff;border:1px solid #555;">
-                        <option value="SSS">SSS등급</option><option value="SS">SS등급</option><option value="S">S등급</option><option value="A">A등급</option><option value="B">B등급</option><option value="C">C등급</option>
-                    </select>
+            <div style="width:100%; border-top:1px dashed #444; padding-top:10px; margin-top:5px;">
+                <label style="font-size:0.8rem; color:#ffea00; margin-bottom:5px; display:block;">🃏 특정 카드 지급 (선택)</label>
+                <div style="display:flex; gap:5px;">
+                    <select id="gm-mail-card-id" style="padding:10px; width:60%; border-radius:5px; background:#000; color:#fff; border:1px solid #555;"><option value="">지급안함</option></select>
+                    <select id="gm-mail-card-grade" style="padding:10px; width:40%; border-radius:5px; background:#000; color:#fff; border:1px solid #555;"><option value="SSS">SSS등급</option><option value="SS">SS등급</option><option value="S">S등급</option><option value="A">A등급</option><option value="B">B등급</option><option value="C">C등급</option></select>
                 </div>
             </div>
-            <button onclick="window.sendGmMail()" style="background:#ff00e5;width:100%;padding:12px;margin-top:10px;">우편 발송하기 🚀</button>
+            <button onclick="window.sendGmMail()" style="background:#ff00e5; width:100%; padding:12px; margin-top:10px;">우편 발송하기 🚀</button>
         </div>
     </div>
-    <button onclick="window.applyGmBuff()" style="background:#ffea00;color:#000;width:100%;padding:15px;font-size:1.1rem;">⚡ GM 무한 버프</button>
+    <button onclick="window.applyGmBuff()" style="background:#ffea00; color:#000; width:100%; padding:15px; font-size:1.1rem;">⚡ GM 무한 버프 (100만 골드+티켓 MAX)</button>
 </div>
 
 <div id="attack-setup-modal" class="modal-overlay" onclick="window.closeModal('attack-setup-modal')">
-    <div style="background:#111;width:95%;max-width:400px;padding:20px;border-radius:12px;border:1px solid #ff00e5;text-align:center;" onclick="event.stopPropagation()">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h3 style="color:#ff006e;margin:0;" id="attack-target-name">유저 공격</h3><button onclick="window.closeModal('attack-setup-modal')" style="padding:5px 10px;background:#555;">닫기</button></div>
+    <div style="background:#111; width:95%; max-width:400px; padding:20px; border-radius:12px; border:1px solid #ff00e5; text-align:center;" onclick="event.stopPropagation()">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3 style="color:#ff006e; margin:0;" id="attack-target-name">유저 공격</h3>
+            <button onclick="window.closeModal('attack-setup-modal')" style="padding:5px 10px; background:#555;">닫기</button>
+        </div>
         <div class="item-toggle-container">
             <label class="item-toggle"><input type="checkbox" id="use-win-ticket-plunder"> 🏆 승리권 (<span id="win-t-cnt-plunder">0</span>)</label>
-            <label class="item-toggle" style="background:#3d0036;border-color:#ff00e5;"><input type="checkbox" id="use-user-capture-plunder"> 👿 유저포획권 (<span id="user-cap-cnt-plunder">0</span>)</label>
+            <label class="item-toggle" style="background:#3d0036; border-color:#ff00e5;"><input type="checkbox" id="use-user-capture-plunder"> 👿 포획권 (<span id="user-cap-cnt-plunder">0</span>)</label>
         </div>
         <div style="margin:15px 0;">
-            <div style="color:#aaa;font-size:0.8rem;margin-bottom:5px;">나의 약탈 덱</div>
+            <div style="color:#aaa; font-size:0.8rem; margin-bottom:5px;">나의 약탈 전용 공격 덱</div>
             <div class="pvp-deck">
                 <div id="plunder-atk-slot1" class="pvp-slot" onclick="window.openCardSelector('plunder', 1)"><div class="slot-add-icon">+</div>공격1</div>
                 <div id="plunder-atk-slot2" class="pvp-slot" onclick="window.openCardSelector('plunder', 2)"><div class="slot-add-icon">+</div>공격2</div>
@@ -254,62 +277,62 @@ button:active{transform:scale(0.97);filter:brightness(1.1)} button:disabled{back
             </div>
         </div>
         <div style="margin:15px 0;">
-            <div style="color:#ff3366;font-size:0.8rem;margin-bottom:5px;">적 방어 덱 (속성)</div>
+            <div style="color:#ff3366; font-size:0.8rem; margin-bottom:5px;">적의 방어 덱 (속성만 노출)</div>
             <div class="pvp-deck">
-                <div id="enemy-def-slot1" class="pvp-slot" style="border-color:#ff3366;border-style:solid;">?</div>
-                <div id="enemy-def-slot2" class="pvp-slot" style="border-color:#ff3366;border-style:solid;">?</div>
-                <div id="enemy-def-slot3" class="pvp-slot" style="border-color:#ff3366;border-style:solid;">?</div>
+                <div id="enemy-def-slot1" class="pvp-slot" style="border-color:#ff3366; border-style:solid;">?</div>
+                <div id="enemy-def-slot2" class="pvp-slot" style="border-color:#ff3366; border-style:solid;">?</div>
+                <div id="enemy-def-slot3" class="pvp-slot" style="border-color:#ff3366; border-style:solid;">?</div>
             </div>
         </div>
-        <button onclick="window.startPlunderPvP()" style="width:100%;padding:15px;font-size:1.1rem;">약탈 시작!</button>
+        <button onclick="window.startPlunderPvP()" style="width:100%; padding:15px; font-size:1.1rem;">약탈 시작!</button>
     </div>
 </div>
 
 <div id="global-chat-modal" class="modal-overlay" onclick="window.closeModal('global-chat-modal')">
-    <div style="background:#111;width:95%;max-width:450px;border-radius:12px;display:flex;flex-direction:column;border:1px solid #009688;padding:15px;box-sizing:border-box;" onclick="event.stopPropagation()">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h3 style="margin:0;color:#00f2ff;font-size:1.2rem;">💬 실시간 채팅방</h3><button onclick="window.closeModal('global-chat-modal')" style="padding:6px 12px;background:#555;">닫기</button></div>
+    <div style="background:#111; width:95%; max-width:450px; border-radius:12px; display:flex; flex-direction:column; border:1px solid #009688; padding:15px; box-sizing:border-box;" onclick="event.stopPropagation()">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><h3 style="margin:0; color:#00f2ff; font-size:1.2rem;">💬 채팅방</h3><button onclick="window.closeModal('global-chat-modal')" style="padding:6px 12px; background:#555;">닫기</button></div>
         <div id="chat-container"></div>
-        <div style="display:flex;gap:5px;"><input type="text" id="chat-input" placeholder="메시지를 입력하세요..." style="flex:1;padding:10px;border-radius:5px;background:#000;color:#fff;border:1px solid #444;" onkeypress="if(event.key==='Enter') window.sendChat()"><button onclick="window.sendChat()" style="background:#009688;">전송</button></div>
+        <div style="display:flex; gap:5px;"><input type="text" id="chat-input" placeholder="메시지..." style="flex:1; padding:10px; border-radius:5px; background:#000; color:#fff; border:1px solid #444;" onkeypress="if(event.key==='Enter') window.sendChat()"><button onclick="window.sendChat()" style="background:#009688;">전송</button></div>
     </div>
 </div>
 
 <div id="mailbox-modal" class="modal-overlay" onclick="window.closeModal('mailbox-modal')">
-    <div style="background:#111;width:95%;max-width:400px;max-height:80vh;border-radius:12px;display:flex;flex-direction:column;border:1px solid #ff00e5;" onclick="event.stopPropagation()">
-        <div style="padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;">
-            <h3 style="margin:0;color:#fff;font-size:1.2rem;">📬 우편함</h3>
-            <div style="display:flex;gap:5px;">
-                <button onclick="window.claimAllMails()" style="padding:6px 12px;background:#ffea00;color:#000;font-size:0.8rem;font-weight:bold;">모두 수령</button>
-                <button onclick="window.closeModal('mailbox-modal')" style="padding:6px 12px;background:#555;font-size:0.8rem;">닫기</button>
+    <div style="background:#111; width:95%; max-width:400px; max-height:80vh; border-radius:12px; display:flex; flex-direction:column; border:1px solid #ff00e5;" onclick="event.stopPropagation()">
+        <div style="padding:15px; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center;">
+            <h3 style="margin:0; color:#fff; font-size:1.2rem;">📬 우편함</h3>
+            <div style="display:flex; gap:5px;">
+                <button onclick="window.claimAllMails()" style="padding:6px 12px; background:#ffea00; color:#000; font-size:0.8rem; font-weight:bold;">모두 수령</button>
+                <button onclick="window.closeModal('mailbox-modal')" style="padding:6px 12px; background:#555; font-size:0.8rem;">닫기</button>
             </div>
         </div>
-        <div id="mail-list-container" style="padding:15px;overflow-y:auto;text-align:left;"></div>
+        <div id="mail-list-container" style="padding:15px; overflow-y:auto; text-align:left;"></div>
     </div>
 </div>
 
-<div id="live-battle-modal" class="modal-overlay" style="z-index:10005;background:rgba(0,0,0,0.95);">
-    <div style="background:#111;width:95%;max-width:400px;padding:20px;border-radius:15px;border:2px solid #ff006e;display:flex;flex-direction:column;align-items:center;">
-        <h2 style="margin-top:0;color:#ff006e;margin-bottom:15px;font-style:italic;">⚔️ 실시간 전투 중계</h2>
-        <div id="live-battle-log" style="width:100%;height:350px;background:#000;border:1px solid #333;border-radius:8px;overflow-y:auto;text-align:left;font-size:0.85rem;padding:10px;box-sizing:border-box;margin-bottom:15px;line-height:1.5;"></div>
-        <button id="live-battle-close" style="width:100%;padding:15px;display:none;" onclick="window.closeLiveBattle()">결과 확인 및 보상받기</button>
+<div id="live-battle-modal" class="modal-overlay" style="z-index:10005; background:rgba(0,0,0,0.95);">
+    <div style="background:#111; width:95%; max-width:400px; padding:20px; border-radius:15px; border:2px solid #ff006e; display:flex; flex-direction:column; align-items:center;">
+        <h2 style="margin-top:0; color:#ff006e; margin-bottom:15px; font-style:italic;">⚔️ 전투 중계</h2>
+        <div id="live-battle-log" style="width:100%; height:350px; background:#000; border:1px solid #333; border-radius:8px; overflow-y:auto; text-align:left; font-size:0.85rem; padding:10px; box-sizing:border-box; margin-bottom:15px; line-height:1.5;"></div>
+        <button id="live-battle-close" style="width:100%; padding:15px; display:none;" onclick="window.closeLiveBattle()">결과 확인</button>
     </div>
 </div>
 
 <div id="card-select-modal" class="modal-overlay" onclick="window.closeModal('card-select-modal')">
-    <div style="background:#1a1a1a;width:95%;max-width:450px;max-height:85vh;border-radius:12px;display:flex;flex-direction:column;border:1px solid #444;" onclick="event.stopPropagation()">
-        <div style="padding:15px;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;"><h3 style="margin:0;color:#ff006e;font-size:1.1rem;" id="card-select-title">장착하기</h3><button onclick="window.closeModal('card-select-modal')" style="padding:6px 12px;background:#555;font-size:0.8rem;">닫기</button></div>
-        <div id="selector-grid" class="grid" style="padding:15px;overflow-y:auto;margin-top:0;align-content:flex-start;"></div>
+    <div style="background:#1a1a1a; width:95%; max-width:450px; max-height:85vh; border-radius:12px; display:flex; flex-direction:column; border:1px solid #444;" onclick="event.stopPropagation()">
+        <div style="padding:15px; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0; color:#ff006e; font-size:1.1rem;" id="card-select-title">장착하기</h3><button onclick="window.closeModal('card-select-modal')" style="padding:6px 12px; background:#555;">닫기</button></div>
+        <div id="selector-grid" class="grid" style="padding:15px; overflow-y:auto; margin-top:0; align-content:flex-start;"></div>
     </div>
 </div>
 
 <div id="zoom-modal" class="modal-overlay" onclick="window.closeModal('zoom-modal')">
-    <div id="zoom-container" style="width:100%;display:flex;justify-content:center;" onclick="event.stopPropagation()"></div>
-    <div id="zoom-actions" style="margin-top:15px;z-index:201;width:100%;max-width:320px;" onclick="event.stopPropagation()"></div>
+    <div id="zoom-container" style="width:100%; display:flex; justify-content:center;" onclick="event.stopPropagation()"></div>
+    <div id="zoom-actions" style="margin-top:15px; z-index:201; width:100%; max-width:320px;" onclick="event.stopPropagation()"></div>
 </div>
 
 <div id="gacha-modal" class="modal-overlay" onclick="window.closeModal('gacha-modal')">
-    <h2 style="color:#fff;margin-bottom:15px;font-size:1.5rem;">🎉 획득! 🎉</h2>
-    <div id="gacha-result-container" style="display:flex;justify-content:center;"></div>
-    <p style="margin-top:15px;color:#aaa;font-size:0.8rem;">(터치 시 닫힘)</p>
+    <h2 style="color:#fff; margin-bottom:15px; font-size:1.5rem;">🎉 획득! 🎉</h2>
+    <div id="gacha-result-container" style="display:flex; justify-content:center;"></div>
+    <p style="margin-top:15px; color:#aaa; font-size:0.8rem;">(터치 시 닫힘)</p>
 </div>
 
 <script type="module">
@@ -407,7 +430,7 @@ button:active{transform:scale(0.97);filter:brightness(1.1)} button:disabled{back
             myMails.forEach(id=>{
                 const m=serverMails[id]; let rTxt=[];
                 if(m.gold) rTxt.push(`💰 ${m.gold}G`); if(m.rateUp) rTxt.push(`✨ 강화권 ${m.rateUp}장`); if(m.cardTid) rTxt.push(`🃏 [${m.cardGrade}] ${getCardBaseInfo(m.cardTid).name}`);
-                container.innerHTML+=`<div class="mail-item"><div style="color:#ff00e5;font-weight:bold;margin-bottom:5px;">${m.title}</div><div style="font-size:0.85rem;color:#ffea00;">보상: ${rTxt.join(', ')}</div><button onclick="window.claimMail('${id}')" style="background:#26ff00;color:#000;width:100%;margin-top:10px;font-weight:bold;">수령하기</button></div>`;
+                container.innerHTML+=`<div class="mail-item"><div style="color:#ff00e5;font-weight:bold;margin-bottom:5px;">${m.title}</div><div style="font-size:0.85rem;color:#ffea00;">보상: ${rTxt.join(', ')}</div><div style="font-size:0.7rem;color:#888;margin-top:5px;">${new Date(m.timestamp).toLocaleString()}</div><button onclick="window.claimMail('${id}')" style="background:#26ff00;color:#000;width:100%;margin-top:10px;font-weight:bold;">수령하기</button></div>`;
             });
         }
         document.getElementById('mailbox-modal').style.display='flex';
@@ -419,24 +442,16 @@ button:active{transform:scale(0.97);filter:brightness(1.1)} button:disabled{back
         claimedMails[id]=true; saveUserData(); updateUI(); updateMailboxBadge(); window.openMailbox();
     };
 
-    // 🔥 "모두 수령" 버튼 완벽 구현 (수령 후 자동 저장 & 알림 삭제)
     window.claimAllMails = () => {
-        let claimedAny = false;
-        Object.keys(serverMails).forEach(id => {
-            const m = serverMails[id];
-            if(!claimedMails[id] && (m.targetUid === 'ALL' || m.targetUid === currentUser.uid)) {
-                if(m.gold) money += parseInt(m.gold);
-                if(m.rateUp) rateUpTickets += parseInt(m.rateUp);
-                if(m.cardTid) grantCardByTemplate(m.cardTid, m.cardGrade);
-                claimedMails[id] = true;
-                claimedAny = true;
+        let claimedAny=false;
+        Object.keys(serverMails).forEach(id=>{
+            const m=serverMails[id];
+            if(!claimedMails[id] && (m.targetUid==='ALL' || m.targetUid===currentUser.uid)){
+                if(m.gold) money+=parseInt(m.gold); if(m.rateUp) rateUpTickets+=parseInt(m.rateUp); if(m.cardTid) grantCardByTemplate(m.cardTid, m.cardGrade);
+                claimedMails[id]=true; claimedAny=true;
             }
         });
-        if(claimedAny) {
-            saveUserData(); updateUI(); updateMailboxBadge(); window.openMailbox(); alert("🎁 모든 우편을 수령했습니다!");
-        } else {
-            alert("수령할 우편이 없습니다.");
-        }
+        if(claimedAny){ saveUserData(); updateUI(); updateMailboxBadge(); window.openMailbox(); alert("🎁 모든 우편 수령!"); } else alert("수령할 우편이 없습니다.");
     };
 
     function populateGmCardSelect(){ const sel=document.getElementById('gm-mail-card-id'); cardDatabase.forEach(c=>{ sel.innerHTML+=`<option value="${c.templateId}">[${c.templateId}] ${c.name}</option>`; }); }
@@ -623,6 +638,8 @@ button:active{transform:scale(0.97);filter:brightness(1.1)} button:disabled{back
     };
 
     const delay = ms => new Promise(res=>setTimeout(res,ms));
+    
+    // 🔥 중복 문제를 완벽히 해결한 단일 컨테이너 출력
     async function printLog(targetBgId, htmlText, color="#aaa", delayMs=300) {
         const createLine=(cId)=>{ const e=document.getElementById(cId); if(e){ e.innerHTML+=`<div style="color:${color};margin-bottom:4px;">${htmlText}</div>`; e.scrollTop=e.scrollHeight; } };
         createLine('live-battle-log'); createLine(targetBgId); if(delayMs>0) await delay(delayMs);
@@ -637,7 +654,6 @@ button:active{transform:scale(0.97);filter:brightness(1.1)} button:disabled{back
         for(let turn=1; turn<=10; turn++){
             await printLog(logBgId, `--- 턴 ${turn} ---`, "#666", 200);
 
-            // My Turn
             let mAtk=myS.atk, eDef=enS.def, mTrig=false;
             if((myS.element==='rock'&&enS.element==='scissors')||(myS.element==='scissors'&&enS.element==='paper')||(myS.element==='paper'&&enS.element==='rock')){ mAtk+=20; await printLog(logBgId, `👉 속성우위 (ATK+20)`, "#00f2ff", 200); }
             if(mSk.isSpecial){ if(mSk.type==='berserker'){ mAtk+=mAtk*((myS.hp-mHp)/myS.hp); } if(mSk.type==='triple_crit'&&Math.random()<0.3){ mAtk*=3; mTrig=true; } if(mSk.type==='true_damage'){ eDef=0; } } else{ if(Math.random()<0.5){ mTrig=true; if(mSk.type==='crit') mAtk*=1.5; if(mSk.type==='pierce') eDef=0; } }
@@ -653,7 +669,6 @@ button:active{transform:scale(0.97);filter:brightness(1.1)} button:disabled{back
             if(eHp<=0){ winR=true; await printLog(logBgId, `✅ 적군 쓰러짐! 승리!`, "#26ff00", 500); break; }
             if(mHp<=0){ winR=false; await printLog(logBgId, `❌ 아군 쓰러짐... 패배`, "#ff3366", 500); break; }
 
-            // Enemy Turn
             let eAtk=enS.atk, mDef=myS.def, eTrig=false;
             if(enS.element!==myS.element&&!((myS.element==='rock'&&enS.element==='scissors')||(myS.element==='scissors'&&enS.element==='paper')||(myS.element==='paper'&&enS.element==='rock'))){ eAtk+=20; await printLog(logBgId, `👉 적 속성우위 (ATK+20)`, "#ff3366", 200); }
             if(eSk.isSpecial){ if(eSk.type==='berserker'){ eAtk+=eAtk*((enS.hp-eHp)/enS.hp); } if(eSk.type==='triple_crit'&&Math.random()<0.3){ eAtk*=3; eTrig=true; } if(eSk.type==='true_damage'){ mDef=0; } } else{ if(Math.random()<0.5){ eTrig=true; if(eSk.type==='crit') eAtk*=1.5; if(eSk.type==='pierce') mDef=0; } }

@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>포토 카드 배틀 - 모바일 최적화 에디션</title>
+    <style>
+        :root { --sss: #ffea00; --ss: #00f2ff; --s: #ff00e5; --a: #26ff00; --b: #ff9800; --c: #a0a0a0; --bg: #121212; }
+        body { margin: 0; background: var(--bg); color: #fff; font-family: 'Pretendard', sans-serif; text-align: center; padding-bottom: 50px; overflow-x: hidden; }
+        
+        header { background: rgba(0,0,0,0.9); padding: 15px; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .stats-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center; }
+        .money { font-size: 1.2rem; color: var(--sss); font-weight: bold; }
+        
+        #notification-banner { display: none; background: #ff3366; color: white; padding: 10px; font-weight: bold; cursor: pointer; animation: flash 1s infinite alternate; font-size: 0.9rem; }
+        @keyframes flash { from { opacity: 1; } to { opacity: 0.7; } }
+
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+        .google-btn { background: white; color: #444; font-weight: bold; padding: 15px 30px; border-radius: 30px; font-size: 1.1rem; border: none; cursor: pointer; display: flex; align-items: center; gap: 10px; width: 100%; max-width: 300px; justify-content: center; }
+
+        .tabs { display: flex; justify-content: center; gap: 5px; margin: 15px 5px; flex-wrap: wrap; }
+        .tab { padding: 10px 12px; background: #222; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 0.85rem; flex: 1 1 auto; min-width: 70px; }
+        .tab.active { background: #ff006e; color: white; }
+        .section { display: none; padding: 15px; max-width: 1000px; margin: 0 auto; box-sizing: border-box; }
+        .section.active { display: block; }
+
+        /* 🔥 모바일 최적화 그리드 */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin-top: 15px; }
+        .card { position: relative; border-radius: 10px; background: #000; border: 2px solid #444; overflow: hidden; aspect-ratio: 2/3; display: flex; flex-direction: column; justify-content: center; cursor: pointer; }
+        .card img { width: 100%; height: 100%; object-fit: cover; }
+        .card-grade { position: absolute; bottom: 5px; right: 5px; font-size: 1.3rem; font-weight: 900; font-style: italic; -webkit-text-stroke: 1px #000; z-index: 2; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
+        .card.sss { border-color: var(--sss); box-shadow: 0 0 15px var(--sss); }
+        .card.ss { border-color: var(--ss); box-shadow: 0 0 10px var(--ss); }
+        .card.s { border-color: var(--s); }
+        .card.a { border-color: var(--a); }
+        .card.b { border-color: var(--b); }
+        .card.c { border-color: var(--c); }
+        
+        .card-stats { position: absolute; top: 0; left: 0; width: 100%; background: rgba(0,0,0,0.8); padding: 5px; box-sizing: border-box; font-size: 0.7rem; text-align: left; line-height: 1.3; }
+
+        button { padding: 10px 15px; border: none; border-radius: 8px; background: #ff006e; color: white; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
+        button:hover { filter: brightness(1.2); transform: scale(1.05); }
+
+        .gacha-box { background: #222; padding: 15px; border-radius: 15px; margin: 15px 0; border: 1px solid #444; }
+        
+        /* 🔥 스마트폰에서 절대 잘리지 않는 3칸 배틀 슬롯 */
+        .vs-board { display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; background: #111; padding: 15px 10px; border-radius: 15px; margin-top: 20px; border: 2px solid #ff006e; gap: 10px; }
+        .pvp-deck { display: flex; gap: 5px; width: 100%; justify-content: center; }
+        .pvp-slot { width: 30%; max-width: 110px; aspect-ratio: 2/3; height: auto; border: 2px dashed #666; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; background:#000; cursor: pointer; position: relative; }
+        
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; z-index: 200; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+        .zoom-card { width: 100%; max-width: 280px; height: auto; aspect-ratio: 2/3; border-radius: 15px; border: 3px solid #fff; }
+
+        /* 체크박스 모바일 최적화 */
+        .item-toggle-container { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+        .item-toggle { display: flex; align-items: center; gap: 8px; background: #333; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; }
+        .item-toggle input { transform: scale(1.2); cursor: pointer; margin: 0; }
+        
+        /* 흔들림 효과 */
+        .shake-anim { animation: shake 0.5s infinite; }
+        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-5px); } 100% { transform: translateX(0); } }
+
+    </style>
+</head>
+<body>
+
+<div id="login-overlay">
+    <h1 style="font-size: 2.5rem; color: #ff006e; font-style: italic; margin-bottom: 30px;">초강력 멀티 배틀</h1>
+    <button class="google-btn" onclick="window.loginWithGoogle()">🌐 Google 계정으로 시작</button>
+</div>
+
+<div id="notification-banner" onclick="window.clearNotification()">
+    🚨 누군가 아레나에서 당신을 쓰러뜨리고 전리품을 약탈해갔습니다! (클릭하여 닫기)
+</div>
+
+<header>
+    <div style="font-weight: bold; font-size: 1.1rem; width: 100%; text-align: center; margin-bottom: 5px;">👑 <span id="player-name">유저</span>님의 덱</div>
+    <div class="stats-bar" style="width: 100%; justify-content: center;">
+        <div class="money">💰 <span id="money">1000</span> G</div>
+        <div style="color:#00f2ff; font-size: 0.9rem;">🛡️<span id="potion-count">0</span></div>
+        <div style="color:#ff3366; font-size: 0.9rem;">💊<span id="atk-potion-count">0</span></div>
+        <button onclick="window.logout()" style="background:#555; padding: 5px 10px; font-size: 0.8rem; margin-left: 5px;">로그아웃</button>
+    </div>
+</header>
+
+<div class="tabs">
+    <div class="tab active" onclick="window.switchTab(0)">상점</div>
+    <div class="tab" onclick="window.switchTab(1)">컬렉션</div>
+    <div class="tab" onclick="window.switchTab(2)">합성</div>
+    <div class="tab" onclick="window.switchTab(3)" style="background:#ff006e; color:white;">아레나</div>
+    <div class="tab" onclick="window.switchTab(4)" style="background:#8338ec; color:white;">탐험대</div>
+</div>
+
+<div id="section-0" class="section active">
+    <div class="gacha-box" style="border-color: #ffea00;">
+        <h2>🎁 고정 51종 영웅 뽑기</h2>
+        <p style="font-size:0.8rem; color:#aaa;">확률: A등급(80%) / S~SSS(7%) / 꽝(13%)<br>※ SSS 중복 시 자동 환전됩니다.</p>
+        <button onclick="window.pullGacha('normal')" style="font-size: 1.1rem; padding: 12px 40px; width: 100%; max-width: 300px;">1회 뽑기 (100G)</button>
+    </div>
+
+    <div class="gacha-box" style="border-color: #00f2ff; display: flex; justify-content: center; flex-wrap: wrap; gap: 10px;">
+        <button onclick="window.buyItem('shield', 200)" style="background: #00f2ff; color: #000; flex: 1 1 45%; min-width: 120px;">🛡️ 방어 물약 (200G)</button>
+        <button onclick="window.buyItem('attack', 300)" style="background: #ff3366; flex: 1 1 45%; min-width: 120px;">💊 강화제 (300G)</button>
+        <button onclick="window.buyItem('scroll', 300)" style="background: #ff9800; flex: 1 1 45%; min-width: 120px;">✨ 합성 부적 (300G)</button>
+        <button onclick="window.buyItem('capture', 4000)" style="background: #ff00e5; flex: 1 1 45%; min-width: 120px;">🪤 포획권 (4000G)</button>
+    </div>
+</div>
+
+<div id="section-1" class="section">
+    <h2 style="font-size: 1.2rem;">🗂️ 내 보유 카드 (총 <span id="card-count">0</span>장)</h2>
+    <div class="grid" id="my-deck-grid"></div>
+</div>
+
+<div id="section-2" class="section">
+    <h2 style="font-size: 1.2rem;">🧪 카드 합성소</h2>
+    <div style="display:flex; justify-content:center; gap:10px; align-items:center; margin: 20px 0;">
+        <div id="fusion-slot1" class="pvp-slot" style="width: 35%; max-width: 130px;" onclick="window.selectForFusion(1)">카드 1</div>
+        <div style="font-size: 1.5rem; font-weight: bold;">+</div>
+        <div id="fusion-slot2" class="pvp-slot" style="width: 35%; max-width: 130px;" onclick="window.selectForFusion(2)">카드 2</div>
+    </div>
+    <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+        <button onclick="window.executeFusion(false)" style="background:#555; flex: 1 1 45%; min-width: 130px;">수동 합성 (60%)</button>
+        <button onclick="window.executeFusion(true)" style="background:#ff9800; flex: 1 1 45%; min-width: 130px;">✨ 부적 합성 (85%)</button>
+    </div>
+    <div style="background: #222; padding: 15px; border-radius: 15px; margin-top: 20px;">
+        <h3 style="color: #26ff00; margin-top: 0; font-size: 1.1rem;">⚡ 일괄 자동 합성</h3>
+        <button onclick="window.batchFusion()" style="background:#4CAF50; width: 100%;">모든 중복 카드 연쇄 합성 (60%)</button>
+    </div>
+</div>
+
+<div id="section-3" class="section">
+    <h2 style="font-size: 1.2rem;">🔥 3 VS 3 멀티플레이어 PvP</h2>
+    <div class="item-toggle-container">
+        <label class="item-toggle"><input type="checkbox" id="use-win-ticket"> 🏆 승리권 (<span id="win-t-cnt">0</span>)</label>
+        <label class="item-toggle"><input type="checkbox" id="use-capture-ticket"> 🪤 포획권 (<span id="cap-t-cnt">0</span>)</label>
+    </div>
+    
+    <div class="vs-board">
+        <div style="width: 100%; text-align: center;">
+            <h3 style="color:#26ff00; font-size: 1rem; margin-top:0;">나의 공격 덱</h3>
+            <div class="pvp-deck">
+                <div id="atk-slot1" class="pvp-slot" onclick="window.selectForPvP(1)">선택</div>
+                <div id="atk-slot2" class="pvp-slot" onclick="window.selectForPvP(2)">선택</div>
+                <div id="atk-slot3" class="pvp-slot" onclick="window.selectForPvP(3)">선택</div>
+            </div>
+        </div>
+        <div style="font-size: 1.5rem; color:#ff006e; font-weight:900; margin: 10px 0;">VS</div>
+        <div style="width: 100%; text-align: center;">
+            <h3 style="color:#ff3366; font-size: 1rem; margin-top:0;" id="defender-name-ui">챔피언 탐색 중...</h3>
+            <div class="pvp-deck">
+                <div id="def-slot1" class="pvp-slot" style="border-color:#ff3366;">?</div>
+                <div id="def-slot2" class="pvp-slot" style="border-color:#ff3366;">?</div>
+                <div id="def-slot3" class="pvp-slot" style="border-color:#ff3366;">?</div>
+            </div>
+        </div>
+    </div>
+    <div id="pvp-log" style="background:#000; padding:10px; margin:15px 0; height:120px; overflow-y:auto; text-align:left; font-size:0.8rem; color:#aaa; border-radius: 8px;">전투 기록 대기 중...</div>
+    <button onclick="window.startPvP()" style="width: 100%; padding: 15px; font-size:1.1rem;">결투 시작!</button>
+</div>
+
+<div id="section-4" class="section">
+    <h2 style="font-size: 1.2rem;">🗺️ 미지의 영역 파견</h2>
+    <div class="vs-board" style="background:#1a0f2e; border-color:#8338ec; padding: 15px 5px;">
+        <div class="pvp-deck">
+            <div id="explore-slot1" class="pvp-slot" onclick="window.selectForExplore(1)">대원 1</div>
+            <div id="explore-slot2" class="pvp-slot" onclick="window.selectForExplore(2)">대원 2</div>
+            <div id="explore-slot3" class="pvp-slot" onclick="window.selectForExplore(3)">대원 3</div>
+        </div>
+    </div>
+    <div id="explore-result" style="font-size: 1rem; margin: 15px 0; font-weight: bold; min-height: 40px; word-break: keep-all;"></div>
+    <button id="explore-btn" onclick="window.startExplore()" style="background:#8338ec; width: 100%; padding: 15px; font-size:1.1rem;">탐험 출발!</button>
+</div>
+
+<div id="zoom-modal" class="modal-overlay" onclick="window.closeModal('zoom-modal')">
+    <div id="zoom-container" style="width: 100%; display: flex; justify-content: center;" onclick="event.stopPropagation()"></div>
+    <div id="zoom-actions" style="margin-top: 15px; z-index: 201; width:100%; max-width:320px;" onclick="event.stopPropagation()"></div>
+</div>
+
+<div id="gacha-modal" class="modal-overlay" onclick="window.closeModal('gacha-modal')">
+    <h2 id="gacha-title" style="color:#fff; margin-bottom: 20px; font-size:1.8rem; text-align:center;">🎉 획득! 🎉</h2>
+    <div id="gacha-result-container" class="zoom-card" style="margin: 0 auto;"></div>
+    <p style="margin-top: 20px; color:#aaa; font-size:0.9rem;">(화면 클릭 시 닫힘)</p>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getDatabase, ref, set, get, child, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCvf7uhsBqZtz6iC-xzxDngnLEsZJGIot0",
+        authDomain: "gameih.firebaseapp.com",
+        databaseURL: "https://gameih-default-rtdb.firebaseio.com",
+        projectId: "gameih",
+        storageBucket: "gameih.firebasestorage.app",
+        messagingSenderId: "898099533818",
+        appId: "1:898099533818:web:a5e683940c9b9524c5b643",
+        measurementId: "G-0G5924H6F5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+    const provider = new GoogleAuthProvider();
+
+    let currentUser = null;
+    let myCards = [];
+    let money = 1000;
+    let potions = 3, atkPotions = 0, fusionScrolls = 0, upgItems = 0, expTickets = 0, winTickets = 0, capTickets = 0;
+    
+    let fusionCards = [null, null];
+    let pvpAttackDeck = [null, null, null];
+    let exploreCards = [null, null, null];
+    let currentDefender = null; 
+
+    const attrIcon = { 'rock': '✊', 'paper': '✋', 'scissors': '✌️' };
+
+    // 51종 DB 설정
+    const cardDatabase = [];
+    const elements = ['rock', 'paper', 'scissors'];
+    const specificCards = [
+        { id: 1, name: '진해골킹', grade: 'S' }, { id: 2, name: '진오노마똥', grade: 'SSS' }, { id: 3, name: '퍼펙트제로', grade: 'SSS' },
+        { id: 4, name: '기즈아아아', grade: 'SSS' }, { id: 5, name: '농ㅋㅋ', grade: 'SSS' }, { id: 6, name: '두두리안', grade: 'SSS' },
+        { id: 7, name: '삼환마', grade: 'SSS' }, { id: 8, name: '솔로 심영몬', grade: 'SSS' }, { id: 9, name: '퍼펙트금화띠', grade: 'SSS' },
+        { id: 10, name: '하이', grade: 'SSS' }
+    ];
+    const fantasyNames = ['화염검사', '얼음마도사', '심연자객', '숲의정령', '바람궁수', '고블린대장', '오크전사'];
+
+    for (let i = 1; i <= 51; i++) {
+        let isSpecific = specificCards.find(c => c.id === i);
+        let cName = isSpecific ? isSpecific.name : fantasyNames[i % fantasyNames.length] + ` ${i}`;
+        let cGrade = isSpecific ? isSpecific.grade : (i % 5 === 0 ? 'A' : (i % 2 === 0 ? 'B' : 'C'));
+        let baseStat = cGrade === 'SSS' ? 200 : (cGrade === 'SS' ? 150 : (cGrade === 'S' ? 100 : (cGrade === 'A' ? 60 : 30)));
+        
+        cardDatabase.push({
+            templateId: i, name: cName, grade: cGrade, element: elements[i % 3],
+            hp: baseStat * 5 + Math.floor(Math.random()*50), def: Math.floor(baseStat / 2) + Math.floor(Math.random()*10),
+            atk: baseStat + Math.floor(Math.random()*20), skill: isSpecific ? '고유 궁극기' : '일반 공격'
+        });
+    }
+
+    const grades = {
+        'SSS': { class: 'sss', color: '#ffea00', sellPrice: 800, exp: 6 },
+        'SS':  { class: 'ss',  color: '#00f2ff', sellPrice: 400, exp: 5 },
+        'S':   { class: 's',   color: '#ff00e5', sellPrice: 150, exp: 4 },
+        'A':   { class: 'a',   color: '#26ff00', sellPrice: 80, exp: 3 },
+        'B':   { class: 'b',   color: '#ff9800', sellPrice: 30, exp: 2 },
+        'C':   { class: 'c',   color: '#a0a0a0', sellPrice: 10, exp: 1 }
+    };
+    const gradeOrder = ['C', 'B', 'A', 'S', 'SS', 'SSS'];
+
+    window.loginWithGoogle = () => { signInWithPopup(auth, provider).catch(err => alert("로그인 실패")); };
+    window.logout = () => { signOut(auth); location.reload(); };
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            currentUser = user;
+            document.getElementById('login-overlay').style.display = 'none';
+            document.getElementById('player-name').textContent = user.displayName;
+            loadUserData(); listenToMyData(); loadArenaData();
+        } else {
+            document.getElementById('login-overlay').style.display = 'flex';
+        }
+    });
+
+    async function loadUserData() {
+        const dbRef = ref(db);
+        try {
+            const snapshot = await get(child(dbRef, `users/${currentUser.uid}`));
+            if (snapshot.exists()) {
+                const d = snapshot.val();
+                myCards = d.deck || [];
+                money = d.money !== undefined ? d.money : 1000;
+                potions = d.potions || 0; atkPotions = d.atkPotions || 0; fusionScrolls = d.scrolls || 0;
+                expTickets = d.exp || 0; winTickets = d.win || 0; capTickets = d.cap || 0; upgItems = d.upg || 0;
+            } else {
+                myCards = []; money = 1000; potions = 3;
+                grantCardByTemplate(50, 'C'); grantCardByTemplate(50, 'C'); grantCardByTemplate(49, 'B');
+                saveUserData();
+            }
+            updateUI(); renderMyCards();
+        } catch(e) { console.error(e); }
+    }
+
+    async function saveUserData() {
+        if(!currentUser) return;
+        await set(ref(db, 'users/' + currentUser.uid), {
+            name: currentUser.displayName, money, deck: myCards, robbed: false,
+            potions, atkPotions, scrolls: fusionScrolls, exp: expTickets, win: winTickets, cap: capTickets, upg: upgItems
+        });
+    }
+
+    function listenToMyData() {
+        onValue(ref(db, 'users/' + currentUser.uid), (snapshot) => {
+            const data = snapshot.val();
+            if (data && data.robbed) {
+                document.getElementById('notification-banner').style.display = 'block';
+                money = data.money; myCards = data.deck || [];
+                updateUI(); renderMyCards();
+            }
+        });
+    }
+
+    window.clearNotification = () => {
+        document.getElementById('notification-banner').style.display = 'none';
+        set(ref(db, 'users/' + currentUser.uid + '/robbed'), false);
+    };
+
+    function getCardBaseInfo(templateId) { return cardDatabase.find(c => c.templateId === parseInt(templateId)) || cardDatabase[0]; }
+
+    function getBattleStats(card) {
+        const base = getCardBaseInfo(card.templateId);
+        const lvBonus = (card.level - 1);
+        return {
+            name: base.name, element: base.element,
+            hp: base.hp + (lvBonus * 20),
+            atk: base.atk + (lvBonus * 5) + ((card.enhance||0) * 10) + ((card.atkBuff||0) * 20),
+            def: base.def + (lvBonus * 2) + Math.floor((card.enhance||0) * 2)
+        };
+    }
+
+    function createCardHTML(card, isZoom = false) {
+        if (!card) return `<div style="color:#666; margin:auto;">비어있음</div>`;
+        const stats = getBattleStats(card);
+        const enhanceText = card.enhance > 0 ? `<span style="color:#ffea00;">+${card.enhance}</span> ` : '';
+        const imgSrc = `./images/${card.templateId}.png`; 
+        
+        return `
+            <div class="card ${grades[card.grade].class} ${isZoom ? 'zoom-card' : ''}">
+                <img src="${imgSrc}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'200\\' height=\\'300\\'><rect width=\\'200\\' height=\\'300\\' fill=\\'%23333\\'/><text x=\\'50%\\' y=\\'50%\\' fill=\\'%23aaa\\' text-anchor=\\'middle\\'>이미지 없음</text></svg>'">
+                <div class="card-grade" style="color:${grades[card.grade].color}">${enhanceText}${card.grade}</div>
+                <div class="card-stats">
+                    <div style="color:#fff; font-weight:bold; margin-bottom:3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${attrIcon[stats.element]} ${stats.name}</div>
+                    <div style="color:#00f2ff;">Lv.${card.level} | ${card.exp}%</div>
+                    <div style="color:#26ff00;">❤️ ${stats.hp} | 🛡️ ${stats.def}</div>
+                    <div style="color:#ff3366;">⚔️ ${stats.atk}</div>
+                </div>
+            </div>
+        `;
+    }
+
+    function grantCardByTemplate(tid, forceGrade=null) {
+        const base = getCardBaseInfo(tid);
+        myCards.push({
+            instanceId: Date.now() + Math.random().toString(),
+            templateId: tid, grade: forceGrade || base.grade,
+            level: 1, exp: 0, enhance: 0, atkBuff: 0
+        });
+    }
+
+    window.pullGacha = (type) => {
+        if (money < 100) return alert("골드 부족!");
+        money -= 100; 
+
+        let rand = Math.random() * 100;
+        let finalGrade = 'C';
+        if (rand <= 1) finalGrade = 'SSS';               
+        else if (rand <= 3) finalGrade = 'SS';           
+        else if (rand <= 7) finalGrade = 'S';            
+        else if (rand <= 87) finalGrade = 'A';           
+        else if (rand <= 93) finalGrade = 'B'; 
+        
+        const randomCard = cardDatabase[Math.floor(Math.random() * cardDatabase.length)];
+        
+        if (finalGrade === 'SSS' && myCards.some(c => c.templateId === randomCard.templateId && c.grade === 'SSS')) {
+            money += grades['SSS'].sellPrice;
+            alert(`🎉 중복 SSS 자동 판매! (+${grades['SSS'].sellPrice}G)`);
+        } else {
+            grantCardByTemplate(randomCard.templateId, finalGrade);
+            document.getElementById('gacha-result-container').innerHTML = createCardHTML(myCards[myCards.length-1], true);
+            document.getElementById('gacha-modal').style.display = 'flex';
+        }
+        updateUI(); renderMyCards(); saveUserData();
+    };
+
+    window.buyItem = (type, cost) => {
+        if (money < cost) return alert("골드 부족!");
+        money -= cost;
+        if (type === 'shield') potions++;
+        else if (type === 'attack') atkPotions++;
+        else if (type === 'scroll') fusionScrolls++;
+        else if (type === 'capture') capTickets++;
+        updateUI(); saveUserData();
+    };
+
+    window.renderMyCards = () => {
+        const grid = document.getElementById('my-deck-grid');
+        grid.innerHTML = '';
+        myCards.forEach((card, index) => {
+            const el = document.createElement('div');
+            el.innerHTML = createCardHTML(card);
+            el.onclick = () => showZoomModal(card);
+            grid.appendChild(el);
+        });
+        document.getElementById('card-count').textContent = myCards.length;
+    };
+
+    window.showZoomModal = (card) => {
+        document.getElementById('zoom-container').innerHTML = createCardHTML(card, true);
+        const price = grades[card.grade].sellPrice;
+        
+        let extraBtns = '';
+        if(expTickets > 0) extraBtns += `<button onclick="window.useSpecialItem('${card.instanceId}', 'exp')" style="background:#2196F3; font-size:0.8rem; padding:8px;">🌟 렙업권 (${expTickets})</button>`;
+        if(upgItems > 0 && card.grade !== 'SSS') extraBtns += `<button onclick="window.useSpecialItem('${card.instanceId}', 'upg')" style="background:#8338ec; font-size:0.8rem; padding:8px;">⏫ 등급업권 (${upgItems})</button>`;
+
+        document.getElementById('zoom-actions').innerHTML = `
+            <div style="margin-bottom: 10px; font-weight:bold; color:#ffea00; text-align:center;">EXP: ${card.exp} / ${card.level * 100}</div>
+            <div style="display:flex; justify-content:center; gap:5px; margin-bottom:10px;">
+                <button onclick="window.enhanceCard('${card.instanceId}')" style="background:#ff9800; font-size:0.8rem; padding:8px; flex:1;">🔨 강화(100G)</button>
+                <button onclick="window.useAttackPotion('${card.instanceId}')" style="background:#ff3366; font-size:0.8rem; padding:8px; flex:1;">💊 투여(${atkPotions})</button>
+            </div>
+            ${extraBtns ? `<div style="display:flex; justify-content:center; gap:5px; margin-bottom:10px;">${extraBtns}</div>` : ''}
+            <div style="display:flex; justify-content:center;"><button onclick="window.sellCard('${card.instanceId}', ${price})" style="background:#555; width:100%; font-size:0.9rem;">💰 판매 (+${price}G)</button></div>
+        `;
+        document.getElementById('zoom-modal').style.display = 'flex';
+    };
+
+    window.enhanceCard = (id) => {
+        if (money < 100) return alert("골드 부족!");
+        const card = myCards.find(c => c.instanceId === id);
+        money -= 100;
+        if (Math.random() < 0.6) { card.enhance++; alert(`✨ 강화 성공!`); } else alert("💥 강화 실패.");
+        updateUI(); renderMyCards(); window.showZoomModal(card); saveUserData();
+    };
+
+    window.useAttackPotion = (id) => {
+        if (atkPotions <= 0) return alert("약물 부족!");
+        const card = myCards.find(c => c.instanceId === id);
+        atkPotions--; card.atkBuff = (card.atkBuff||0) + 1; alert(`💉 공격력 상승!`);
+        updateUI(); renderMyCards(); window.showZoomModal(card); saveUserData();
+    };
+
+    window.useSpecialItem = (id, type) => {
+        const card = myCards.find(c => c.instanceId === id);
+        if (type === 'exp') { expTickets--; card.level++; card.exp = 0; alert("🌟 렙업 완료!"); } 
+        else if (type === 'upg') {
+            upgItems--;
+            card.grade = gradeOrder[gradeOrder.indexOf(card.grade) + 1];
+            alert(`⏫ ${card.grade} 등급으로 상승!`);
+        }
+        updateUI(); renderMyCards(); window.showZoomModal(card); saveUserData();
+    };
+
+    window.sellCard = (id, price) => {
+        if(!confirm(`판매하시겠습니까?`)) return;
+        myCards = myCards.filter(c => c.instanceId !== id);
+        pvpAttackDeck = pvpAttackDeck.map(c => c && c.instanceId === id ? null : c);
+        exploreCards = exploreCards.map(c => c && c.instanceId === id ? null : c);
+        money += price; updateUI(); renderMyCards(); window.closeModal('zoom-modal'); saveUserData();
+    };
+
+    window.selectForFusion = (slotIdx) => {
+        const num = prompt(`[슬롯 ${slotIdx}] 카드 순서 입력 (1~${myCards.length})`);
+        if(!num) return;
+        const card = myCards[parseInt(num) - 1];
+        if (!card) return alert("오류!");
+        if (slotIdx === 2 && fusionCards[0] && fusionCards[0].instanceId === card.instanceId) return alert("동일 카드 불가!");
+        fusionCards[slotIdx - 1] = card;
+        document.getElementById(`fusion-slot${slotIdx}`).innerHTML = createCardHTML(card);
+    };
+
+    window.executeFusion = (useScroll) => {
+        const c1 = fusionCards[0], c2 = fusionCards[1];
+        if (!c1 || !c2) return alert("슬롯을 채워주세요.");
+        if (c1.templateId !== c2.templateId) return alert("같은 영웅만 합성됩니다!");
+        if (c1.grade !== c2.grade) return alert("등급이 다릅니다!");
+        if (c1.grade === 'SSS') return alert("최고 등급입니다!");
+
+        if (useScroll) {
+            if(fusionScrolls <= 0) return alert("부적이 없습니다!");
+            fusionScrolls--; updateUI();
+        }
+
+        const success = Math.random() < (useScroll ? 0.85 : 0.60);
+        myCards = myCards.filter(c => c.instanceId !== c1.instanceId && c.instanceId !== c2.instanceId);
+        fusionCards = [null, null];
+        document.getElementById('fusion-slot1').innerHTML = '카드 1'; document.getElementById('fusion-slot2').innerHTML = '카드 2';
+
+        if (success) {
+            const nextGrade = gradeOrder[gradeOrder.indexOf(c1.grade) + 1];
+            if (nextGrade === 'SSS' && myCards.some(c => c.templateId === c1.templateId && c.grade === 'SSS')) {
+                money += grades['SSS'].sellPrice; alert(`✨ SSS 중복! 자동 판매 완료 (+${grades['SSS'].sellPrice}G)`);
+            } else {
+                grantCardByTemplate(c1.templateId, nextGrade); alert(`✨ ${nextGrade} 등급 진화 성공!`);
+            }
+        } else alert("💥 합성 실패! 카드 파괴됨...");
+        renderMyCards(); saveUserData();
+    };
+
+    window.batchFusion = () => {
+        let didFuse = true, fusedCount = 0, successCount = 0;
+        while (didFuse) {
+            didFuse = false;
+            let groups = {};
+            for (let c of myCards) {
+                if (c.grade === 'SSS') continue;
+                const key = c.templateId + '_' + c.grade;
+                if (!groups[key]) groups[key] = [];
+                groups[key].push(c);
+            }
+            
+            let toRemove = new Set(); let newlyCreated = [];
+            for (const key in groups) {
+                const group = groups[key];
+                while (group.length >= 2) {
+                    const c1 = group.pop(); const c2 = group.pop();
+                    toRemove.add(c1.instanceId); toRemove.add(c2.instanceId);
+                    didFuse = true; fusedCount++;
+                    
+                    if (Math.random() < 0.6) {
+                        successCount++;
+                        const nextGrade = gradeOrder[gradeOrder.indexOf(c1.grade) + 1];
+                        if (nextGrade === 'SSS' && (myCards.some(c => !toRemove.has(c.instanceId) && c.templateId === c1.templateId && c.grade === 'SSS') || newlyCreated.some(c => c.templateId === c1.templateId && c.grade === 'SSS'))) {
+                            money += grades['SSS'].sellPrice; continue; 
+                        }
+                        newlyCreated.push({ instanceId: Date.now()+Math.random(), templateId: c1.templateId, grade: nextGrade, level: 1, exp: 0, enhance: 0, atkBuff: 0 });
+                    }
+                }
+            }
+            if (didFuse) myCards = myCards.filter(c => !toRemove.has(c.instanceId)).concat(newlyCreated);
+        }
+        alert(`⚡ 일괄 합성 완료!\n시도: ${fusedCount}회 | 성공: ${successCount}회`);
+        updateUI(); renderMyCards(); saveUserData();
+    };
+
+    // 실시간 아레나
+    async function loadArenaData() {
+        const snapshot = await get(child(ref(db), `arena/current`));
+        if (snapshot.exists()) {
+            currentDefender = snapshot.val();
+            document.getElementById('defender-name-ui').textContent = `챔피언: ${currentDefender.defenderName}`;
+            for(let i=0; i<3; i++) {
+                const c = currentDefender.deck[i];
+                if(c) document.getElementById(`def-slot${i+1}`).innerHTML = `<div style="font-size:3rem;">${attrIcon[getCardBaseInfo(c.templateId).element]}</div>`;
+            }
+        } else {
+            document.getElementById('defender-name-ui').textContent = `챔피언: [AI] 무명 기사단`;
+            currentDefender = { defenderUid: 'AI', defenderName: '무명 기사단', deck: [{ templateId: 10, grade: 'B', level: 10 }, { templateId: 20, grade: 'B', level: 10 }, { templateId: 30, grade: 'A', level: 10 }] };
+        }
+    }
+
+    window.selectForPvP = (slot) => {
+        const num = prompt(`[출전 슬롯 ${slot}] 순서 입력`);
+        if(!num) return;
+        const card = myCards[parseInt(num) - 1];
+        if (!card) return alert("오류!");
+        pvpAttackDeck[slot - 1] = card;
+        document.getElementById(`atk-slot${slot}`).innerHTML = createCardHTML(card);
+    };
+
+    function addLog(msg, color="#fff") {
+        const log = document.getElementById('pvp-log');
+        log.innerHTML += `<div style="color:${color}; margin-bottom:5px;">${msg}</div>`;
+        log.scrollTop = log.scrollHeight;
+    }
+
+    window.startPvP = async () => {
+        if(pvpAttackDeck.filter(c => c!==null).length < 3) return alert("3장 모두 세팅하세요!");
+        
+        const chkWin = document.getElementById('use-win-ticket');
+        const chkCap = document.getElementById('use-capture-ticket');
+        if (chkWin.checked && winTickets <= 0) { chkWin.checked=false; return alert("승리권이 없습니다!"); }
+        if (chkCap.checked && capTickets <= 0) { chkCap.checked=false; return alert("포획권이 없습니다!"); }
+
+        document.getElementById('pvp-log').innerHTML = '';
+        addLog(`⚔️ 전투 시작!`, "#ffea00");
+
+        let myWins = 0; let enemyWins = 0;
+
+        for(let i=0; i<3; i++) {
+            const myC = pvpAttackDeck[i]; const enC = currentDefender.deck[i];
+            document.getElementById(`def-slot${i+1}`).innerHTML = createCardHTML(enC);
+            
+            if (chkWin.checked) { myWins++; addLog(`🏆 승리권으로 자동 승리!`, "#26ff00"); continue; }
+
+            const myStats = getBattleStats(myC); const enStats = getBattleStats(enC);
+            let myAtk = myStats.atk, enAtk = enStats.atk;
+
+            if((myStats.element==='rock'&&enStats.element==='scissors') || (myStats.element==='scissors'&&enStats.element==='paper') || (myStats.element==='paper'&&enStats.element==='rock')) { myAtk += 20; addLog(`👉 나의 상성 우위! 공격력 +20`); }
+            else if(myStats.element !== enStats.element) { enAtk += 20; addLog(`👉 상대 상성 우위! 공격력 +20`, "#ff3366"); }
+
+            let myHp = myStats.hp, enHp = enStats.hp;
+            for(let turn=1; turn<=10; turn++) {
+                enHp -= Math.max(1, myAtk - enStats.def);
+                if(enHp <= 0) { myWins++; addLog(`✅ [라운드${i+1}] 승리!`, "#26ff00"); break; }
+                myHp -= Math.max(1, enAtk - myStats.def);
+                if(myHp <= 0) { enemyWins++; addLog(`❌ [라운드${i+1}] 패배...`, "#ff3366"); break; }
+            }
+            if(myHp > 0 && enHp > 0) { if(myHp/myStats.hp >= enHp/enStats.hp) myWins++; else enemyWins++; addLog(`⚠️ 판정승.`); }
+        }
+
+        if(chkWin.checked) { winTickets--; chkWin.checked=false; }
+
+        if(myWins >= 2) {
+            addLog(`🏆 새로운 챔피언 등극!`, "#ffea00");
+            pvpAttackDeck.forEach(c => c.exp += 50); money += 500;
+            
+            if(chkCap.checked) {
+                capTickets--; chkCap.checked=false;
+                const target = currentDefender.deck[Math.floor(Math.random()*3)];
+                grantCardByTemplate(target.templateId, target.grade);
+                alert("🪤 적군 영웅 1명을 포획했습니다!");
+            }
+
+            await set(ref(db, 'arena/current'), { defenderUid: currentUser.uid, defenderName: currentUser.displayName, deck: pvpAttackDeck });
+
+            if(currentDefender.defenderUid !== 'AI') {
+                const loserSnap = await get(child(ref(db), `users/${currentDefender.defenderUid}`));
+                if(loserSnap.exists()) {
+                    let loserData = loserSnap.val();
+                    let stolenMoney = Math.min(loserData.money, 300);
+                    loserData.money -= stolenMoney; loserData.robbed = true;
+                    await set(ref(db, `users/${currentDefender.defenderUid}`), loserData);
+                    money += stolenMoney; addLog(`💰 골드 약탈 완료!`);
+                }
+            }
+        } else {
+            addLog(`💀 최종 패배...`, "#ff3366");
+        }
+
+        pvpAttackDeck = [null, null, null];
+        for(let i=1; i<=3; i++) document.getElementById(`atk-slot${i}`).innerHTML = '선택';
+        saveUserData(); loadArenaData(); updateUI(); renderMyCards();
+    };
+
+    window.selectForExplore = (slotIdx) => {
+        const num = prompt(`[대원 ${slotIdx}] 카드 번호 입력`);
+        if(!num) return;
+        const card = myCards[parseInt(num) - 1];
+        if (!card || exploreCards.some(c => c && c.instanceId === card.instanceId)) return alert("오류!");
+        exploreCards[slotIdx - 1] = card;
+        document.getElementById(`explore-slot${slotIdx}`).innerHTML = createCardHTML(card);
+    };
+
+    window.startExplore = () => {
+        if (exploreCards.filter(c => c !== null).length < 3) return alert("3명 모두 파견해야 합니다!");
+        
+        let luckScore = exploreCards.reduce((sum, c) => sum + (grades[c.grade].exp), 0); 
+        const btn = document.getElementById('explore-btn'); const res = document.getElementById('explore-result');
+        btn.disabled = true; btn.textContent = "진행 중...";
+        res.innerHTML = `<span style='color:#aaa;'>수색 중...</span>`;
+
+        setTimeout(() => {
+            btn.disabled = false; btn.textContent = "탐험 출발!";
+            
+            if(Math.random() < Math.max(0.05, 0.30 - (luckScore * 0.015))) {
+                const kidIdx = Math.floor(Math.random() * 3);
+                myCards = myCards.filter(c => c.instanceId !== exploreCards[kidIdx].instanceId);
+                if(potions > 0) { potions--; alert("방어 물약을 소모해 납치를 막았습니다!"); }
+                else { res.innerHTML = `<span style="color:#ff3366;">🚨 기습! 대원 1명 납치됨...</span>`; document.getElementById(`explore-slot${kidIdx+1}`).innerHTML = `💀`; }
+            } else {
+                money += 500 + (luckScore * 50);
+                let drops = luckScore >= 16 ? 3 : (luckScore >= 12 ? 2 : 1);
+                let foundItems = [];
+                for (let j = 0; j < drops; j++) {
+                    if (Math.random() < 0.60 + (luckScore * 0.02)) { 
+                        const r = Math.random();
+                        if(luckScore >= 10 && r < 0.2) { upgItems++; foundItems.push("⏫등급업권"); }
+                        else if(luckScore >= 6 && r < 0.4) { winTickets++; foundItems.push("🏆승리권"); }
+                        else if(luckScore >= 4 && r < 0.6) { capTickets++; foundItems.push("🪤포획권"); }
+                        else if(r < 0.8) { expTickets++; foundItems.push("🌟경험치권"); }
+                        else { fusionScrolls++; foundItems.push("✨부적"); }
+                    }
+                }
+                exploreCards.forEach(c => c.exp += 30);
+                res.innerHTML = `<span style="color:#26ff00;">🎉 탐험 대성공!</span><br><span style="color:#ffea00; font-size:0.9rem;">전리품: [${foundItems.join(', ')}]</span>`;
+            }
+            exploreCards = [null, null, null];
+            for(let i=1; i<=3; i++) { if(document.getElementById(`explore-slot${i}`).innerHTML !== '💀') document.getElementById(`explore-slot${i}`).innerHTML = `대원 ${i}`; }
+            updateUI(); renderMyCards(); saveUserData();
+        }, 2000); 
+    };
+
+    window.closeModal = (id) => { document.getElementById(id).style.display = 'none'; };
+    window.switchTab = (n) => { document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === n)); document.querySelectorAll('.section').forEach((s, i) => s.classList.toggle('active', i === n)); };
+
+    function updateUI() { 
+        if(document.getElementById('money')) document.getElementById('money').textContent = money; 
+        if(document.getElementById('potion-count')) document.getElementById('potion-count').textContent = potions;
+        if(document.getElementById('atk-potion-count')) document.getElementById('atk-potion-count').textContent = atkPotions;
+        if(document.getElementById('win-t-cnt')) document.getElementById('win-t-cnt').textContent = winTickets;
+        if(document.getElementById('cap-t-cnt')) document.getElementById('cap-t-cnt').textContent = capTickets;
+    }
+</script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>포토 카드 배틀 - 랜덤 스탯 & 하극상 에디션</title>
+    <title>포토 카드 배틀 - 라이브 밸런스 패치 에디션</title>
     <style>
         :root { --sss: #ffea00; --ss: #00f2ff; --s: #ff00e5; --a: #26ff00; --b: #ff9800; --c: #a0a0a0; --bg: #121212; }
         body { margin: 0; background: var(--bg); color: #fff; font-family: 'Pretendard', sans-serif; text-align: center; padding-bottom: 70px; overflow-x: hidden; }
@@ -87,7 +87,7 @@
 <div id="section-0" class="section active">
     <div class="gacha-box" style="border-color: #ffea00;">
         <h2 style="font-size: 1.2rem; margin-top:0;">🎁 영웅 뽑기 (51종)</h2>
-        <p style="font-size:0.75rem; color:#aaa; margin-bottom:10px;">동일 등급이라도 스탯이 극옵/똥옵 랜덤 부여!<br>SSS 중복 시 800G 환전</p>
+        <p style="font-size:0.75rem; color:#aaa; margin-bottom:10px;">1~10번 대장은 사기적인 전설 스킬 탑재!<br>SSS 중복 시 800G 환전</p>
         <div style="background:#000; padding:10px; border-radius:8px; margin-bottom:12px; border:1px solid #333;">
             <label style="color:#ffea00; font-weight:bold; display:block; margin-bottom:5px; font-size:0.85rem;">✨ SSS 확률강화권 (보유: <span id="rateup-cnt">0</span>장)</label>
             <div style="display:flex; justify-content:center; align-items:center; gap:10px;">
@@ -242,35 +242,21 @@
     };
     const normalSkills = [ { type: 'crit', name: '🔥치명타', desc: '1.5배 피해(50%)', isSpecial: false }, { type: 'pierce', name: '🗡️관통', desc: '방어무시(50%)', isSpecial: false }, { type: 'heal', name: '💚치유', desc: '공격후 체력 30%회복(50%)', isSpecial: false }, { type: 'vamp', name: '🦇흡혈', desc: '가한 피해 50%회복(50%)', isSpecial: false } ];
     
-    // 🔥 [핵심] 오버랩(하극상)이 가능한 랜덤 스탯 제네레이터
-    function getRandomStats(grade) {
-        let hp, atk, def;
-        switch(grade) {
-            case 'C': hp = 100 + Math.random()*120; atk = 15 + Math.random()*20; def = 5 + Math.random()*10; break;
-            case 'B': hp = 200 + Math.random()*250; atk = 30 + Math.random()*40; def = 12 + Math.random()*18; break; // 최상급 B > 최하급 A
-            case 'A': hp = 400 + Math.random()*500; atk = 60 + Math.random()*90; def = 25 + Math.random()*35; break;
-            case 'S': hp = 800 + Math.random()*1000; atk = 130 + Math.random()*120; def = 50 + Math.random()*50; break;
-            case 'SS': hp = 1600 + Math.random()*2000; atk = 220 + Math.random()*180; def = 90 + Math.random()*70; break;
-            case 'SSS': hp = 3200 + Math.random()*2800; atk = 350 + Math.random()*250; def = 140 + Math.random()*110; break;
-        }
-        return { hp: Math.floor(hp), atk: Math.floor(atk), def: Math.floor(def) };
-    }
+    // 라이브 버전에 맞는 안정적인 스탯 계산 (기존 유저 데이터 보호)
+    const gradeBaseStats = {
+        'C': { hp: 100, atk: 15, def: 5 }, 'B': { hp: 250, atk: 35, def: 15 }, 'A': { hp: 500, atk: 70, def: 30 },
+        'S': { hp: 1000, atk: 150, def: 60 }, 'SS': { hp: 2000, atk: 250, def: 100 }, 'SSS': { hp: 4000, atk: 400, def: 150 }
+    };
 
     const cardDatabase = []; const elements = ['rock', 'paper', 'scissors']; const fantasyNames = ["페가수스", "그리폰", "미노타우", "켄타우로", "사이클롭", "오크대장", "고블린킹", "트롤술사", "슬라임퀸", "데스나잇", "리치", "뱀파이어", "서큐버스", "늑대인간", "가고일", "바실리스", "하피", "키메라", "만티코어", "와이번", "크라켄", "레비아탄", "베히모스", "요르문간", "펜리르", "발키리", "에인헤랴", "듀라한", "골렘", "호문쿨루", "일리시드", "비홀더", "드라이어", "실프", "운디네", "샐러맨더", "노움", "이프리트", "마리드", "정령왕", "마도기사"];
     
-    // DB 세팅
     for (let i = 1; i <= 51; i++) {
         let isSpecific = specificCards.find(c => c.id === i); 
         let cName = isSpecific ? isSpecific.name : fantasyNames[(i - 11) % fantasyNames.length];
         let cGrade = isSpecific ? isSpecific.grade : (i % 5 === 0 ? 'A' : (i % 2 === 0 ? 'B' : 'C')); 
-        
-        let stats = getRandomStats(cGrade);
-        // 1~10번은 전설 취급으로 스탯 프리미엄 +10%
-        if(isSpecific) { stats.hp = Math.floor(stats.hp * 1.1); stats.atk = Math.floor(stats.atk * 1.1); stats.def = Math.floor(stats.def * 1.1); }
-        // 11~51번 일반 스킬 완전 랜덤화
-        let rSkill = isSpecific ? specialSkills[i] : normalSkills[Math.floor(Math.random() * normalSkills.length)];
-
-        cardDatabase.push({ templateId: i, name: cName, grade: cGrade, element: elements[i % 3], hp: stats.hp, def: stats.def, atk: stats.atk, skill: rSkill });
+        let base = gradeBaseStats[cGrade];
+        // 태생 1~10번은 전설스킬 고정, 나머진 랜덤스킬이 아니라 공통 적용으로 안정화
+        cardDatabase.push({ templateId: i, name: cName, grade: cGrade, element: elements[i % 3], hp: base.hp + Math.floor(Math.random()*20), def: base.def + Math.floor(Math.random()*5), atk: base.atk + Math.floor(Math.random()*5), skill: isSpecific ? specialSkills[i] : normalSkills[i % 4] });
     }
     const grades = { 'SSS': { class: 'sss', color: '#ffea00', sellPrice: 800, exp: 6 }, 'SS': { class: 'ss', color: '#00f2ff', sellPrice: 400, exp: 5 }, 'S': { class: 's', color: '#ff00e5', sellPrice: 150, exp: 4 }, 'A': { class: 'a', color: '#26ff00', sellPrice: 80, exp: 3 }, 'B': { class: 'b', color: '#ff9800', sellPrice: 30, exp: 2 }, 'C': { class: 'c', color: '#a0a0a0', sellPrice: 10, exp: 1 } };
     const gradeOrder = ['C', 'B', 'A', 'S', 'SS', 'SSS'];
@@ -286,8 +272,7 @@
             const snap = await get(child(ref(db), `users/${currentUser.uid}`));
             if (snap.exists()) {
                 const d = snap.val(); myCards = (d.deck || []).map(c => ({...c, isLocked: c.isLocked || false, level: c.level || 1, exp: c.exp || 0})); money = d.money !== undefined ? d.money : 1000;
-                potions = d.potions||0; atkPotions = d.atkPotions||0; fusionScrolls = d.scrolls||0; expTickets = d.exp||0; winTickets = d.win||0; upgItems = d.upg||0; capTickets = d.cap||0; userCapTickets = d.userCap||0; rateUpTickets = d.rateUp||0;
-                aiWins = d.aiWins||0; 
+                potions = d.potions||0; atkPotions = d.atkPotions||0; fusionScrolls = d.scrolls||0; expTickets = d.exp||0; winTickets = d.win||0; upgItems = d.upg||0; capTickets = d.cap||0; userCapTickets = d.userCap||0; rateUpTickets = d.rateUp||0; aiWins = d.aiWins||0; 
                 if (d.robbed) showRobbedBanner(d.lostCardName, d.stolenMoney);
             } else { myCards = []; money = 1000; potions = 3; aiWins = 0; grantCardByTemplate(50, 'C'); grantCardByTemplate(49, 'C'); grantCardByTemplate(40, 'C'); saveUserData(); }
             updateUI(); renderMyCards();
@@ -300,6 +285,7 @@
     window.clearNotification = () => { document.getElementById('notification-banner').style.display = 'none'; set(ref(db, 'users/' + currentUser.uid + '/robbed'), false); };
 
     function getCardBaseInfo(tid) { return cardDatabase.find(c => c.templateId === parseInt(tid)) || cardDatabase[0]; }
+    
     function getBattleStats(card) {
         const base = getCardBaseInfo(card.templateId); const lvBonus = ((card.level||1) - 1);
         return { name: base.name, element: base.element, skill: base.skill, hp: base.hp + (lvBonus * 50), atk: base.atk + (lvBonus * 10) + ((card.enhance||0) * 20) + ((card.atkBuff||0) * 20), def: base.def + (lvBonus * 5) + Math.floor((card.enhance||0) * 5) };
@@ -324,16 +310,28 @@
     }
 
     function setSlotHTML(slotEl, card, defaultText) { if(card) { slotEl.innerHTML = createCardHTML(card); slotEl.classList.add('filled'); } else { slotEl.innerHTML = `<div class="slot-add-icon">+</div>${defaultText}`; slotEl.classList.remove('filled'); } }
-    function grantCardByTemplate(tid, forceGrade=null) { const base = getCardBaseInfo(tid); myCards.push({ instanceId: Date.now() + Math.random().toString(), templateId: tid, grade: forceGrade || base.grade, level: 1, exp: 0, enhance: 0, atkBuff: 0, isLocked: false }); }
+    
+    function grantCardByTemplate(tid, forceGrade=null) { 
+        const base = getCardBaseInfo(tid); let g = forceGrade || base.grade;
+        myCards.push({ instanceId: Date.now() + Math.random().toString(), templateId: tid, grade: g, level: 1, exp: 0, enhance: 0, atkBuff: 0, isLocked: false }); 
+    }
 
     window.adjustRateUp = (amount) => { let input = document.getElementById('use-rate-up'); let newVal = (parseInt(input.value) || 0) + amount; if(newVal < 0) newVal = 0; if(newVal > rateUpTickets) newVal = rateUpTickets; input.value = newVal; document.getElementById('rateup-pct').textContent = newVal * 2; }
+    
     window.pullGacha = () => {
         if (money < 100) return alert("골드 부족!");
         let useRateUp = parseInt(document.getElementById('use-rate-up').value) || 0; if (useRateUp > rateUpTickets) return alert("강화권 부족!");
         money -= 100; rateUpTickets -= useRateUp; document.getElementById('use-rate-up').value = 0; 
+        
         let rand = Math.random() * 100, sssRate = 1 + (useRateUp * 2), finalGrade = 'C';
         if (rand <= sssRate) finalGrade = 'SSS'; else if (rand <= sssRate + 2) finalGrade = 'SS'; else if (rand <= sssRate + 6) finalGrade = 'S'; else if (rand <= 86) finalGrade = 'A'; else if (rand <= 93) finalGrade = 'B'; 
-        const randomCard = cardDatabase[Math.floor(Math.random() * cardDatabase.length)];
+        
+        let pool = [];
+        if (finalGrade === 'SSS') pool = cardDatabase.filter(c => (c.templateId >= 2 && c.templateId <= 10) || c.templateId >= 11);
+        else if (finalGrade === 'S') pool = cardDatabase.filter(c => c.templateId === 1 || c.templateId >= 11);
+        else pool = cardDatabase.filter(c => c.templateId >= 11);
+
+        const randomCard = pool[Math.floor(Math.random() * pool.length)];
         if (finalGrade === 'SSS' && myCards.some(c => c.templateId === randomCard.templateId && c.grade === 'SSS')) { money += grades['SSS'].sellPrice; alert(`🎉 SSS 중복! 800G 자동 환전!`); } 
         else { grantCardByTemplate(randomCard.templateId, finalGrade); document.getElementById('gacha-result-container').innerHTML = createCardHTML(myCards[myCards.length-1], true); document.getElementById('gacha-modal').style.display = 'flex'; }
         updateUI(); renderMyCards(); saveUserData();
@@ -380,13 +378,19 @@
         if(upgItems > 0 && card.grade !== 'SSS') extraBtns += `<button onclick="window.useSpecialItem('${card.instanceId}', 'upg')" style="background:#8338ec; flex:1; font-size:0.85rem;">⏫진화 (${upgItems})</button>`;
         let lockText = card.isLocked ? "🔓보호해제" : "🔒보호설정"; let lockColor = card.isLocked ? "#555" : "#4CAF50";
 
+        // 🔥 강화 확률 UI 추가
+        let rate = 60;
+        if(card.grade === 'S') rate = 10;
+        else if(card.grade === 'SS') rate = 5;
+        else if(card.grade === 'SSS') rate = 3;
+
         document.getElementById('zoom-actions').innerHTML = `
             <div style="margin-bottom: 5px; font-weight:bold; color:${stats.skill.isSpecial ? '#ffea00' : '#00f2ff'}; font-size:0.85rem; border:1px solid #444; padding:5px; border-radius:5px; background:#000;">
                 ${stats.skill.name} : ${stats.skill.desc}
             </div>
             <div style="margin-bottom: 10px; font-weight:bold; color:#ffea00; font-size:0.9rem;">EXP: ${card.exp||0} / ${(card.level||1) * 100}</div>
             <div style="display:flex; justify-content:center; gap:5px; margin-bottom:8px;">
-                <button onclick="window.enhanceCard('${card.instanceId}')" style="background:#ff9800; flex:1; font-size:0.85rem;">🔨강화(100)</button>
+                <button onclick="window.enhanceCard('${card.instanceId}')" style="background:#ff9800; flex:1; font-size:0.85rem;">🔨강화(${rate}%)</button>
                 <button onclick="window.useAttackPotion('${card.instanceId}')" style="background:#ff3366; flex:1; font-size:0.85rem;">💊투여(${atkPotions})</button>
             </div>
             ${extraBtns ? `<div style="display:flex; justify-content:center; gap:5px; margin-bottom:8px;">${extraBtns}</div>` : ''}
@@ -399,7 +403,26 @@
     };
 
     window.toggleLock = (id) => { const card = myCards.find(c => c.instanceId === id); card.isLocked = !card.isLocked; updateUI(); renderMyCards(); window.showZoomModal(card); saveUserData(); };
-    window.enhanceCard = (id) => { if (money < 100) return alert("골드 부족!"); const card = myCards.find(c => c.instanceId === id); money -= 100; if (Math.random() < 0.6) { card.enhance++; alert(`✨ 강화 성공!`); } else alert("💥 강화 실패."); updateUI(); renderMyCards(); window.showZoomModal(card); saveUserData(); };
+    
+    // 🔥 [핵심] 강화 확률 패치 적용
+    window.enhanceCard = (id) => { 
+        if (money < 100) return alert("골드 부족!"); 
+        const card = myCards.find(c => c.instanceId === id); 
+        money -= 100; 
+
+        let rate = 0.6;
+        if(card.grade === 'S') rate = 0.1;
+        else if(card.grade === 'SS') rate = 0.05;
+        else if(card.grade === 'SSS') rate = 0.03;
+
+        if (Math.random() < rate) { 
+            card.enhance++; alert(`✨ 강화 성공!`); 
+        } else {
+            alert(`💥 강화 실패. (성공 확률: ${rate*100}%)`);
+        }
+        updateUI(); renderMyCards(); window.showZoomModal(card); saveUserData(); 
+    };
+
     window.useAttackPotion = (id) => { if (atkPotions <= 0) return alert("강화제 부족!"); const card = myCards.find(c => c.instanceId === id); atkPotions--; card.atkBuff = (card.atkBuff||0) + 1; alert(`💉 공격력 영구 상승!`); updateUI(); renderMyCards(); window.showZoomModal(card); saveUserData(); };
     window.useSpecialItem = (id, type) => { const card = myCards.find(c => c.instanceId === id); if (type === 'exp') { expTickets--; card.level++; card.exp = 0; alert("🌟 레벨업 완료!"); } else if (type === 'upg') { upgItems--; card.grade = gradeOrder[gradeOrder.indexOf(card.grade) + 1]; alert(`⏫ ${card.grade} 등급으로 진화!`); } updateUI(); renderMyCards(); window.showZoomModal(card); saveUserData(); };
     window.sellCard = (id, price) => {

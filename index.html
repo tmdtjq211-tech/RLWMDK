@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>포토 카드 배틀 - 유저 피드백 밸런스 에디션</title>
+    <title>포토 카드 배틀 - 정식 런칭 (GM & 우편함)</title>
     <style>
         :root { --sss: #ffea00; --ss: #00f2ff; --s: #ff00e5; --a: #26ff00; --b: #ff9800; --c: #a0a0a0; --bg: #121212; }
         body { margin: 0; background: var(--bg); color: #fff; font-family: 'Pretendard', sans-serif; text-align: center; padding-bottom: 70px; overflow-x: hidden; }
@@ -53,6 +53,11 @@
         ::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #ff006e; }
         .battle-log-container { background:#000; padding:15px; margin:10px 0; height:120px; overflow-y:auto; text-align:left; font-size:0.8rem; color:#aaa; border-radius: 8px; border:1px solid #333; line-height:1.4; }
+        
+        /* 🔥 우편함 및 GM 버튼 스타일 */
+        .mail-btn { background: #3d0036; border: 1px solid #ff00e5; padding: 5px 10px; border-radius: 6px; color: white; font-size: 0.8rem; cursor: pointer; position: relative; }
+        .mail-badge { position: absolute; top: -5px; right: -5px; font-size: 0.7rem; background: red; color: white; border-radius: 50%; padding: 2px 5px; display: none; }
+        .mail-item { background: #222; border: 1px solid #444; padding: 10px; margin-bottom: 10px; border-radius: 8px; text-align: left; }
     </style>
 </head>
 <body>
@@ -71,6 +76,7 @@
         <div class="money">💰 <span id="money">1000</span></div>
         <div style="color:#00f2ff; font-size: 0.85rem;">🛡️<span id="potion-count">0</span></div>
         <div style="color:#ff3366; font-size: 0.85rem;">💊<span id="atk-potion-count">0</span></div>
+        <button class="mail-btn" onclick="window.openMailbox()">📬 우편함 <span id="mail-badge" class="mail-badge">N</span></button>
         <button onclick="window.logout()" style="background:#444; padding: 4px 8px; font-size: 0.75rem;">로그아웃</button>
     </div>
 </header>
@@ -82,6 +88,7 @@
     <div class="tab" onclick="window.switchTab(3)" style="color:#00f2ff;">🤖AI</div>
     <div class="tab" onclick="window.switchTab(4)" style="color:#ff006e;">🔥PvP</div>
     <div class="tab" onclick="window.switchTab(5)" style="color:#8338ec;">탐험</div>
+    <div class="tab" id="tab-gm" onclick="window.switchTab(6)" style="display:none; background:#ff00e5; color:white; font-weight:900;">👑GM</div>
 </div>
 
 <div id="section-0" class="section active">
@@ -120,6 +127,7 @@
 
 <div id="section-2" class="section">
     <h2 style="font-size: 1.1rem; margin-top:0;">🧪 카드 합성소</h2>
+    <p style="font-size:0.75rem; color:#ff3366; font-weight:bold; margin-bottom:10px;">⚠️ S등급(10%), SS등급(3%)의 극악 성공률!</p>
     <div style="display:flex; justify-content:center; gap:8px; align-items:center; margin: 15px 0;">
         <div id="fusion-slot1" class="pvp-slot" onclick="window.openCardSelector('fusion', 1)"><div class="slot-add-icon">+</div>재료1</div>
         <div style="font-size: 1.5rem; font-weight: bold; color:#555;">+</div>
@@ -131,7 +139,8 @@
     </div>
     <div style="background: #1a1a1a; padding: 15px; border-radius: 12px; border: 1px solid #333;">
         <h3 style="color: #26ff00; margin-top: 0; font-size: 1rem;">⚡ 일괄 자동 합성</h3>
-        <p style="font-size:0.75rem; color:#aaa; margin-bottom:10px;">보호되지 않은 중복 카드를 전부 연쇄 합성합니다.</p>
+        <p style="font-size:0.75rem; color:#aaa; margin-bottom:5px;">보호되지 않은 중복 카드를 자동 합성합니다.</p>
+        <p style="font-size:0.7rem; color:#ffea00; margin-bottom:10px;">* 전체 연쇄 합성 시 +20% 확률 보너스 적용</p>
         <button onclick="window.batchFusion()" style="background:#4CAF50; width: 100%;">전체 연쇄 합성 시작</button>
     </div>
 </div>
@@ -140,7 +149,8 @@
     <h2 style="font-size: 1.1rem; margin-top:0; color:#00f2ff;">🤖 AI 기사단 (<span id="ai-win-ui">0</span>승 진행중)</h2>
     <p style="font-size:0.75rem; color:#aaa; margin-bottom:10px;">
         🔥 연승 횟수: <span id="ai-streak-ui" style="color:#ffea00; font-weight:bold;">0</span> / 4 
-        <br>(4연승 시 탐험 횟수 10회로 초기화!)
+        <br>(4연승 시 탐험 횟수 10회로 초기화!)<br>
+        <span style="color:#ff3366; font-weight:bold;">⚠️ 주의: 4% 확률로 AI 진영에 SSS 괴물 난입!</span>
     </p>
     <div class="item-toggle-container">
         <label class="item-toggle"><input type="checkbox" id="use-ai-cap"> 🪤 AI포획권 (<span id="ai-cap-cnt">0</span>)</label>
@@ -200,6 +210,33 @@
     <button id="explore-btn" onclick="window.startExplore()" style="background:#8338ec; width: 100%; padding: 12px;">탐험 출발! (잔여: <span id="exp-cnt-ui">10</span>회)</button>
 </div>
 
+<div id="section-6" class="section">
+    <h2 style="font-size: 1.5rem; margin-top:0; color:#ff00e5;">🛠️ 개발자(GM) 콘솔</h2>
+    <div style="background:#1a1a1a; padding:15px; border-radius:10px; margin-bottom:15px; border:1px solid #ff00e5;">
+        <h3 style="margin-top:0; color:#fff;">🎁 전체 유저 우편 발송</h3>
+        <p style="font-size:0.8rem; color:#aaa;">모든 접속자에게 실시간으로 선물을 보냅니다.</p>
+        <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
+            <input type="text" id="gm-mail-title" placeholder="우편 제목 (예: 서버 점검 보상)" style="padding:10px; width:90%; border-radius:5px; background:#000; color:#fff; border:1px solid #555;">
+            <input type="number" id="gm-mail-gold" placeholder="지급 골드 수량" style="padding:10px; width:90%; border-radius:5px; background:#000; color:#fff; border:1px solid #555;">
+            <input type="number" id="gm-mail-rateup" placeholder="지급 SSS강화권 수량" style="padding:10px; width:90%; border-radius:5px; background:#000; color:#fff; border:1px solid #555;">
+            <button onclick="window.sendGmMail()" style="background:#ff00e5; width:95%; padding:12px;">전체 발송하기 🚀</button>
+        </div>
+    </div>
+    <button onclick="window.applyGmBuff()" style="background:#ffea00; color:#000; width:100%; padding:15px; font-size:1.1rem;">⚡ GM 무한 버프 (100만 골드+티켓 MAX)</button>
+</div>
+
+<div id="mailbox-modal" class="modal-overlay" onclick="window.closeModal('mailbox-modal')">
+    <div style="background: #111; width: 95%; max-width: 400px; max-height: 80vh; border-radius: 12px; display: flex; flex-direction: column; border: 1px solid #ff00e5;" onclick="event.stopPropagation()">
+        <div style="padding: 15px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; color: #fff; font-size: 1.2rem;">📬 우편함</h3>
+            <button onclick="window.closeModal('mailbox-modal')" style="padding: 6px 12px; background: #555; font-size: 0.8rem;">닫기</button>
+        </div>
+        <div id="mail-list-container" style="padding: 15px; overflow-y: auto; text-align:left;">
+            </div>
+    </div>
+</div>
+
+
 <div id="live-battle-modal" class="modal-overlay" style="z-index: 10005; background:rgba(0,0,0,0.95);">
     <div style="background:#111; width:95%; max-width:400px; padding:20px; border-radius:15px; border:2px solid #ff006e; display:flex; flex-direction:column; align-items:center;">
         <h2 style="margin-top:0; color:#ff006e; margin-bottom:15px; font-style:italic;">⚔️ 실시간 전투 중계</h2>
@@ -236,9 +273,12 @@
     const firebaseConfig = { apiKey: "AIzaSyCvf7uhsBqZtz6iC-xzxDngnLEsZJGIot0", authDomain: "gameih.firebaseapp.com", databaseURL: "https://gameih-default-rtdb.firebaseio.com", projectId: "gameih", storageBucket: "gameih.firebasestorage.app", messagingSenderId: "898099533818", appId: "1:898099533818:web:a5e683940c9b9524c5b643" };
     const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getDatabase(app); const provider = new GoogleAuthProvider();
 
-    let currentUser = null, myCards = [], money = 1000;
+    let currentUser = null, isAdmin = false; 
+    let myCards = [], money = 1000;
     let potions = 3, atkPotions = 0, fusionScrolls = 0, upgItems = 0, expTickets = 0, winTickets = 0, capTickets = 0, userCapTickets = 0, rateUpTickets = 0; 
-    let aiWins = 0, aiWinStreak = 0, exploreCount = 0; // 🔥 AI연승, 탐험횟수 변수 추가
+    let aiWins = 0, aiWinStreak = 0, exploreCount = 0; 
+    let claimedMails = {}; // 🔥 유저가 받은 우편 목록 기록
+    let serverMails = {};  // 🔥 서버에 등록된 전체 우편 데이터
     let fusionCards = [null, null], aiAttackDeck = [null, null], pvpAttackDeck = [null, null, null], exploreCards = [null, null, null];
     let currentDefender = null, selectionTarget = { mode: null, slotIdx: null }; 
 
@@ -279,7 +319,20 @@
 
     window.loginWithGoogle = () => { signInWithPopup(auth, provider).catch(err => alert("로그인 실패")); }; window.logout = () => { signOut(auth); location.reload(); };
     onAuthStateChanged(auth, (user) => {
-        if (user) { currentUser = user; document.getElementById('login-overlay').style.display = 'none'; document.getElementById('player-name').textContent = user.displayName; loadUserData(); listenToMyData(); loadArenaData(); } 
+        if (user) { 
+            currentUser = user; document.getElementById('login-overlay').style.display = 'none'; 
+            
+            // 🔥 GM 권한 체크
+            if(user.email === 'tmdtjq211@gmail.com') {
+                isAdmin = true;
+                document.getElementById('player-name').innerHTML = `<span style="color:#ff00e5;">[GM]</span> ${user.displayName}`;
+                document.getElementById('tab-gm').style.display = 'block'; // GM 탭 오픈
+            } else {
+                document.getElementById('player-name').textContent = user.displayName;
+            }
+            
+            loadUserData(); listenToMyData(); loadArenaData(); listenToServerMails(); 
+        } 
         else { document.getElementById('login-overlay').style.display = 'flex'; }
     });
 
@@ -289,17 +342,96 @@
             if (snap.exists()) {
                 const d = snap.val(); myCards = (d.deck || []).map(c => ({...c, isLocked: c.isLocked || false, level: c.level || 1, exp: c.exp || 0})); money = d.money !== undefined ? d.money : 1000;
                 potions = d.potions||0; atkPotions = d.atkPotions||0; fusionScrolls = d.scrolls||0; expTickets = d.exp||0; winTickets = d.win||0; upgItems = d.upg||0; capTickets = d.cap||0; userCapTickets = d.userCap||0; rateUpTickets = d.rateUp||0; 
-                aiWins = d.aiWins||0; aiWinStreak = d.aiStrk||0; exploreCount = d.expCnt||0; // 🔥 신규 변수 로드
+                aiWins = d.aiWins||0; aiWinStreak = d.aiStrk||0; exploreCount = d.expCnt||0; claimedMails = d.claimedMails || {};
                 if (d.robbed) showRobbedBanner(d.lostCardName, d.stolenMoney);
-            } else { myCards = []; money = 1000; potions = 3; aiWins = 0; aiWinStreak = 0; exploreCount = 0; grantCardByTemplate(50, 'C'); grantCardByTemplate(49, 'C'); grantCardByTemplate(40, 'C'); saveUserData(); }
+            } else { myCards = []; money = 1000; potions = 3; aiWins = 0; aiWinStreak = 0; exploreCount = 0; claimedMails = {}; grantCardByTemplate(50, 'C'); grantCardByTemplate(49, 'C'); grantCardByTemplate(40, 'C'); saveUserData(); }
             updateUI(); renderMyCards();
         } catch(e) {}
     }
 
-    async function saveUserData() { if(!currentUser) return; await set(ref(db, 'users/' + currentUser.uid), { name: currentUser.displayName, money, deck: myCards, robbed: false, potions, atkPotions, scrolls: fusionScrolls, exp: expTickets, win: winTickets, upg: upgItems, cap: capTickets, userCap: userCapTickets, rateUp: rateUpTickets, aiWins, aiStrk: aiWinStreak, expCnt: exploreCount }); }
+    async function saveUserData() { if(!currentUser) return; await set(ref(db, 'users/' + currentUser.uid), { name: currentUser.displayName, money, deck: myCards, robbed: false, potions, atkPotions, scrolls: fusionScrolls, exp: expTickets, win: winTickets, upg: upgItems, cap: capTickets, userCap: userCapTickets, rateUp: rateUpTickets, aiWins, aiStrk: aiWinStreak, expCnt: exploreCount, claimedMails }); }
+    
     function listenToMyData() { onValue(ref(db, 'users/' + currentUser.uid), (snap) => { const data = snap.val(); if (data && data.robbed) { showRobbedBanner(data.lostCardName, data.stolenMoney); money = data.money; myCards = data.deck || []; updateUI(); renderMyCards(); } }); }
     function showRobbedBanner(cardName, gold) { let msg = `🚨 아레나 패배 리포트<br>`; if(gold) msg += `골드 손실: -${gold}G<br>`; if(cardName) msg += `👿 <span style="color:#ffea00; font-weight:bold;">[${cardName}] 강탈당함!</span>`; const banner = document.getElementById('notification-banner'); banner.innerHTML = msg; banner.style.display = 'block'; setTimeout(() => banner.style.display = 'none', 7000); }
     window.clearNotification = () => { document.getElementById('notification-banner').style.display = 'none'; set(ref(db, 'users/' + currentUser.uid + '/robbed'), false); };
+
+    // 🔥 우편함(Mailbox) 시스템
+    function listenToServerMails() {
+        onValue(ref(db, 'server_mails'), (snap) => {
+            serverMails = snap.val() || {};
+            updateMailboxBadge();
+        });
+    }
+
+    function updateMailboxBadge() {
+        let unreadCount = Object.keys(serverMails).filter(id => !claimedMails[id]).length;
+        const badge = document.getElementById('mail-badge');
+        if(unreadCount > 0) { badge.style.display = 'inline-block'; badge.textContent = unreadCount; }
+        else { badge.style.display = 'none'; }
+    }
+
+    window.openMailbox = () => {
+        const container = document.getElementById('mail-list-container');
+        container.innerHTML = '';
+        const mailIds = Object.keys(serverMails).reverse(); // 최신순
+        
+        if(mailIds.length === 0) { container.innerHTML = '<div style="color:#aaa; text-align:center; margin-top:20px;">도착한 우편이 없습니다.</div>'; }
+        else {
+            mailIds.forEach(id => {
+                const mail = serverMails[id];
+                const isClaimed = claimedMails[id];
+                let rewardText = `💰 ${mail.gold || 0}G`;
+                if(mail.rateUp) rewardText += ` / ✨ SSS확률권 ${mail.rateUp}장`;
+                
+                let btnHtml = isClaimed ? `<button disabled style="background:#444; width:100%; margin-top:10px;">수령 완료</button>` : `<button onclick="window.claimMail('${id}')" style="background:#26ff00; color:#000; width:100%; margin-top:10px;">수령하기</button>`;
+                
+                container.innerHTML += `
+                    <div class="mail-item" style="opacity: ${isClaimed ? '0.5' : '1'};">
+                        <div style="color:#ff00e5; font-weight:bold; margin-bottom:5px;">${mail.title || '운영자 선물'}</div>
+                        <div style="font-size:0.9rem; color:#ffea00;">보상: ${rewardText}</div>
+                        <div style="font-size:0.7rem; color:#888; margin-top:5px;">${new Date(mail.timestamp).toLocaleString()}</div>
+                        ${btnHtml}
+                    </div>`;
+            });
+        }
+        document.getElementById('mailbox-modal').style.display = 'flex';
+    };
+
+    window.claimMail = (mailId) => {
+        const mail = serverMails[mailId];
+        if(!mail || claimedMails[mailId]) return;
+        
+        if(mail.gold) money += parseInt(mail.gold);
+        if(mail.rateUp) rateUpTickets += parseInt(mail.rateUp);
+        
+        claimedMails[mailId] = true;
+        saveUserData(); updateUI(); updateMailboxBadge();
+        window.openMailbox(); // 새로고침
+        alert(`🎁 우편 수령 완료!`);
+    };
+
+    // 🔥 개발자(GM) 전용 기능
+    window.sendGmMail = async () => {
+        if(!isAdmin) return alert("권한이 없습니다.");
+        const title = document.getElementById('gm-mail-title').value || '운영자 특별 보상';
+        const gold = parseInt(document.getElementById('gm-mail-gold').value) || 0;
+        const rateUp = parseInt(document.getElementById('gm-mail-rateup').value) || 0;
+        
+        if(gold === 0 && rateUp === 0) return alert("보상을 입력해주세요.");
+        if(!confirm(`[${title}]\n골드: ${gold}, 강화권: ${rateUp}\n전체 유저에게 발송하시겠습니까?`)) return;
+
+        const newMailRef = ref(db, 'server_mails/' + Date.now());
+        await set(newMailRef, { title: title, gold: gold, rateUp: rateUp, timestamp: Date.now() });
+        alert("🚀 전체 우편 발송 성공!");
+    };
+
+    window.applyGmBuff = () => {
+        if(!isAdmin) return;
+        money += 1000000; potions += 100; atkPotions += 100; fusionScrolls += 100;
+        expTickets += 100; winTickets += 100; upgItems += 100; capTickets += 100; userCapTickets += 100; rateUpTickets += 100;
+        alert("⚡ GM 버프가 적용되었습니다! (100만 골드 + 모든 아이템 100개)");
+        updateUI(); saveUserData();
+    };
 
     function getCardBaseInfo(tid) { return cardDatabase.find(c => c.templateId === parseInt(tid)) || cardDatabase[0]; }
     
@@ -358,9 +490,8 @@
 
     window.buyItem = (type, cost) => { if (money < cost) return alert("골드 부족!"); if(!confirm(`구매하시겠습니까?`)) return; money -= cost; if (type === 'shield') potions++; else if (type === 'attack') atkPotions++; else if (type === 'scroll') fusionScrolls++; else if (type === 'capture') capTickets++; else if (type === 'rateup') rateUpTickets++; updateUI(); saveUserData(); };
 
-    // 🔥 [NEW] 일괄 판매 로직 추가
     window.bulkSell = (grade) => {
-        if(!confirm(`잠금(보호) 상태가 아닌 모든 ${grade}등급 카드를 일괄 판매하시겠습니까?`)) return;
+        if(!confirm(`보호 상태가 아닌 모든 ${grade}등급 카드를 일괄 판매하시겠습니까?`)) return;
         let sellCount = 0; let earned = 0; let toKeep = [];
         for(let c of myCards) {
             if(c.grade === grade && !c.isLocked) {
@@ -370,8 +501,7 @@
             toKeep.push(c);
         }
         if(sellCount === 0) return alert("판매할 수 있는 일반 카드가 없습니다.");
-        myCards = toKeep; money += earned;
-        alert(`🧹 총 ${sellCount}장의 카드를 판매하여 ${earned}G를 획득했습니다!`);
+        myCards = toKeep; money += earned; alert(`🧹 총 ${sellCount}장의 카드를 판매하여 ${earned}G를 획득했습니다!`);
         updateUI(); renderMyCards(); saveUserData();
     };
 
@@ -553,12 +683,11 @@
         return winRound;
     }
 
-    // 🔥 [핵심] AI 전투 4% 확률 SSS 난입 로직 적용
     function getAITeam(wins) {
         let baseLv = 1 + Math.floor(wins / 2); let maxGradeIdx = Math.min(5, Math.floor(wins / 5)); 
         return [0, 1].map(() => {
             let g = 'C';
-            if (Math.random() < 0.04) { g = 'SSS'; } // 🔥 4% 확률로 무조건 SSS 등장
+            if (Math.random() < 0.04) { g = 'SSS'; } 
             else { let gIdx = Math.max(0, maxGradeIdx - (Math.random()>0.7?1:0)); g = gradeOrder[gIdx] || 'C'; }
             
             let pool = cardDatabase.filter(c => c.grade === g && c.templateId > 10); if(!pool.length) pool = cardDatabase.filter(c => c.grade === g);
@@ -622,15 +751,15 @@
 
         if(res.type === 'ai') {
             if(res.wins >= 1) { 
-                aiWins++; aiWinStreak++; // 🔥 연승 カ운트 증가
+                aiWins++; aiWinStreak++; 
                 aiAttackDeck.forEach(c => { c.exp = (c.exp||0) + 30; if(c.exp >= (c.level||1)*100) { c.level++; c.exp=0; } }); money += 200;
                 let capMsg = ""; if(res.useCap) { capTickets--; const target = res.aiTeam[Math.floor(Math.random()*2)]; grantCardByTemplate(target.templateId, target.grade); capMsg = `\n🪤 AI 영웅 포획 성공!`; }
                 
                 let streakMsg = `\n🔥 AI연승: ${aiWinStreak}/4`;
-                if(aiWinStreak >= 4) { exploreCount = 0; aiWinStreak = 0; streakMsg = `\n🎉 4연승 달성! 탐험 횟수가 초기화되었습니다!`; } // 🔥 연승 시 탐험 초기화
+                if(aiWinStreak >= 4) { exploreCount = 0; aiWinStreak = 0; streakMsg = `\n🎉 4연승 달성! 탐험 횟수가 초기화되었습니다!`; } 
                 alert(`🎉 AI 대전 승리! (200G 획득)${capMsg}${streakMsg}`);
             } else {
-                aiWinStreak = 0; // 패배시 연승 리셋
+                aiWinStreak = 0; 
                 if(res.useCap) capTickets--;
                 if(potions > 0) { potions--; alert("💀 패배... 방어 물약을 소모해 보호했습니다. (연승 초기화)"); } else { const loserId = aiAttackDeck[Math.random() < 0.5 ? 0 : 1].instanceId; myCards = myCards.filter(c => c.instanceId !== loserId); alert("💀 패배... 영웅 한 명이 파괴되었습니다! (연승 초기화)"); }
             }
@@ -680,7 +809,6 @@
         window.pendingBattleResult = null; saveUserData(); updateUI(); renderMyCards();
     };
 
-    // 🔥 [핵심] 탐험 로직 제어 (횟수 차감 및 드랍률 하향)
     window.startExplore = () => {
         if(exploreCount >= 10) return alert(`탐험 횟수(10/10)를 모두 소진했습니다!\nAI 기사단 연속 4회 승리 시 초기화됩니다.\n(현재 연속 승리: ${aiWinStreak}/4)`);
         if (exploreCards.filter(c => c !== null).length < 3) return alert("대원 3명을 모두 선택해주세요.");
@@ -690,7 +818,7 @@
         btn.disabled = true; btn.textContent = "탐험 중..."; res.innerHTML = `수색 중...`;
 
         setTimeout(() => {
-            exploreCount++; // 횟수 차감
+            exploreCount++; 
             btn.disabled = false; btn.textContent = `탐험 출발! (잔여: ${10 - exploreCount}회)`;
             let deathParams = Math.max(0.02, 0.25 - (luckScore * 0.01)); 
             if(Math.random() < deathParams) {
@@ -703,12 +831,12 @@
                 for (let j = 0; j < dropRts; j++) {
                     if (Math.random() < 0.7) { 
                         const r = Math.random();
-                        if(luckScore >= 12 && r < 0.08) { userCapTickets++; foundItems.push("👿유저포획권"); } 
-                        else if(luckScore >= 10 && r < 0.20) { rateUpTickets++; foundItems.push("✨확률강화권"); }
-                        else if(luckScore >= 8 && r < 0.25) { upgItems++; foundItems.push("⏫등급업권"); } // 🔥 드랍률 대폭 하향 (5%)
-                        else if(r < 0.45) { winTickets++; foundItems.push("🏆승리권"); }
-                        else if(r < 0.65) { capTickets++; foundItems.push("🪤AI포획권"); }
-                        else if(r < 0.85) { expTickets++; foundItems.push("🌟경험치권"); }
+                        if(luckScore >= 12 && r < 0.05) { userCapTickets++; foundItems.push("👿유저포획권"); } 
+                        else if(luckScore >= 10 && r < 0.15) { rateUpTickets++; foundItems.push("✨확률강화권"); }
+                        else if(luckScore >= 8 && r < 0.20) { upgItems++; foundItems.push("⏫등급업권"); } 
+                        else if(r < 0.40) { winTickets++; foundItems.push("🏆승리권"); }
+                        else if(r < 0.60) { capTickets++; foundItems.push("🪤AI포획권"); }
+                        else if(r < 0.80) { expTickets++; foundItems.push("🌟경험치권"); }
                         else { fusionScrolls++; foundItems.push("✨부적"); }
                     }
                 }
@@ -726,8 +854,8 @@
         document.getElementById('money').textContent = money.toLocaleString(); 
         document.getElementById('potion-count').textContent = potions; document.getElementById('atk-potion-count').textContent = atkPotions; document.getElementById('win-t-cnt').textContent = winTickets; document.getElementById('ai-cap-cnt').textContent = capTickets; document.getElementById('user-cap-cnt').textContent = userCapTickets; document.getElementById('rateup-cnt').textContent = rateUpTickets;
         if(document.getElementById('ai-win-ui')) document.getElementById('ai-win-ui').textContent = aiWins; 
-        if(document.getElementById('ai-streak-ui')) document.getElementById('ai-streak-ui').textContent = aiWinStreak; // 🔥 연승 UI 추가
-        if(document.getElementById('exp-cnt-ui')) document.getElementById('exp-cnt-ui').textContent = Math.max(0, 10 - exploreCount); // 🔥 남은 탐험 횟수
+        if(document.getElementById('ai-streak-ui')) document.getElementById('ai-streak-ui').textContent = aiWinStreak; 
+        if(document.getElementById('exp-cnt-ui')) document.getElementById('exp-cnt-ui').textContent = Math.max(0, 10 - exploreCount); 
         let ruInput = document.getElementById('use-rate-up'); if(parseInt(ruInput.value) > rateUpTickets) ruInput.value = rateUpTickets; document.getElementById('rateup-pct').textContent = (parseInt(ruInput.value)||0) * 2;
     }
 </script>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>포토 카드 배틀 - V25 데이터 철통방어 에디션</title>
+    <title>포토 카드 배틀 - V26 데이터 절대방어 에디션</title>
     <style>
         :root { --sss: #ffea00; --ss: #00f2ff; --s: #ff00e5; --a: #26ff00; --b: #ff9800; --c: #a0a0a0; --bg: #121212; }
         body { margin: 0; background: var(--bg); color: #fff; font-family: 'Pretendard', sans-serif; text-align: center; padding-bottom: 70px; overflow-x: hidden; }
@@ -141,8 +141,7 @@
 <div id="section-3" class="section">
     <h2 style="font-size: 1.1rem; margin-top:0; color:#00f2ff;">🤖 AI 기사단 (<span id="ai-win-ui">0</span>승 진행중)</h2>
     <p style="font-size:0.75rem; color:#aaa; margin-bottom:10px;">
-        🔥 연승 횟수: <span id="ai-streak-ui" style="color:#ffea00; font-weight:bold;">0</span> / 4 
-        <br>(4연승 시 탐험 횟수 10회로 초기화!)<br>
+        🔥 연승 횟수: <span id="ai-streak-ui" style="color:#ffea00; font-weight:bold;">0</span> / 4 <br>
         <span style="color:#ff3366; font-weight:bold;">⚠️ 4% 확률로 AI 진영에 SSS 괴물 난입!</span>
     </p>
     <div class="item-toggle-container"><label class="item-toggle"><input type="checkbox" id="use-ai-cap"> 🪤 AI포획권 (<span id="ai-cap-cnt">0</span>)</label></div>
@@ -157,13 +156,12 @@
             <div id="ai-def-slot2" class="pvp-slot" style="border-color:#00f2ff; border-style:solid;">?</div>
         </div></div>
     </div>
-    <div id="ai-pvp-log" class="battle-log-container">전투 기록 (실시간 중계는 모달창 진행)</div>
+    <div id="ai-pvp-log" class="battle-log-container">전투 기록 (실시간 중계는 팝업 진행)</div>
     <button onclick="window.startAIPvP()" style="width: 100%; padding: 12px; background:#00f2ff; color:#000; margin-top:10px;">AI와 실시간 결투 시작!</button>
 </div>
 
 <div id="section-4" class="section">
     <h2 style="font-size: 1.2rem; margin-top:0; color:#ff006e;">🔥 명예의 아레나 & 유저 약탈</h2>
-    
     <div style="background:#1a1a1a; padding:15px; border-radius:10px; border:1px solid #ffea00; margin-bottom:15px;">
         <h3 style="margin:0 0 5px 0; color:#ffea00; font-size:1rem;">👑 아레나 챔피언 도전</h3>
         <p style="font-size:0.7rem; color:#aaa; margin-top:0;">서버 최강의 덱을 쓰러뜨리고 왕좌를 차지하세요!</p>
@@ -187,7 +185,7 @@
                 </div>
             </div>
         </div>
-        <button onclick="window.startArenaPvP()" style="width: 100%; padding: 12px; margin-top:10px; background:#ffea00; color:#000;">도전!</button>
+        <button onclick="window.startArenaPvP()" style="width: 100%; padding: 12px; margin-top:10px; background:#ffea00; color:#000;">챔피언에게 도전!</button>
     </div>
 
     <div style="background:#1a1a1a; padding:15px; border-radius:10px; border:1px solid #00f2ff; margin-bottom:15px;">
@@ -201,13 +199,9 @@
     </div>
 
     <div style="background:#1a1a1a; padding:15px; border-radius:10px; border:1px solid #ff3366;">
-        <h3 style="margin:0 0 5px 0; color:#ff3366; font-size:1rem;">⚔️ 일반 유저 약탈 (리스트)</h3>
-        <p style="font-size:0.7rem; color:#aaa; margin-top:0;">유저의 방어덱을 뚫고 골드/아이템/카드를 훔치세요!</p>
-        <div id="user-list-container" style="max-height:250px; overflow-y:auto; background:#000; border:1px solid #444; border-radius:8px; padding:10px; text-align:left;">
-            유저 목록 로딩중...
-        </div>
+        <h3 style="margin:0 0 5px 0; color:#ff3366; font-size:1rem;">⚔️ 일반 유저 약탈 리스트</h3>
+        <div id="user-list-container" style="max-height:250px; overflow-y:auto; background:#000; border:1px solid #444; border-radius:8px; padding:10px; text-align:left;">유저 목록 로딩중...</div>
     </div>
-    
     <div id="pvp-log" class="battle-log-container" style="margin-top:15px;">전투 기록 (실시간 중계는 팝업창에서 진행)</div>
 </div>
 
@@ -229,27 +223,30 @@
     <h2 style="font-size: 1.5rem; margin-top:0; color:#ff00e5;">🛠️ 개발자(GM) 콘솔</h2>
     
     <div style="background:#1a1a1a; padding:15px; border-radius:10px; margin-bottom:15px; border:1px solid #009688;">
-        <h3 style="margin-top:0; color:#00f2ff;">👀 유저 정보 / 🚨 긴급 보상</h3>
-        <p style="font-size:0.8rem; color:#aaa;">오류 유저에게 SSS를 직접 꽂아주세요.</p>
-        <button onclick="window.openGmUserList()" style="background:#009688; width:100%; padding:12px;">전체 유저 DB & 복구 관리 🔍</button>
+        <h3 style="margin-top:0; color:#00f2ff;">👀 유저 정보 실시간 조회 & 🚨 긴급 보상</h3>
+        <p style="font-size:0.8rem; color:#aaa;">서버 내 모든 유저의 접속 상태와 덱을 확인하고 보상합니다.</p>
+        <button onclick="window.openGmUserList()" style="background:#009688; width:100%; padding:12px;">전체 유저 DB 보기 🔍</button>
     </div>
 
     <div style="background:#1a1a1a; padding:15px; border-radius:10px; margin-bottom:15px; border:1px solid #ff00e5;">
-        <h3 style="margin-top:0; color:#fff;">🎁 우편 발송</h3>
+        <h3 style="margin-top:0; color:#fff;">🎁 유저 우편 발송</h3>
         <div style="display:flex; flex-direction:column; gap:8px; align-items:center; text-align:left; width:100%;">
             <select id="gm-target-user" style="padding:10px; width:100%; border-radius:5px; background:#000; color:#fff; border:1px solid #555;"><option value="ALL">📢 서버 전체 유저</option></select>
-            <input type="text" id="gm-mail-title" placeholder="제목" style="padding:10px; width:100%; box-sizing:border-box; border-radius:5px; background:#000; color:#fff; border:1px solid #555;">
+            <input type="text" id="gm-mail-title" placeholder="우편 제목" style="padding:10px; width:100%; box-sizing:border-box; border-radius:5px; background:#000; color:#fff; border:1px solid #555;">
             <div style="display:flex; gap:5px; width:100%;">
-                <input type="number" id="gm-mail-gold" placeholder="골드" style="padding:10px; width:50%; box-sizing:border-box; border-radius:5px; background:#000; color:#fff; border:1px solid #555;">
-                <input type="number" id="gm-mail-rateup" placeholder="확률권" style="padding:10px; width:50%; box-sizing:border-box; border-radius:5px; background:#000; color:#fff; border:1px solid #555;">
+                <input type="number" id="gm-mail-gold" placeholder="지급 골드" style="padding:10px; width:50%; box-sizing:border-box; border-radius:5px; background:#000; color:#fff; border:1px solid #555;">
+                <input type="number" id="gm-mail-rateup" placeholder="확률업 티켓" style="padding:10px; width:50%; box-sizing:border-box; border-radius:5px; background:#000; color:#fff; border:1px solid #555;">
             </div>
-            <div style="display:flex; gap:5px; width:100%; margin-top:5px;">
-                <select id="gm-mail-card-id" style="padding:10px; width:60%; border-radius:5px; background:#000; color:#fff; border:1px solid #555;"><option value="">카드선택(안함)</option></select>
-                <select id="gm-mail-card-grade" style="padding:10px; width:40%; border-radius:5px; background:#000; color:#fff; border:1px solid #555;">
-                    <option value="SSS">SSS</option><option value="SS">SS</option><option value="S">S</option><option value="A">A</option><option value="B">B</option><option value="C">C</option>
-                </select>
+            <div style="width:100%; border-top:1px dashed #444; padding-top:10px; margin-top:5px;">
+                <label style="font-size:0.8rem; color:#ffea00; margin-bottom:5px; display:block;">🃏 특정 카드 지급 (선택)</label>
+                <div style="display:flex; gap:5px;">
+                    <select id="gm-mail-card-id" style="padding:10px; width:60%; border-radius:5px; background:#000; color:#fff; border:1px solid #555;"><option value="">지급안함</option></select>
+                    <select id="gm-mail-card-grade" style="padding:10px; width:40%; border-radius:5px; background:#000; color:#fff; border:1px solid #555;">
+                        <option value="SSS">SSS등급</option><option value="SS">SS등급</option><option value="S">S등급</option><option value="A">A등급</option><option value="B">B등급</option><option value="C">C등급</option>
+                    </select>
+                </div>
             </div>
-            <button onclick="window.sendGmMail()" style="background:#ff00e5; width:100%; padding:12px; margin-top:10px;">발송 🚀</button>
+            <button onclick="window.sendGmMail()" style="background:#ff00e5; width:100%; padding:12px; margin-top:10px;">우편 발송하기 🚀</button>
         </div>
     </div>
     <button onclick="window.applyGmBuff()" style="background:#ffea00; color:#000; width:100%; padding:15px; font-size:1.1rem;">⚡ GM 무한 버프 (100만 골드+티켓 MAX)</button>
@@ -276,22 +273,8 @@
             <label class="item-toggle"><input type="checkbox" id="use-win-ticket-plunder"> 🏆 승리권 (<span id="win-t-cnt-plunder">0</span>)</label>
             <label class="item-toggle" style="background:#3d0036; border-color:#ff00e5;"><input type="checkbox" id="use-user-capture-plunder"> 👿 포획권 (<span id="user-cap-cnt-plunder">0</span>)</label>
         </div>
-        <div style="margin:15px 0;">
-            <div style="color:#aaa; font-size:0.8rem; margin-bottom:5px;">나의 약탈 전용 공격 덱</div>
-            <div class="pvp-deck">
-                <div id="plunder-atk-slot1" class="pvp-slot" onclick="window.openCardSelector('plunder', 1)"><div class="slot-add-icon">+</div>공격1</div>
-                <div id="plunder-atk-slot2" class="pvp-slot" onclick="window.openCardSelector('plunder', 2)"><div class="slot-add-icon">+</div>공격2</div>
-                <div id="plunder-atk-slot3" class="pvp-slot" onclick="window.openCardSelector('plunder', 3)"><div class="slot-add-icon">+</div>공격3</div>
-            </div>
-        </div>
-        <div style="margin:15px 0;">
-            <div style="color:#ff3366; font-size:0.8rem; margin-bottom:5px;">적 방어 덱 (속성)</div>
-            <div class="pvp-deck">
-                <div id="enemy-def-slot1" class="pvp-slot" style="border-color:#ff3366;border-style:solid;">?</div>
-                <div id="enemy-def-slot2" class="pvp-slot" style="border-color:#ff3366;border-style:solid;">?</div>
-                <div id="enemy-def-slot3" class="pvp-slot" style="border-color:#ff3366;border-style:solid;">?</div>
-            </div>
-        </div>
+        <div style="margin:15px 0;"><div style="color:#aaa; font-size:0.8rem; margin-bottom:5px;">나의 약탈 전용 공격 덱</div><div class="pvp-deck"><div id="plunder-atk-slot1" class="pvp-slot" onclick="window.openCardSelector('plunder', 1)"><div class="slot-add-icon">+</div>공격1</div><div id="plunder-atk-slot2" class="pvp-slot" onclick="window.openCardSelector('plunder', 2)"><div class="slot-add-icon">+</div>공격2</div><div id="plunder-atk-slot3" class="pvp-slot" onclick="window.openCardSelector('plunder', 3)"><div class="slot-add-icon">+</div>공격3</div></div></div>
+        <div style="margin:15px 0;"><div style="color:#ff3366; font-size:0.8rem; margin-bottom:5px;">적 방어 덱 (속성)</div><div class="pvp-deck"><div id="enemy-def-slot1" class="pvp-slot" style="border-color:#ff3366;border-style:solid;">?</div><div id="enemy-def-slot2" class="pvp-slot" style="border-color:#ff3366;border-style:solid;">?</div><div id="enemy-def-slot3" class="pvp-slot" style="border-color:#ff3366;border-style:solid;">?</div></div></div>
         <button onclick="window.startPlunderPvP()" style="width:100%; padding:15px; font-size:1.1rem;">약탈 시작!</button>
     </div>
 </div>
@@ -318,7 +301,7 @@
     <div style="background:#111; width:95%; max-width:400px; padding:20px; border-radius:15px; border:2px solid #ff006e; display:flex; flex-direction:column; align-items:center;">
         <h2 style="margin-top:0; color:#ff006e; margin-bottom:15px; font-style:italic;">⚔️ 실시간 전투 중계</h2>
         <div id="live-battle-log" style="width:100%; height:350px; background:#000; border:1px solid #333; border-radius:8px; overflow-y:auto; text-align:left; font-size:0.85rem; padding:10px; box-sizing:border-box; margin-bottom:15px; line-height:1.5;"></div>
-        <button id="live-battle-close" style="width:100%; padding:15px; display:none;" onclick="window.closeLiveBattle()">결과 확인 및 보상받기</button>
+        <button id="live-battle-close" style="width:100%; padding:15px; display:none;" onclick="window.closeLiveBattle()">결과 확인</button>
     </div>
 </div>
 
@@ -348,7 +331,7 @@
     const firebaseConfig = { apiKey: "AIzaSyCvf7uhsBqZtz6iC-xzxDngnLEsZJGIot0", authDomain: "gameih.firebaseapp.com", databaseURL: "https://gameih-default-rtdb.firebaseio.com", projectId: "gameih", storageBucket: "gameih.firebasestorage.app", messagingSenderId: "898099533818", appId: "1:898099533818:web:a5e683940c9b9524c5b643" };
     const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getDatabase(app); const provider = new GoogleAuthProvider();
 
-    let currentUser=null, isAdmin=false, isDataLoaded = false; 
+    let currentUser=null, isAdmin=false, isDataLoaded=false, isBattling=false; 
     let myCards=[], money=1000;
     let potions=3, atkPotions=0, fusionScrolls=0, upgItems=0, expTickets=0, winTickets=0, capTickets=0, userCapTickets=0, rateUpTickets=0; 
     let aiWins=0, aiWinStreak=0, exploreCount=0; 
@@ -394,13 +377,17 @@
         }else{ document.getElementById('login-overlay').style.display='flex'; }
     });
 
-    // 🔥 로컬 데이터와 서버 데이터를 100% 동기화하는 핵심 함수
+    // 🔥 [안전장치 1] DB에서 100% 안전하게 데이터를 복사해오는 로직
     function syncDataFromDB(data) {
         if(!data) return;
         money = data.money||0; potions = data.potions||0; atkPotions = data.atkPotions||0; fusionScrolls = data.scrolls||0; expTickets = data.exp||0; winTickets = data.win||0; upgItems = data.upg||0; capTickets = data.cap||0; userCapTickets = data.userCap||0; rateUpTickets = data.rateUp||0; aiWins = data.aiWins||0; aiWinStreak = data.aiStrk||0; exploreCount = data.expCnt||0; claimedMails = data.claimedMails||{};
         
         let rawDeck = data.deck ? (Array.isArray(data.deck) ? data.deck : Object.values(data.deck)) : [];
         myCards = rawDeck.filter(c=>c!=null).map(c=>({...c,isLocked:c.isLocked||false,level:c.level||1,exp:c.exp||0}));
+        
+        // 장착된 카드들의 레퍼런스를 갱신해줍니다.
+        const mapDeck = (deck) => deck.map(c => c ? myCards.find(mc => mc.instanceId === c.instanceId) || null : null);
+        aiAttackDeck = mapDeck(aiAttackDeck); pvpAttackDeck = mapDeck(pvpAttackDeck); exploreCards = mapDeck(exploreCards); plunderAttackDeck = mapDeck(plunderAttackDeck); fusionCards = mapDeck(fusionCards);
         
         let savedDef = data.defDeck ? (Array.isArray(data.defDeck) ? data.defDeck : Object.values(data.defDeck)) : [];
         defenseDeck = [null, null, null];
@@ -423,12 +410,12 @@
     }
 
     async function saveUserData(){ 
-        if(!currentUser || !isDataLoaded) return; // 🔥 데이터를 다 부르기 전엔 절대 저장 차단 (덮어쓰기 방지)
+        if(!currentUser || !isDataLoaded) return; // 🔥 데이터를 다 부르기 전엔 절대 저장 차단
         const safeCards = myCards.filter(c=>c!=null);
         await set(ref(db, 'users/'+currentUser.uid), { name:currentUser.displayName, email:currentUser.email, money, deck:safeCards, defDeck:defenseDeck, robbed:false, potions, atkPotions, scrolls:fusionScrolls, exp:expTickets, win:winTickets, upg:upgItems, cap:capTickets, userCap:userCapTickets, rateUp:rateUpTickets, aiWins, aiStrk:aiWinStreak, expCnt:exploreCount, claimedMails }); 
     }
     
-    // 🔥 실시간 동기화: GM이 보상을 주면 새로고침 없이 바로 적용됨!
+    // 🔥 [안전장치 2] 실시간 완벽 동기화 (덮어쓰기 방지)
     function listenToMyData(){ 
         onValue(ref(db, 'users/'+currentUser.uid), (snap)=>{ 
             if(!isDataLoaded) return;
@@ -491,7 +478,7 @@
                 claimedMails[id]=true; claimedAny=true;
             }
         });
-        if(claimedAny){ saveUserData(); updateUI(); updateMailboxBadge(); window.openMailbox(); alert("🎁 모든 우편 수령!"); } else alert("수령할 우편이 없습니다.");
+        if(claimedAny){ saveUserData(); updateUI(); updateMailboxBadge(); window.openMailbox(); alert("🎁 모든 우편을 수령했습니다!"); } else alert("수령할 우편이 없습니다.");
     };
 
     window.openGmUserList = async () => {
@@ -512,10 +499,7 @@
         const c=document.getElementById('gm-user-list-container'); const d=document.getElementById('gm-user-detail-container'); c.style.display='none'; d.style.display='block'; document.getElementById('gm-user-modal-title').textContent=`${u.name}님 정보`;
         let it=`💰 골드:${u.money||0} | 🛡️방어약:${u.potions||0} | 💊강화제:${u.atkPotions||0} | ✨부적:${u.scrolls||0} | 🌟경험치:${u.exp||0} | 🏆승리권:${u.win||0} | ⏫진화권:${u.upg||0} | 🪤AI포획:${u.cap||0} | 👿유저포획:${u.userCap||0} | ✨SSS확률:${u.rateUp||0}`;
         let ch='<div class="grid">'; let dk=u.deck?Object.values(u.deck).filter(x=>x!=null):[]; dk.sort((a,b)=>gradeOrder.indexOf(b.grade)-gradeOrder.indexOf(a.grade)).forEach(cd=>{ch+=createCardHTML(cd);}); ch+='</div>';
-        
-        // 🔥 GM 긴급 복구 버튼 (수동 SSS 3장 + 1만골드 투입)
         let recBtn = `<button onclick="window.compensateUser('${uid}')" style="background:#ff3366; width:100%; margin-bottom:10px; padding:10px;">🎁 오류 복구 긴급지원 (SSS 3장 + 1만G)</button>`;
-        
         d.innerHTML=`<button onclick="document.getElementById('gm-user-list-container').style.display='block';document.getElementById('gm-user-detail-container').style.display='none';document.getElementById('gm-user-modal-title').textContent='유저 목록';" style="background:#555;margin-bottom:10px;padding:5px 10px;font-size:0.8rem;">⬅️ 뒤로가기</button>${recBtn}<div style="background:#222;padding:10px;border-radius:5px;margin-bottom:10px;color:#ffea00;font-size:0.8rem;line-height:1.5;">${it}</div><h4 style="color:#00f2ff;margin:0 0 10px 0;">보유 카드 (${dk.length}장)</h4>${ch}`;
     };
 
@@ -550,13 +534,13 @@
 
     function getCardBaseInfo(tid){ return cardDatabase.find(c=>c.templateId===parseInt(tid))||cardDatabase[0]; }
     
-    // 🔥 스킬 에러 100% 방지 로직 적용
+    // 🔥 스킬 에러 100% 방어
     function getBattleStats(card){
-        if(!card) return {name:'오류카드', element:'rock', skill:normalSkills[0], hp:1, atk:1, def:0};
+        if(!card) return {name:'오류', element:'rock', skill:normalSkills[0], hp:1, atk:1, def:0};
         const base=getCardBaseInfo(card.templateId); const lvBonus=((card.level||1)-1);
         let bHp=card.baseHp||100, bAtk=card.baseAtk||15, bDef=card.baseDef||5; 
         let sObj=base.templateId<=10?specialSkills[base.templateId]:(card.skillInfo||normalSkills[0]);
-        if(!sObj) sObj=normalSkills[0];
+        if(!sObj) sObj=normalSkills[0]; 
         return {name:base.name, element:base.element, skill:sObj, hp:bHp+(lvBonus*50), atk:bAtk+(lvBonus*10)+((card.enhance||0)*20)+((card.atkBuff||0)*20), def:bDef+(lvBonus*5)+Math.floor((card.enhance||0)*5)};
     }
 
@@ -795,9 +779,12 @@
         });
     }
 
+    // 🔥 [안전장치 2] 전투 중복 실행 방지 락(Lock)
     window.startAIPvP = async () => {
+        if(isBattling) return; 
         if(aiAttackDeck.filter(c=>c).length<2) return alert("2명 셋팅 요망."); const cCap=document.getElementById('use-ai-cap'); if(cCap.checked&&capTickets<=0){ cCap.checked=false; return alert("포획권 없음."); }
         
+        isBattling = true;
         document.getElementById('live-battle-modal').style.display='flex';
         document.getElementById('live-battle-log').innerHTML=''; 
         let tLog = document.getElementById('ai-pvp-log'); if(tLog) tLog.innerHTML=''; 
@@ -806,6 +793,7 @@
         const t=getAITeam(aiWins); let w=0; await printLog('ai-pvp-log', `⚔️ AI(${aiWins}승) 결투 시작!`, "#ffea00", 600);
         for(let i=0;i<2;i++){ setSlotHTML(document.getElementById(`ai-def-slot${i+1}`), t[i], '?'); let r=await runLiveSimulation(aiAttackDeck[i], t[i], 'ai-pvp-log', i+1); if(r) w++; await delay(500); }
         await printLog('ai-pvp-log', '--- 전투 종료 ---', "#fff", 0); window.pendingBattleResult={type:'ai', wins:w, aiTeam:t, useCap:cCap.checked}; document.getElementById('live-battle-close').style.display='block';
+        isBattling = false;
     };
 
     async function loadArenaData(){
@@ -829,9 +817,11 @@
     }
 
     window.startArenaPvP = async () => {
+        if(isBattling) return;
         if(pvpAttackDeck.filter(c=>c).length<3) return alert("3명 셋팅 요망."); if(currentDefender&&currentDefender.defenderUid===currentUser.uid) return alert("본인 공격 불가.");
         const cw=document.getElementById('use-win-ticket-arena'), cc=document.getElementById('use-user-capture-arena'); if(cw.checked&&winTickets<=0){ cw.checked=false; return alert("승리권 없음."); } if(cc.checked&&userCapTickets<=0){ cc.checked=false; return alert("포획권 없음."); }
         
+        isBattling = true;
         document.getElementById('live-battle-modal').style.display='flex'; document.getElementById('live-battle-log').innerHTML=''; 
         let pLog = document.getElementById('pvp-log'); if(pLog) pLog.innerHTML=''; 
         document.getElementById('live-battle-close').style.display='none';
@@ -839,6 +829,7 @@
         await printLog('pvp-log', '⚔️ 아레나 매칭 완료! 전투 시작!', "#ffea00", 600); let w=0;
         for(let i=0;i<3;i++){ let enC=currentDefender.deck[i]; setSlotHTML(document.getElementById(`def-slot${i+1}`), enC, '?'); if(!enC){ w++; await printLog('pvp-log', `[R${i+1}] 방어없음! 자동 승리!`, "#26ff00", 500); continue; } if(cw.checked){ w++; await printLog('pvp-log', `[R${i+1}] 🏆 자동 승리!`, "#26ff00", 800); continue; } let r=await runLiveSimulation(pvpAttackDeck[i], enC, 'pvp-log', i+1); if(r) w++; await delay(500); }
         await printLog('pvp-log', '--- 전투 종료 ---', "#fff", 0); window.pendingBattleResult={type:'arena', wins:w, useWin:cw.checked, useCap:cc.checked}; document.getElementById('live-battle-close').style.display='block';
+        isBattling = false;
     };
 
     window.openAttackSetup = async (id, nm) => {
@@ -855,9 +846,11 @@
     };
 
     window.startPlunderPvP = async () => {
+        if(isBattling) return;
         if(plunderAttackDeck.filter(c=>c).length<3) return alert("약탈할 공격 덱 3명을 모두 세팅하세요.");
         const cw=document.getElementById('use-win-ticket-plunder'), cc=document.getElementById('use-user-capture-plunder'); if(cw.checked&&winTickets<=0){ cw.checked=false; return alert("승리권 없음."); } if(cc.checked&&userCapTickets<=0){ cc.checked=false; return alert("포획권 없음."); }
         
+        isBattling = true;
         document.getElementById('attack-setup-modal').style.display='none'; 
         document.getElementById('live-battle-modal').style.display='flex'; document.getElementById('live-battle-log').innerHTML=''; 
         let pLog = document.getElementById('pvp-log'); if(pLog) pLog.innerHTML=''; 
@@ -866,6 +859,7 @@
         await printLog('pvp-log', `⚔️ [${pvpTargetUser.name}] 약탈 시작!`, "#ffea00", 600); let w=0;
         for(let i=0;i<3;i++){ let enC=pvpTargetUser.defDeck[i]; if(!enC){ w++; await printLog('pvp-log', `[R${i+1}] 방어없음 승리!`, "#26ff00", 500); continue; } if(cw.checked){ w++; await printLog('pvp-log', `[R${i+1}] 🏆 자동 승리!`, "#26ff00", 800); continue; } let r=await runLiveSimulation(plunderAttackDeck[i], enC, 'pvp-log', i+1); if(r) w++; await delay(500); }
         await printLog('pvp-log', '--- 전투 종료 ---', "#fff", 0); window.pendingBattleResult={type:'plunder', wins:w, useWin:cw.checked, useCap:cc.checked, target:pvpTargetUser}; document.getElementById('live-battle-close').style.display='block';
+        isBattling = false;
     };
 
     window.closeLiveBattle = async () => {
@@ -896,7 +890,7 @@
                 await set(ref(db, 'arena/current'), {defenderUid:currentUser.uid, defenderName:currentUser.displayName, deck:pvpAttackDeck});
                 if(currentDefender.defenderUid!=='AI'){ try{ const ls=await get(child(ref(db), `users/${currentDefender.defenderUid}`)); if(ls.exists()){ let d=ls.val(); let sM=Math.min(Math.max(0,d.money||0),300); d.money=Math.max(0,(d.money||0)-sM); d.robbed=true; d.stolenMoney=(d.stolenMoney||0)+sM; await set(ref(db, `users/${currentDefender.defenderUid}`), d); money+=sM; } }catch(e){} }
                 alert(`🎉 챔피언 등극! (500G)${cM}`); sendSystemMessage(`🏆 [${currentUser.displayName}]님이 새로운 아레나 챔피언에 등극했습니다!`);
-            }else{ alert("💀 챔피언 도전 실패."); if(rs.useCap) userCapTickets--; }
+            }else{ alert("💀 챔피언 도전 패배."); if(rs.useCap) userCapTickets--; }
             pvpAttackDeck=[null,null,null]; for(let i=1;i<=3;i++) setSlotHTML(document.getElementById(`atk-slot${i}`),null,'선택'); document.getElementById('use-win-ticket-arena').checked=false; document.getElementById('use-user-capture-arena').checked=false; loadArenaData();
         }
         else if(rs.type==='plunder'){

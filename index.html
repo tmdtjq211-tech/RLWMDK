@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>포토 카드 배틀 - 실시간 중계 완벽 패치 에디션</title>
+    <title>포토 카드 배틀 - V22 최종 완벽판 (GM툴 추가)</title>
     <style>
         :root { --sss: #ffea00; --ss: #00f2ff; --s: #ff00e5; --a: #26ff00; --b: #ff9800; --c: #a0a0a0; --bg: #121212; }
         body { margin: 0; background: var(--bg); color: #fff; font-family: 'Pretendard', sans-serif; text-align: center; padding-bottom: 70px; overflow-x: hidden; }
@@ -14,11 +14,9 @@
         @keyframes flash { from { opacity: 1; } to { opacity: 0.7; } }
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
         .google-btn { background: white; color: #444; font-weight: bold; padding: 15px 30px; border-radius: 30px; font-size: 1.1rem; border: none; cursor: pointer; display: flex; align-items: center; gap: 10px; width: 100%; max-width: 300px; justify-content: center; }
-        
         .tabs { display: flex; justify-content: center; gap: 2px; position: fixed; bottom: 0; left: 0; width: 100%; background: #000; padding: 10px 5px; box-sizing: border-box; z-index: 90; border-top: 1px solid #333; }
         .tab { padding: 12px 5px; background: #222; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.2s; font-size: 0.8rem; flex: 1; min-width: 0; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;}
         .tab.active { background: #ff006e; color: white; }
-        
         .section { display: none; padding: 15px; padding-top: 20px; max-width: 1000px; margin: 0 auto; box-sizing: border-box; }
         .section.active { display: block; }
         
@@ -27,25 +25,17 @@
         .card:active { transform: scale(0.95); }
         .card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
         .card-grade { position: absolute; bottom: 4px; right: 4px; font-size: 1.2rem; font-weight: 900; font-style: italic; -webkit-text-stroke: 1px #000; z-index: 2; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); pointer-events: none;}
-        .card.sss { border-color: var(--sss); box-shadow: 0 0 12px var(--sss); }
-        .card.ss { border-color: var(--ss); box-shadow: 0 0 8px var(--ss); }
-        .card.s { border-color: var(--s); }
-        .card.a { border-color: var(--a); }
-        .card.b { border-color: var(--b); }
-        .card.c { border-color: var(--c); }
+        .card.sss { border-color: var(--sss); box-shadow: 0 0 12px var(--sss); } .card.ss { border-color: var(--ss); box-shadow: 0 0 8px var(--ss); } .card.s { border-color: var(--s); } .card.a { border-color: var(--a); } .card.b { border-color: var(--b); } .card.c { border-color: var(--c); }
         .locked-icon { position: absolute; top: 35%; left: 50%; transform: translate(-50%, -50%); font-size: 2.5rem; text-shadow: 0 0 10px #000; pointer-events: none; z-index: 5; opacity: 0.8;}
         
         button { padding: 10px 15px; border: none; border-radius: 6px; background: #ff006e; color: white; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.9rem; -webkit-tap-highlight-color: transparent;}
-        button:active { transform: scale(0.97); filter: brightness(1.1); }
-        button:disabled { background: #555; cursor: not-allowed; transform: none; opacity: 0.7;}
+        button:active { transform: scale(0.97); filter: brightness(1.1); } button:disabled { background: #555; cursor: not-allowed; transform: none; opacity: 0.7;}
         
         .gacha-box { background: #1a1a1a; padding: 15px; border-radius: 12px; margin: 10px 0; border: 1px solid #333; }
         .vs-board { display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; background: #111; padding: 15px 5px; border-radius: 12px; margin-top: 15px; border: 2px solid #ff006e; gap: 5px; }
         .pvp-deck { display: flex; gap: 5px; width: 100%; justify-content: center; }
         .pvp-slot { width: 30%; max-width: 100px; aspect-ratio: 2/3; border: 2px dashed #666; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.75rem; background:#000; cursor: pointer; position: relative; color:#aaa; transition: 0.2s; -webkit-tap-highlight-color: transparent;}
-        .pvp-slot:active { background: #222; border-color: #999; }
-        .pvp-slot.filled { border-style: solid; color: #fff; border-width: 1px;}
-        .slot-add-icon { font-size: 2rem; margin-bottom: 5px; color: #555; pointer-events: none;}
+        .pvp-slot:active { background: #222; border-color: #999; } .pvp-slot.filled { border-style: solid; color: #fff; border-width: 1px;} .slot-add-icon { font-size: 2rem; margin-bottom: 5px; color: #555; pointer-events: none;}
         
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; z-index: 1000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
         .zoom-card { width: 100%; max-width: 260px; height: auto; aspect-ratio: 2/3; border-radius: 12px; border: 3px solid #fff; }
@@ -54,13 +44,9 @@
         .item-toggle { display: flex; align-items: center; gap: 6px; background: #2a2a2a; padding: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; border: 1px solid #333; }
         .item-toggle input { transform: scale(1.1); cursor: pointer; margin: 0; }
         
-        #selection-notice { display: none; position: fixed; top: 70px; left: 0; width: 100%; background: #4CAF50; color: white; padding: 10px; font-weight: bold; z-index: 80; font-size: 0.9rem; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #111; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #ff006e; }
-        .battle-log-container { background:#000; padding:15px; margin:10px 0; height:120px; overflow-y:auto; text-align:left; font-size:0.8rem; color:#aaa; border-radius: 8px; border:1px solid #333; line-height:1.4; }
+        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #111; border-radius: 4px; } ::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; } ::-webkit-scrollbar-thumb:hover { background: #ff006e; }
         
+        .battle-log-container { background:#000; padding:15px; margin:10px 0; height:120px; overflow-y:auto; text-align:left; font-size:0.8rem; color:#aaa; border-radius: 8px; border:1px solid #333; line-height:1.4; }
         .mail-btn, .chat-btn { background: #3d0036; border: 1px solid #ff00e5; padding: 5px 10px; border-radius: 6px; color: white; font-size: 0.8rem; cursor: pointer; position: relative; }
         .mail-badge { position: absolute; top: -5px; right: -5px; font-size: 0.7rem; background: red; color: white; border-radius: 50%; padding: 2px 5px; display: none; font-weight:bold; }
         .mail-item { background: #222; border: 1px solid #444; padding: 10px; margin-bottom: 10px; border-radius: 8px; text-align: left; }
@@ -74,13 +60,8 @@
 </head>
 <body>
 
-<div id="login-overlay">
-    <h1 style="font-size: 2.2rem; color: #ff006e; font-style: italic; margin-bottom: 30px;">초강력 멀티 배틀</h1>
-    <button class="google-btn" onclick="window.loginWithGoogle()">🌐 Google 계정으로 시작</button>
-</div>
-
+<div id="login-overlay"><h1 style="font-size: 2.2rem; color: #ff006e; font-style: italic; margin-bottom: 30px;">초강력 멀티 배틀</h1><button class="google-btn" onclick="window.loginWithGoogle()">🌐 Google 계정으로 시작</button></div>
 <div id="notification-banner" onclick="window.clearNotification()"></div>
-<div id="selection-notice">장착할 카드를 아래에서 터치하세요.</div>
 
 <header id="main-header">
     <div style="font-weight: bold; font-size: 1rem; width: 100%; text-align: center; margin-bottom: 5px;">👑 <span id="player-name">유저</span>님의 덱</div>
@@ -106,7 +87,7 @@
 <div id="section-0" class="section active">
     <div class="gacha-box" style="border-color: #ffea00;">
         <h2 style="font-size: 1.2rem; margin-top:0;">🎁 영웅 뽑기 (51종)</h2>
-        <p style="font-size:0.75rem; color:#aaa; margin-bottom:10px;">동일 등급이라도 스탯 랜덤 부여!<br>SSS 중복 시 800G 환전</p>
+        <p style="font-size:0.75rem; color:#aaa; margin-bottom:10px;">동일 등급이라도 스탯 극옵/똥옵 랜덤 부여!<br>SSS 중복 시 800G 환전</p>
         <div style="background:#000; padding:10px; border-radius:8px; margin-bottom:12px; border:1px solid #333;">
             <label style="color:#ffea00; font-weight:bold; display:block; margin-bottom:5px; font-size:0.85rem;">✨ SSS 확률강화권 (보유: <span id="rateup-cnt">0</span>장)</label>
             <div style="display:flex; justify-content:center; align-items:center; gap:10px;">
@@ -158,14 +139,8 @@
 
 <div id="section-3" class="section">
     <h2 style="font-size: 1.1rem; margin-top:0; color:#00f2ff;">🤖 AI 기사단 (<span id="ai-win-ui">0</span>승 진행중)</h2>
-    <p style="font-size:0.75rem; color:#aaa; margin-bottom:10px;">
-        🔥 연승 횟수: <span id="ai-streak-ui" style="color:#ffea00; font-weight:bold;">0</span> / 4 
-        <br>(4연승 시 탐험 횟수 10회로 초기화!)<br>
-        <span style="color:#ff3366; font-weight:bold;">⚠️ 4% 확률로 AI 진영에 SSS 괴물 난입!</span>
-    </p>
-    <div class="item-toggle-container">
-        <label class="item-toggle"><input type="checkbox" id="use-ai-cap"> 🪤 AI포획권 (<span id="ai-cap-cnt">0</span>)</label>
-    </div>
+    <p style="font-size:0.75rem; color:#aaa; margin-bottom:10px;">🔥 연승: <span id="ai-streak-ui" style="color:#ffea00; font-weight:bold;">0</span> / 4 <br><span style="color:#ff3366; font-weight:bold;">⚠️ 4% 확률로 AI 진영에 SSS 괴물 난입!</span></p>
+    <div class="item-toggle-container"><label class="item-toggle"><input type="checkbox" id="use-ai-cap"> 🪤 AI포획권 (<span id="ai-cap-cnt">0</span>)</label></div>
     <div class="vs-board" style="border-color:#00f2ff;">
         <div style="width: 100%;"><div class="pvp-deck">
             <div id="ai-atk-slot1" class="pvp-slot" onclick="window.openCardSelector('ai', 1)"><div class="slot-add-icon">+</div>선택</div>
@@ -177,16 +152,15 @@
             <div id="ai-def-slot2" class="pvp-slot" style="border-color:#00f2ff; border-style:solid;">?</div>
         </div></div>
     </div>
-    <div id="ai-pvp-log" class="battle-log-container">전투 기록 (실시간 중계는 모달창 진행)</div>
+    <div id="ai-pvp-log" class="battle-log-container">전투 기록 (실시간 중계는 팝업 진행)</div>
     <button onclick="window.startAIPvP()" style="width: 100%; padding: 12px; background:#00f2ff; color:#000; margin-top:10px;">AI와 실시간 결투 시작!</button>
 </div>
 
 <div id="section-4" class="section">
     <h2 style="font-size: 1.2rem; margin-top:0; color:#ff006e;">🔥 명예의 아레나 & 유저 약탈</h2>
-    
     <div style="background:#1a1a1a; padding:15px; border-radius:10px; border:1px solid #ffea00; margin-bottom:15px;">
         <h3 style="margin:0 0 5px 0; color:#ffea00; font-size:1rem;">👑 아레나 챔피언 도전</h3>
-        <p style="font-size:0.7rem; color:#aaa; margin-top:0;">서버 최강의 덱을 쓰러뜨리고 왕좌를 차지하세요!</p>
+        <p style="font-size:0.7rem; color:#aaa; margin-top:0;">서버 최강의 덱을 쓰러뜨리세요!</p>
         <div class="item-toggle-container" style="margin-top:10px;">
             <label class="item-toggle"><input type="checkbox" id="use-win-ticket-arena"> 🏆 승리권 (<span id="win-t-cnt-arena">0</span>)</label>
             <label class="item-toggle" style="background:#3d0036; border-color:#ff00e5;"><input type="checkbox" id="use-user-capture-arena"> 👿 포획권 (<span id="user-cap-cnt-arena">0</span>)</label>
@@ -212,7 +186,7 @@
 
     <div style="background:#1a1a1a; padding:15px; border-radius:10px; border:1px solid #00f2ff; margin-bottom:15px;">
         <h3 style="margin:0 0 5px 0; color:#00f2ff; font-size:1rem;">🛡️ 나의 방어 덱 설정</h3>
-        <p style="font-size:0.7rem; color:#aaa; margin-top:0;">접속 종료 시 적의 약탈을 방어합니다. (필수)</p>
+        <p style="font-size:0.7rem; color:#aaa; margin-top:0;">접속 종료 시 적의 약탈을 방어합니다.</p>
         <div class="pvp-deck">
             <div id="def-setup-slot1" class="pvp-slot" onclick="window.openCardSelector('defense', 1)"><div class="slot-add-icon">+</div>방어1</div>
             <div id="def-setup-slot2" class="pvp-slot" onclick="window.openCardSelector('defense', 2)"><div class="slot-add-icon">+</div>방어2</div>
@@ -222,9 +196,8 @@
 
     <div style="background:#1a1a1a; padding:15px; border-radius:10px; border:1px solid #ff3366;">
         <h3 style="margin:0 0 5px 0; color:#ff3366; font-size:1rem;">⚔️ 일반 유저 약탈 리스트</h3>
-        <div id="user-list-container" style="max-height:250px; overflow-y:auto; background:#000; border:1px solid #444; border-radius:8px; padding:10px; text-align:left;"></div>
+        <div id="user-list-container" style="max-height:250px; overflow-y:auto; background:#000; border:1px solid #444; border-radius:8px; padding:10px; text-align:left;">유저 목록 로딩중...</div>
     </div>
-    
     <div id="pvp-log" class="battle-log-container" style="margin-top:15px;">전투 기록 (실시간 중계는 팝업창에서 진행)</div>
 </div>
 
@@ -244,6 +217,13 @@
 
 <div id="section-6" class="section">
     <h2 style="font-size: 1.5rem; margin-top:0; color:#ff00e5;">🛠️ 개발자(GM) 콘솔</h2>
+    
+    <div style="background:#1a1a1a; padding:15px; border-radius:10px; margin-bottom:15px; border:1px solid #009688;">
+        <h3 style="margin-top:0; color:#00f2ff;">👀 유저 정보 조회</h3>
+        <p style="font-size:0.8rem; color:#aaa;">서버 내 모든 유저의 재화와 덱을 확인합니다.</p>
+        <button onclick="window.openGmUserList()" style="background:#009688; width:100%; padding:12px;">전체 유저 DB 보기 🔍</button>
+    </div>
+
     <div style="background:#1a1a1a; padding:15px; border-radius:10px; margin-bottom:15px; border:1px solid #ff00e5;">
         <h3 style="margin-top:0; color:#fff;">🎁 유저 우편 발송</h3>
         <div style="display:flex; flex-direction:column; gap:8px; align-items:center; text-align:left; width:100%;">
@@ -268,6 +248,17 @@
     <button onclick="window.applyGmBuff()" style="background:#ffea00; color:#000; width:100%; padding:15px; font-size:1.1rem;">⚡ GM 무한 버프 (100만 골드+티켓 MAX)</button>
 </div>
 
+<div id="gm-user-modal" class="modal-overlay" onclick="window.closeModal('gm-user-modal')">
+    <div style="background:#111; width:95%; max-width:500px; max-height:85vh; border-radius:12px; display:flex; flex-direction:column; border:1px solid #00f2ff;" onclick="event.stopPropagation()">
+        <div style="padding:15px; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center;">
+            <h3 style="margin:0; color:#fff; font-size:1.2rem;" id="gm-user-modal-title">유저 목록</h3>
+            <button onclick="window.closeModal('gm-user-modal')" style="padding:6px 12px; background:#555; font-size:0.8rem;">닫기</button>
+        </div>
+        <div id="gm-user-list-container" style="padding:15px; overflow-y:auto; text-align:left; display:none;"></div>
+        <div id="gm-user-detail-container" style="padding:15px; overflow-y:auto; text-align:left; display:none;"></div>
+    </div>
+</div>
+
 <div id="attack-setup-modal" class="modal-overlay" onclick="window.closeModal('attack-setup-modal')">
     <div style="background:#111; width:95%; max-width:400px; padding:20px; border-radius:12px; border:1px solid #ff00e5; text-align:center;" onclick="event.stopPropagation()">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -278,29 +269,15 @@
             <label class="item-toggle"><input type="checkbox" id="use-win-ticket-plunder"> 🏆 승리권 (<span id="win-t-cnt-plunder">0</span>)</label>
             <label class="item-toggle" style="background:#3d0036; border-color:#ff00e5;"><input type="checkbox" id="use-user-capture-plunder"> 👿 포획권 (<span id="user-cap-cnt-plunder">0</span>)</label>
         </div>
-        <div style="margin:15px 0;">
-            <div style="color:#aaa; font-size:0.8rem; margin-bottom:5px;">나의 약탈 전용 공격 덱</div>
-            <div class="pvp-deck">
-                <div id="plunder-atk-slot1" class="pvp-slot" onclick="window.openCardSelector('plunder', 1)"><div class="slot-add-icon">+</div>공격1</div>
-                <div id="plunder-atk-slot2" class="pvp-slot" onclick="window.openCardSelector('plunder', 2)"><div class="slot-add-icon">+</div>공격2</div>
-                <div id="plunder-atk-slot3" class="pvp-slot" onclick="window.openCardSelector('plunder', 3)"><div class="slot-add-icon">+</div>공격3</div>
-            </div>
-        </div>
-        <div style="margin:15px 0;">
-            <div style="color:#ff3366; font-size:0.8rem; margin-bottom:5px;">적 방어 덱 (속성)</div>
-            <div class="pvp-deck">
-                <div id="enemy-def-slot1" class="pvp-slot" style="border-color:#ff3366; border-style:solid;">?</div>
-                <div id="enemy-def-slot2" class="pvp-slot" style="border-color:#ff3366; border-style:solid;">?</div>
-                <div id="enemy-def-slot3" class="pvp-slot" style="border-color:#ff3366; border-style:solid;">?</div>
-            </div>
-        </div>
+        <div style="margin:15px 0;"><div style="color:#aaa; font-size:0.8rem; margin-bottom:5px;">나의 약탈 전용 공격 덱</div><div class="pvp-deck"><div id="plunder-atk-slot1" class="pvp-slot" onclick="window.openCardSelector('plunder', 1)"><div class="slot-add-icon">+</div>공격1</div><div id="plunder-atk-slot2" class="pvp-slot" onclick="window.openCardSelector('plunder', 2)"><div class="slot-add-icon">+</div>공격2</div><div id="plunder-atk-slot3" class="pvp-slot" onclick="window.openCardSelector('plunder', 3)"><div class="slot-add-icon">+</div>공격3</div></div></div>
+        <div style="margin:15px 0;"><div style="color:#ff3366; font-size:0.8rem; margin-bottom:5px;">적 방어 덱 (속성)</div><div class="pvp-deck"><div id="enemy-def-slot1" class="pvp-slot" style="border-color:#ff3366;border-style:solid;">?</div><div id="enemy-def-slot2" class="pvp-slot" style="border-color:#ff3366;border-style:solid;">?</div><div id="enemy-def-slot3" class="pvp-slot" style="border-color:#ff3366;border-style:solid;">?</div></div></div>
         <button onclick="window.startPlunderPvP()" style="width:100%; padding:15px; font-size:1.1rem;">약탈 시작!</button>
     </div>
 </div>
 
 <div id="global-chat-modal" class="modal-overlay" onclick="window.closeModal('global-chat-modal')">
     <div style="background:#111; width:95%; max-width:450px; border-radius:12px; display:flex; flex-direction:column; border:1px solid #009688; padding:15px; box-sizing:border-box;" onclick="event.stopPropagation()">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><h3 style="margin:0; color:#00f2ff; font-size:1.2rem;">💬 실시간 채팅방</h3><button onclick="window.closeModal('global-chat-modal')" style="padding:6px 12px; background:#555;">닫기</button></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><h3 style="margin:0; color:#00f2ff; font-size:1.2rem;">💬 채팅방</h3><button onclick="window.closeModal('global-chat-modal')" style="padding:6px 12px; background:#555;">닫기</button></div>
         <div id="chat-container"></div>
         <div style="display:flex; gap:5px;"><input type="text" id="chat-input" placeholder="메시지..." style="flex:1; padding:10px; border-radius:5px; background:#000; color:#fff; border:1px solid #444;" onkeypress="if(event.key==='Enter') window.sendChat()"><button onclick="window.sendChat()" style="background:#009688;">전송</button></div>
     </div>
@@ -310,10 +287,7 @@
     <div style="background:#111; width:95%; max-width:400px; max-height:80vh; border-radius:12px; display:flex; flex-direction:column; border:1px solid #ff00e5;" onclick="event.stopPropagation()">
         <div style="padding:15px; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center;">
             <h3 style="margin:0; color:#fff; font-size:1.2rem;">📬 우편함</h3>
-            <div style="display:flex; gap:5px;">
-                <button onclick="window.claimAllMails()" style="padding:6px 12px; background:#ffea00; color:#000; font-size:0.8rem; font-weight:bold;">모두 수령</button>
-                <button onclick="window.closeModal('mailbox-modal')" style="padding:6px 12px; background:#555; font-size:0.8rem;">닫기</button>
-            </div>
+            <div style="display:flex; gap:5px;"><button onclick="window.claimAllMails()" style="padding:6px 12px; background:#ffea00; color:#000; font-size:0.8rem; font-weight:bold;">모두 수령</button><button onclick="window.closeModal('mailbox-modal')" style="padding:6px 12px; background:#555; font-size:0.8rem;">닫기</button></div>
         </div>
         <div id="mail-list-container" style="padding:15px; overflow-y:auto; text-align:left;"></div>
     </div>
@@ -381,18 +355,21 @@
     }
 
     const cardDatabase = []; const elements = ['rock','paper','scissors']; const fantasyNames = ["페가수스","그리폰","미노타우","켄타우로","사이클롭","오크대장","고블린킹","트롤술사","슬라임퀸","데스나잇","리치","뱀파이어","서큐버스","늑대인간","가고일","바실리스","하피","키메라","만티코어","와이번","크라켄","레비아탄","베히모스","요르문간","펜리르","발키리","에인헤랴","듀라한","골렘","호문쿨루","일리시드","비홀더","드라이어","실프","운디네","샐러맨더","노움","이프리트","마리드","정령왕","마도기사"];
-    for(let i=1;i<=51;i++){let isSp=specificCards.find(c=>c.id===i); let cN=isSp?isSp.name:fantasyNames[(i-11)%fantasyNames.length]; let cG=isSp?isSp.grade:(i%5===0?'A':(i%2===0?'B':'C')); cardDatabase.push({templateId:i,name:cN,grade:cG,element:elements[i%3]});}
-    const grades = {'SSS':{class:'sss',color:'#ffea00',sellPrice:800,exp:6},'SS':{class:'ss',color:'#00f2ff',sellPrice:400,exp:5},'S':{class:'s',color:'#ff00e5',sellPrice:150,exp:4},'A':{class:'a',color:'#26ff00',sellPrice:80,exp:3},'B':{class:'b',color:'#ff9800',sellPrice:30,exp:2},'C':{class:'c',color:'#a0a0a0',sellPrice:10,exp:1}};
-    const gradeOrder = ['C','B','A','S','SS','SSS'];
+    for (let i = 1; i <= 51; i++) {
+        let isSpecific = specificCards.find(c => c.id === i); let cName = isSpecific ? isSpecific.name : fantasyNames[(i - 11) % fantasyNames.length]; let cGrade = isSpecific ? isSpecific.grade : (i % 5 === 0 ? 'A' : (i % 2 === 0 ? 'B' : 'C')); 
+        cardDatabase.push({ templateId: i, name: cName, grade: cGrade, element: elements[i % 3] });
+    }
+    const grades = { 'SSS': { class: 'sss', color: '#ffea00', sellPrice: 800, exp: 6 }, 'SS': { class: 'ss', color: '#00f2ff', sellPrice: 400, exp: 5 }, 'S': { class: 's', color: '#ff00e5', sellPrice: 150, exp: 4 }, 'A': { class: 'a', color: '#26ff00', sellPrice: 80, exp: 3 }, 'B': { class: 'b', color: '#ff9800', sellPrice: 30, exp: 2 }, 'C': { class: 'c', color: '#a0a0a0', sellPrice: 10, exp: 1 } };
+    const gradeOrder = ['C', 'B', 'A', 'S', 'SS', 'SSS'];
 
     window.loginWithGoogle = () => { signInWithPopup(auth, provider).catch(err=>alert("로그인 실패")); }; window.logout = () => { signOut(auth); location.reload(); };
     onAuthStateChanged(auth, (user) => {
-        if(user){ 
-            currentUser=user; document.getElementById('login-overlay').style.display='none'; 
+        if (user) { 
+            currentUser = user; document.getElementById('login-overlay').style.display='none'; 
             if(user.email==='tmdtjq211@gmail.com'){ isAdmin=true; document.getElementById('player-name').innerHTML=`<span style="color:#ff00e5;">[GM]</span> ${user.displayName}`; document.getElementById('tab-gm').style.display='block'; populateGmCardSelect(); populateGmUserList(); } 
             else{ document.getElementById('player-name').textContent=user.displayName; }
             loadUserData(); listenToMyData(); loadArenaData(); listenToServerMails(); listenToChat(); 
-        }else{ document.getElementById('login-overlay').style.display='flex'; }
+        } else { document.getElementById('login-overlay').style.display='flex'; }
     });
 
     async function loadUserData(){
@@ -461,7 +438,25 @@
                 claimedMails[id]=true; claimedAny=true;
             }
         });
-        if(claimedAny){ saveUserData(); updateUI(); updateMailboxBadge(); window.openMailbox(); alert("🎁 모든 우편을 수령했습니다!"); } else alert("수령할 우편이 없습니다.");
+        if(claimedAny){ saveUserData(); updateUI(); updateMailboxBadge(); window.openMailbox(); alert("🎁 모든 우편 수령!"); } else alert("수령할 우편이 없습니다.");
+    };
+
+    // 🔥 GM 유저 조회 기능 로직
+    window.openGmUserList = async () => {
+        if(!isAdmin) return; const s=await get(child(ref(db),'users')); const c=document.getElementById('gm-user-list-container'); const d=document.getElementById('gm-user-detail-container'); c.style.display='block'; d.style.display='none'; c.innerHTML=''; document.getElementById('gm-user-modal-title').textContent="유저 목록";
+        if(s.exists()){
+            const us=s.val();
+            Object.keys(us).forEach(id=>{ const u=us[id]; c.innerHTML+=`<div style="background:#222;padding:10px;margin-bottom:5px;border-radius:5px;display:flex;justify-content:space-between;align-items:center;"><div><div style="color:#fff;font-weight:bold;">${u.name}</div><div style="color:#aaa;font-size:0.7rem;">${u.email||''}</div></div><button onclick="window.viewGmUserDetail('${id}')" style="background:#ff00e5;padding:5px 10px;font-size:0.8rem;">상세보기</button></div>`; });
+        } else { c.innerHTML='<div style="color:#aaa;">유저가 없습니다.</div>'; }
+        document.getElementById('gm-user-modal').style.display='flex';
+    };
+
+    window.viewGmUserDetail = async (uid) => {
+        if(!isAdmin) return; const s=await get(child(ref(db),`users/${uid}`)); if(!s.exists()) return; const u=s.val();
+        const c=document.getElementById('gm-user-list-container'); const d=document.getElementById('gm-user-detail-container'); c.style.display='none'; d.style.display='block'; document.getElementById('gm-user-modal-title').textContent=`${u.name}님의 정보`;
+        let it=`💰 골드:${u.money||0} | 🛡️방어약:${u.potions||0} | 💊강화제:${u.atkPotions||0} | ✨부적:${u.scrolls||0} | 🌟경험치:${u.exp||0} | 🏆승리권:${u.win||0} | ⏫진화권:${u.upg||0} | 🪤AI포획:${u.cap||0} | 👿유저포획:${u.userCap||0} | ✨SSS확률:${u.rateUp||0}`;
+        let ch='<div class="grid">'; let dk=u.deck||[]; dk.sort((a,b)=>gradeOrder.indexOf(b.grade)-gradeOrder.indexOf(a.grade)).forEach(cd=>{ch+=createCardHTML(cd);}); ch+='</div>';
+        d.innerHTML=`<button onclick="document.getElementById('gm-user-list-container').style.display='block';document.getElementById('gm-user-detail-container').style.display='none';document.getElementById('gm-user-modal-title').textContent='유저 목록';" style="background:#555;margin-bottom:10px;padding:5px 10px;font-size:0.8rem;">⬅️ 뒤로가기</button><div style="background:#222;padding:10px;border-radius:5px;margin-bottom:10px;color:#ffea00;font-size:0.8rem;line-height:1.5;">${it}</div><h4 style="color:#00f2ff;margin:0 0 10px 0;">보유 카드 (${dk.length}장)</h4>${ch}`;
     };
 
     function populateGmCardSelect(){ const sel=document.getElementById('gm-mail-card-id'); cardDatabase.forEach(c=>{ sel.innerHTML+=`<option value="${c.templateId}">[${c.templateId}] ${c.name}</option>`; }); }
@@ -519,13 +514,13 @@
         let pool=[]; if(fGr==='SSS') pool=cardDatabase.filter(c=>(c.templateId>=2&&c.templateId<=10)||c.templateId>=11); else if(fGr==='S') pool=cardDatabase.filter(c=>c.templateId===1||c.templateId>=11); else pool=cardDatabase.filter(c=>c.templateId>=11);
         const rCard=pool[Math.floor(Math.random()*pool.length)];
         if(fGr==='SSS'&&myCards.some(c=>c.templateId===rCard.templateId&&c.grade==='SSS')){ money+=grades['SSS'].sellPrice; alert(`🎉 SSS 중복! 800G 환전!`); } 
-        else{ grantCardByTemplate(rCard.templateId, fGr); document.getElementById('gacha-result-container').innerHTML=createCardHTML(myCards[myCards.length-1],true); document.getElementById('gacha-modal').style.display='flex'; if(fGr==='SSS') sendSystemMessage(`🎉 [${currentUser.displayName}]님이 [SSS] ${rCard.name} 획득!`); }
+        else{ grantCardByTemplate(rCard.templateId, fGr); document.getElementById('gacha-result-container').innerHTML=createCardHTML(myCards[myCards.length-1],true); document.getElementById('gacha-modal').style.display='flex'; if(fGr==='SSS') sendSystemMessage(`🎉 [${currentUser.displayName}]님이 상점에서 [SSS] ${rCard.name} 획득!`); }
         updateUI(); renderMyCards(); saveUserData();
     };
 
     window.buyItem = (type, cost) => { if(money<cost) return alert("골드 부족!"); if(!confirm(`구매하시겠습니까?`)) return; money-=cost; if(type==='shield') potions++; else if(type==='attack') atkPotions++; else if(type==='scroll') fusionScrolls++; else if(type==='capture') capTickets++; else if(type==='rateup') rateUpTickets++; updateUI(); saveUserData(); };
     window.bulkSell = (grade) => {
-        if(!confirm(`보호 상태가 아닌 모든 ${grade}등급 카드를 판매합니까?`)) return;
+        if(!confirm(`보호 상태가 아닌 모든 ${grade}등급 카드를 일괄 판매하시겠습니까?`)) return;
         let sCnt=0, ern=0, keep=[];
         for(let c of myCards){
             if(c.grade===grade&&!c.isLocked){ let isEq=fusionCards.some(fc=>fc?.instanceId===c.instanceId)||aiAttackDeck.some(ac=>ac?.instanceId===c.instanceId)||pvpAttackDeck.some(pc=>pc?.instanceId===c.instanceId)||exploreCards.some(ec=>ec?.instanceId===c.instanceId)||defenseDeck.some(dc=>dc?.instanceId===c.instanceId)||plunderAttackDeck.some(plc=>plc?.instanceId===c.instanceId); if(!isEq){ sCnt++; ern+=grades[grade].sellPrice; continue; } }
@@ -544,13 +539,13 @@
         const grid=document.getElementById('selector-grid'); grid.innerHTML=''; let sCards=[...myCards].sort((a,b)=>gradeOrder.indexOf(b.grade)-gradeOrder.indexOf(a.grade));
         if(sCards.length===0){ grid.innerHTML='<div style="color:#aaa;">카드가 없습니다.</div>'; } 
         else{
-            sCards.forEach(c => {
-                const el=document.createElement('div'); el.innerHTML=createCardHTML(c);
-                let isEq=fusionCards.some(x=>x?.instanceId===c.instanceId)||aiAttackDeck.some(x=>x?.instanceId===c.instanceId)||pvpAttackDeck.some(x=>x?.instanceId===c.instanceId)||exploreCards.some(x=>x?.instanceId===c.instanceId)||defenseDeck.some(x=>x?.instanceId===c.instanceId)||plunderAttackDeck.some(x=>x?.instanceId===c.instanceId);
+            sCards.forEach(card => {
+                const el=document.createElement('div'); el.innerHTML=createCardHTML(card);
+                let isEq=fusionCards.some(c=>c?.instanceId===card.instanceId)||aiAttackDeck.some(c=>c?.instanceId===card.instanceId)||pvpAttackDeck.some(c=>c?.instanceId===card.instanceId)||exploreCards.some(c=>c?.instanceId===card.instanceId)||defenseDeck.some(c=>c?.instanceId===card.instanceId)||plunderAttackDeck.some(c=>c?.instanceId===card.instanceId);
                 let isInv=false, rsn="";
-                if(isEq){ isInv=true; rsn="장착중"; } else if(mode==='fusion'&&(c.isLocked||c.grade==='SSS')){ isInv=true; rsn=c.isLocked?"보호됨":"합성불가"; }
+                if(isEq){ isInv=true; rsn="장착중"; } else if(mode==='fusion'&&(card.isLocked||card.grade==='SSS')){ isInv=true; rsn=card.isLocked?"보호됨":"합성불가"; }
                 if(isInv){ el.style.opacity='0.3'; el.innerHTML+=`<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.8);padding:5px;border-radius:5px;color:#ff3366;font-weight:bold;z-index:10;">${rsn}</div>`; el.onclick=()=>alert("장착불가"); } 
-                else el.onclick=()=>finalizeSelection(c.instanceId); grid.appendChild(el);
+                else el.onclick=()=>finalizeSelection(card.instanceId); grid.appendChild(el);
             });
         }
         document.getElementById('card-select-modal').style.display='flex';
@@ -572,15 +567,10 @@
         document.getElementById('zoom-actions').innerHTML=`
             <div style="margin-bottom:5px;font-weight:bold;color:${stats.skill.isSpecial?'#ffea00':'#00f2ff'};font-size:0.85rem;border:1px solid #444;padding:5px;border-radius:5px;background:#000;">${stats.skill.name} : ${stats.skill.desc}</div>
             <div style="margin-bottom:10px;font-weight:bold;color:#ffea00;font-size:0.9rem;">EXP: ${c.exp||0} / ${(c.level||1)*100}</div>
-            <div style="display:flex;justify-content:center;gap:5px;margin-bottom:8px;">
-                <button onclick="window.enhanceCard('${c.instanceId}')" style="background:#ff9800;flex:1;font-size:0.85rem;">🔨강화(${enR}%)</button>
-                <button onclick="window.useAttackPotion('${c.instanceId}')" style="background:#ff3366;flex:1;font-size:0.85rem;">💊투여(${atkPotions})</button>
-            </div>
+            <div style="display:flex;justify-content:center;gap:5px;margin-bottom:8px;"><button onclick="window.enhanceCard('${c.instanceId}')" style="background:#ff9800;flex:1;font-size:0.85rem;">🔨강화(${enR}%)</button><button onclick="window.useAttackPotion('${c.instanceId}')" style="background:#ff3366;flex:1;font-size:0.85rem;">💊투여(${atkPotions})</button></div>
             ${exBtns?`<div style="display:flex;justify-content:center;gap:5px;margin-bottom:8px;">${exBtns}</div>`:''}
-            <div style="display:flex;justify-content:center;gap:5px;">
-                <button onclick="window.toggleLock('${c.instanceId}')" style="background:${lCol};flex:1;font-size:0.85rem;">${lTxt}</button>
-                <button onclick="window.sellCard('${c.instanceId}', ${prc})" style="background:#333;flex:1;font-size:0.85rem;">💰판매(+${prc})</button>
-            </div>`;
+            <div style="display:flex;justify-content:center;gap:5px;"><button onclick="window.toggleLock('${c.instanceId}')" style="background:${lCol};flex:1;font-size:0.85rem;">${lTxt}</button><button onclick="window.sellCard('${c.instanceId}', ${prc})" style="background:#333;flex:1;font-size:0.85rem;">💰판매(+${prc})</button></div>
+        `;
         document.getElementById('zoom-modal').style.display='flex';
     };
 
@@ -591,8 +581,8 @@
         if(Math.random()<r){ c.enhance++; alert(`✨ 강화 성공!`); } else alert(`💥 실패. (${r*100}%)`); 
         updateUI(); renderMyCards(); window.showZoomModal(c); saveUserData(); 
     };
-    window.useAttackPotion=(id)=>{ if(atkPotions<=0) return alert("약 부족!"); const c=myCards.find(x=>x.instanceId===id); atkPotions--; c.atkBuff=(c.atkBuff||0)+1; alert(`💉 버프!`); updateUI(); renderMyCards(); window.showZoomModal(c); saveUserData(); };
-    window.useSpecialItem=(id,t)=>{ const c=myCards.find(x=>x.instanceId===id); if(t==='exp'){ expTickets--; c.level++; c.exp=0; alert("🌟 렙업!"); } else if(t==='upg'){ upgItems--; c.grade=gradeOrder[gradeOrder.indexOf(c.grade)+1]; alert(`⏫ 진화!`); } updateUI(); renderMyCards(); window.showZoomModal(c); saveUserData(); };
+    window.useAttackPotion=(id)=>{ if(atkPotions<=0) return alert("약 부족!"); const c=myCards.find(x=>x.instanceId===id); atkPotions--; c.atkBuff=(c.atkBuff||0)+1; alert(`💉 공격력 상승!`); updateUI(); renderMyCards(); window.showZoomModal(c); saveUserData(); };
+    window.useSpecialItem=(id,t)=>{ const c=myCards.find(x=>x.instanceId===id); if(t==='exp'){ expTickets--; c.level++; c.exp=0; alert("🌟 렙업!"); } updateUI(); renderMyCards(); window.showZoomModal(c); saveUserData(); };
     window.sellCard=(id,p)=>{
         const c=myCards.find(x=>x.instanceId===id); if(c.isLocked) return alert("보호됨."); if(!confirm(`판매하시겠습니까?`)) return;
         myCards=myCards.filter(x=>x.instanceId!==id);
@@ -620,36 +610,33 @@
     };
 
     window.batchFusion=()=>{
-        if(!confirm("모두 합성? (+20% 보너스)")) return;
-        let df=true, fCt=0, sCt=0, sss=[];
+        if(!confirm("잠금 해제된 중복 자동 합성 (+20% 확률업)")) return;
+        let df=true, fCt=0, sCt=0, sssBorn=[];
         while(df){
-            df=false; let grps={};
-            for(let c of myCards){ if(c.grade==='SSS'||c.isLocked) continue; const k=c.templateId+'_'+c.grade; if(!grps[k])grps[k]=[]; grps[k].push(c); }
+            df=false; let grps={}; for(let c of myCards){ if(c.grade==='SSS'||c.isLocked) continue; const k=c.templateId+'_'+c.grade; if(!grps[k])grps[k]=[]; grps[k].push(c); }
             let rm=new Set(), nc=[];
             for(const k in grps){
                 const g=grps[k];
                 while(g.length>=2){
                     const c1=g.pop(), c2=g.pop(); rm.add(c1.instanceId); rm.add(c2.instanceId); df=true; fCt++;
-                    let bR=0.60; if(c1.grade==='S') bR=0.10; else if(c1.grade==='SS') bR=0.03; let fR=bR+0.20;
-                    if(Math.random()<fR){
+                    let bRate=0.60; if(c1.grade==='S') bRate=0.10; else if(c1.grade==='SS') bRate=0.03; let fRate=bRate+0.20;
+                    if(Math.random()<fRate){
                         sCt++; const nG=gradeOrder[gradeOrder.indexOf(c1.grade)+1];
                         if(nG==='SSS'&&(myCards.some(x=>!rm.has(x.instanceId)&&x.templateId===c1.templateId&&x.grade==='SSS')||nc.some(x=>x.templateId===c1.templateId&&x.grade==='SSS'))){ money+=800; continue; }
                         let st=getRandomStats(nG); if(c1.templateId<=10){ st.hp=Math.floor(st.hp*1.15); st.atk=Math.floor(st.atk*1.15); st.def=Math.floor(st.def*1.15); }
                         let rSk=c1.templateId<=10?specialSkills[c1.templateId]:normalSkills[Math.floor(Math.random()*normalSkills.length)];
                         nc.push({instanceId:Date.now()+Math.random(),templateId:c1.templateId,grade:nG,baseHp:st.hp,baseAtk:st.atk,baseDef:st.def,skillInfo:rSk,level:1,exp:0,enhance:0,atkBuff:0,isLocked:false});
-                        if(nG==='SSS') sss.push(1);
+                        if(nG==='SSS') sssBorn.push(1);
                     }
                 }
             }
             if(df) myCards=myCards.filter(c=>!rm.has(c.instanceId)).concat(nc);
         }
-        alert(`⚡ 일괄완료! 시도:${fCt} 성공:${sCt}`); if(sss.length>0) sendSystemMessage(`✨ [${currentUser.displayName}]님 SSS 대량 합성!`);
+        alert(`⚡ 일괄완료! 시도:${fCt} 성공:${sCt}`); if(sssBorn.length>0) sendSystemMessage(`✨ [${currentUser.displayName}]님 연쇄합성 SSS 탄생!`);
         updateUI(); renderMyCards(); saveUserData();
     };
 
     const delay = ms => new Promise(res=>setTimeout(res,ms));
-    
-    // 🔥 전투 로그 완벽 복구
     async function printLog(targetBgId, htmlText, color="#aaa", delayMs=300) {
         const createLine=(cId)=>{ const e=document.getElementById(cId); if(e){ e.innerHTML+=`<div style="color:${color};margin-bottom:4px;">${htmlText}</div>`; e.scrollTop=e.scrollHeight; } };
         createLine('live-battle-log'); createLine(targetBgId); if(delayMs>0) await delay(delayMs);
@@ -686,9 +673,9 @@
             if(mBl>0){ eDmg=0; mBl--; await printLog(logBgId, `[내 방어] 🛡️무적 (남은:${mBl})`, "#ffea00", 300); }
 
             if(eSk.type==='instant_kill'&&Math.random()<0.10&&eDmg>0){ mHp=0; await printLog(logBgId, `⚡적 즉사 발동!`, "#ffea00", 500); } 
-            else{ mHp-=eDmg; await printLog(logBgId, `${eTrig?`[${eSk.name}] `:''}나에게 <span style="color:#ff3366;">${eDmg}</span>피해! (HP:${Math.max(0,Math.floor(mHp))})`, "#ff3366", 400); if(mSk.type==='reflect'&&Math.random()<0.20&&eDmg>0){ eHp-=eDmg; await printLog(logBgId, `🔄가시갑옷 반사! (적HP:${Math.max(0,Math.floor(eHp))})`, "#ffea00", 300); } }
+            else{ mHp-=eDmg; await printLog(logBgId, `${eTrig?`[${eSk.name}] `:''}나에게 <span style="color:#ff3366;">${eDmg}</span>피해! (HP:${Math.max(0,Math.floor(mHp))})`, "#ff3366", 400); if(mSk.type==='reflect'&&Math.random()<0.20&&eDmg>0){ enHp-=eDmg; await printLog(logBgId, `🔄가시갑옷 반사! (적HP:${Math.max(0,Math.floor(enHp))})`, "#ffea00", 300); } }
 
-            if(eHp>0){ if(eSk.type==='true_vamp'){ eHp=Math.min(enS.hp, eHp+eDmg); await printLog(logBgId, `🩸적 흡혈귀왕`, "#26ff00", 200); } else if(eTrig&&eSk.type==='heal'){ eHp=Math.min(enS.hp, eHp+Math.floor(enS.hp*0.3)); await printLog(logBgId, `💚적 치유`, "#26ff00", 200); } else if(eTrig&&eSk.type==='vamp'){ eHp=Math.min(enS.hp, eHp+Math.floor(eDmg*0.5)); await printLog(logBgId, `🦇적 흡혈`, "#26ff00", 200); } }
+            if(enHp>0){ if(eSk.type==='true_vamp'){ eHp=Math.min(enS.hp, eHp+eDmg); await printLog(logBgId, `🩸적 흡혈귀왕`, "#26ff00", 200); } else if(eTrig&&eSk.type==='heal'){ eHp=Math.min(enS.hp, eHp+Math.floor(enS.hp*0.3)); await printLog(logBgId, `💚적 치유`, "#26ff00", 200); } else if(eTrig&&eSk.type==='vamp'){ eHp=Math.min(enS.hp, eHp+Math.floor(eDmg*0.5)); await printLog(logBgId, `🦇적 흡혈`, "#26ff00", 200); } }
             if(mHp>0&&eHp>0){ let dMsg=""; if(mSk.type==='curse'){ eHp-=Math.floor(enS.hp*0.1); dMsg+=`☠️저주(적) `; } if(eSk.type==='curse'){ mHp-=Math.floor(myS.hp*0.1); dMsg+=`☠️저주(나) `; } if(mSk.type==='regen'){ mHp=Math.min(myS.hp, mHp+Math.floor(myS.hp*0.15)); dMsg+=`💚자연 `; } if(eSk.type==='regen'){ eHp=Math.min(enS.hp, eHp+Math.floor(enS.hp*0.15)); dMsg+=`💚자연(적) `; } if(dMsg) await printLog(logBgId, dMsg, "#aaa", 300); }
             if(mHp<=0&&mRev>0){ mHp=Math.floor(myS.hp*0.5); mRev--; await printLog(logBgId, `👼불사조 부활!`, "#ffea00", 400); }
             if(eHp<=0&&eRev>0){ eHp=Math.floor(enS.hp*0.5); eRev--; await printLog(logBgId, `👼적 불사조 부활!`, "#ffea00", 400); }
@@ -704,13 +691,9 @@
         return [0,1].map(()=>{ let g='C'; if(Math.random()<0.04)g='SSS'; else g=gradeOrder[Math.max(0,mGr-(Math.random()>0.7?1:0))]||'C'; let p=cardDatabase.filter(c=>c.grade===g&&c.templateId>10); if(!p.length)p=cardDatabase.filter(c=>c.grade===g); let c=p[Math.floor(Math.random()*p.length)]; let s=getRandomStats(g); return {templateId:c.templateId,grade:g,level:bLv+Math.floor(Math.random()*2),enhance:Math.floor(w/10),baseHp:s.hp,baseAtk:s.atk,baseDef:s.def,skillInfo:c.skill}; });
     }
 
-    window.pendingBattleResult = null; 
     window.startAIPvP = async () => {
         if(aiAttackDeck.filter(c=>c).length<2) return alert("2명 셋팅 요망."); const cCap=document.getElementById('use-ai-cap'); if(cCap.checked&&capTickets<=0){ cCap.checked=false; return alert("포획권 없음."); }
-        document.getElementById('live-battle-modal').style.display='flex'; document.getElementById('live-battle-log').innerHTML=''; 
-        let aLog=document.getElementById('ai-pvp-log'); if(aLog) aLog.innerHTML=''; 
-        document.getElementById('live-battle-close').style.display='none';
-        
+        document.getElementById('live-battle-modal').style.display='flex'; document.getElementById('live-battle-log').innerHTML=''; document.getElementById('ai-pvp-log').innerHTML=''; document.getElementById('live-battle-close').style.display='none';
         const t=getAITeam(aiWins); let w=0; await printLog('ai-pvp-log', `⚔️ AI(${aiWins}승) 시작!`, "#ffea00", 600);
         for(let i=0;i<2;i++){ setSlotHTML(document.getElementById(`ai-def-slot${i+1}`), t[i]); let r=await runLiveSimulation(aiAttackDeck[i], t[i], 'ai-pvp-log', i+1); if(r) w++; await delay(500); }
         await printLog('ai-pvp-log', '--- 종료 ---', "#fff", 0); window.pendingBattleResult={type:'ai', wins:w, aiTeam:t, useCap:cCap.checked}; document.getElementById('live-battle-close').style.display='block';
@@ -734,18 +717,9 @@
     window.startArenaPvP = async () => {
         if(pvpAttackDeck.filter(c=>c).length<3) return alert("3명 셋팅 요망."); if(currentDefender&&currentDefender.defenderUid===currentUser.uid) return alert("본인 공격 불가.");
         const cw=document.getElementById('use-win-ticket-arena'), cc=document.getElementById('use-user-capture-arena'); if(cw.checked&&winTickets<=0){ cw.checked=false; return alert("승리권 없음."); } if(cc.checked&&userCapTickets<=0){ cc.checked=false; return alert("포획권 없음."); }
-        
-        document.getElementById('live-battle-modal').style.display='flex'; document.getElementById('live-battle-log').innerHTML=''; 
-        let pLog=document.getElementById('pvp-log'); if(pLog) pLog.innerHTML=''; 
-        document.getElementById('live-battle-close').style.display='none';
-        
+        document.getElementById('live-battle-modal').style.display='flex'; document.getElementById('live-battle-log').innerHTML=''; document.getElementById('pvp-log').innerHTML=''; document.getElementById('live-battle-close').style.display='none';
         await printLog('pvp-log', '⚔️ 아레나 시작!', "#ffea00", 600); let w=0;
-        for(let i=0;i<3;i++){ 
-            let enC = currentDefender.deck[i]; setSlotHTML(document.getElementById(`def-slot${i+1}`), enC, '?'); 
-            if(!enC) { w++; await printLog('pvp-log', `[R${i+1}] 방어 없음! 자동 승리!`, "#26ff00", 500); continue; }
-            if(cw.checked){ w++; await printLog('pvp-log', `[R${i+1}] 🏆 자동 승리!`, "#26ff00", 800); continue; } 
-            let r=await runLiveSimulation(pvpAttackDeck[i], enC, 'pvp-log', i+1); if(r) w++; await delay(500); 
-        }
+        for(let i=0;i<3;i++){ let enC = currentDefender.deck[i]; setSlotHTML(document.getElementById(`def-slot${i+1}`), enC, '?'); if(!enC) { w++; await printLog('pvp-log', `[R${i+1}] 방어 없음! 자동 승리!`, "#26ff00", 500); continue; } if(cw.checked){ w++; await printLog('pvp-log', `[R${i+1}] 🏆 자동 승리!`, "#26ff00", 800); continue; } let r=await runLiveSimulation(pvpAttackDeck[i], enC, 'pvp-log', i+1); if(r) w++; await delay(500); }
         await printLog('pvp-log', '--- 종료 ---', "#fff", 0); window.pendingBattleResult={type:'arena', wins:w, useWin:cw.checked, useCap:cc.checked}; document.getElementById('live-battle-close').style.display='block';
     };
 
@@ -755,25 +729,15 @@
             const sn=await get(child(ref(db), `users/${id}/defDeck`)); const dD=sn.val()||[null,null,null]; pvpTargetUser.defDeck=dD;
             for(let i=0;i<3;i++){ if(dD[i]){ document.getElementById(`enemy-def-slot${i+1}`).innerHTML=`<div style="font-size:2.5rem;display:flex;height:100%;align-items:center;justify-content:center;">${attrIcon[getCardBaseInfo(dD[i].templateId).element]}</div>`; document.getElementById(`enemy-def-slot${i+1}`).style.borderStyle='solid'; } else{ document.getElementById(`enemy-def-slot${i+1}`).innerHTML='?'; document.getElementById(`enemy-def-slot${i+1}`).style.borderStyle='dashed'; } }
             document.getElementById('attack-setup-modal').style.display='flex';
-        }catch(e){ alert("정보오류"); }
+        }catch(e){ alert("상대 정보 로드 실패."); }
     };
 
     window.startPlunderPvP = async () => {
         if(plunderAttackDeck.filter(c=>c).length<3) return alert("3명 셋팅 요망.");
         const cw=document.getElementById('use-win-ticket-plunder'), cc=document.getElementById('use-user-capture-plunder'); if(cw.checked&&winTickets<=0){ cw.checked=false; return alert("승리권 없음."); } if(cc.checked&&userCapTickets<=0){ cc.checked=false; return alert("포획권 없음."); }
-        
-        document.getElementById('attack-setup-modal').style.display='none'; 
-        document.getElementById('live-battle-modal').style.display='flex'; document.getElementById('live-battle-log').innerHTML=''; 
-        let pLog=document.getElementById('pvp-log'); if(pLog) pLog.innerHTML=''; 
-        document.getElementById('live-battle-close').style.display='none';
-        
+        document.getElementById('attack-setup-modal').style.display='none'; document.getElementById('live-battle-modal').style.display='flex'; document.getElementById('live-battle-log').innerHTML=''; document.getElementById('pvp-log').innerHTML=''; document.getElementById('live-battle-close').style.display='none';
         await printLog('pvp-log', `⚔️ [${pvpTargetUser.name}] 약탈!`, "#ffea00", 600); let w=0;
-        for(let i=0;i<3;i++){ 
-            let enC = pvpTargetUser.defDeck[i];
-            if(!enC){ w++; await printLog('pvp-log', `[R${i+1}] 방어없음 승리!`, "#26ff00", 500); continue; } 
-            if(cw.checked){ w++; await printLog('pvp-log', `[R${i+1}] 🏆 자동 승리!`, "#26ff00", 800); continue; } 
-            let r=await runLiveSimulation(plunderAttackDeck[i], enC, 'pvp-log', i+1); if(r) w++; await delay(500); 
-        }
+        for(let i=0;i<3;i++){ let enC = pvpTargetUser.defDeck[i]; if(!enC){ w++; await printLog('pvp-log', `[R${i+1}] 방어없음 승리!`, "#26ff00", 500); continue; } if(cw.checked){ w++; await printLog('pvp-log', `[R${i+1}] 🏆 자동 승리!`, "#26ff00", 800); continue; } let r=await runLiveSimulation(plunderAttackDeck[i], enC, 'pvp-log', i+1); if(r) w++; await delay(500); }
         await printLog('pvp-log', '--- 종료 ---', "#fff", 0); window.pendingBattleResult={type:'plunder', wins:w, useWin:cw.checked, useCap:cc.checked, target:pvpTargetUser}; document.getElementById('live-battle-close').style.display='block';
     };
 
@@ -784,7 +748,7 @@
                 aiWins++; aiWinStreak++; aiAttackDeck.forEach(c=>{c.exp=(c.exp||0)+30; if(c.exp>=(c.level||1)*100){c.level++;c.exp=0;}}); money+=200;
                 let cM=""; if(rs.useCap){ capTickets--; const t=rs.aiTeam[Math.floor(Math.random()*2)]; grantCardByTemplate(t.templateId, t.grade); cM=`\n🪤 포획 성공!`; }
                 let sM=`\n🔥 연승: ${aiWinStreak}/4`; if(aiWinStreak>=4){ exploreCount=0; aiWinStreak=0; sM=`\n🎉 4연승! 탐험 초기화!`; } 
-                alert(`🎉 승리! (200G)${cM}${sM}`);
+                alert(`🎉 AI 대전 승리! (200G)${cM}${sM}`);
             }else{ aiWinStreak=0; if(rs.useCap) capTickets--; if(potions>0){ potions--; alert("💀 패배 방어물약소모."); } else{ myCards=myCards.filter(c=>c.instanceId!==aiAttackDeck[Math.floor(Math.random()*2)].instanceId); alert("💀 패배 파괴됨!"); } }
             aiAttackDeck=[null,null]; setSlotHTML(document.getElementById(`ai-atk-slot1`),null,'선택'); setSlotHTML(document.getElementById(`ai-atk-slot2`),null,'선택'); document.getElementById('use-ai-cap').checked=false;
         } 
@@ -815,7 +779,7 @@
                         if(Math.random()<0.3){ const vs=['potions','atkPotions','scrolls','exp','win','upg','cap','rateUp'].filter(i=>d[i]>0); if(vs.length>0){ const si=vs[Math.floor(Math.random()*vs.length)]; d[si]--; if(si==='potions')potions++; else if(si==='atkPotions')atkPotions++; else if(si==='scrolls')fusionScrolls++; else if(si==='exp')expTickets++; else if(si==='win')winTickets++; else if(si==='upg')upgItems++; else if(si==='cap')capTickets++; else if(si==='rateUp')rateUpTickets++; sI="\n🎁 아이템 스틸!"; } }
                         if(rs.useCap||Math.random()<0.05){
                             if(rs.useCap) userCapTickets--; let sc=(d.deck||[]).filter(c=>!c.isLocked);
-                            if(sc.length>0){ const st=sc[Math.floor(Math.random()*sc.length)]; d.deck=d.deck.filter(c=>c.instanceId!==st.instanceId); if(d.defDeck)d.defDeck=d.defDeck.map(c=>(c&&c.instanceId===st.instanceId)?null:c); d.lostCardName=getCardBaseInfo(st.templateId).name; st.instanceId=Date.now()+Math.random().toString(); st.atkBuff=0; st.enhance=0; myCards.push(st); cM=`\n👿 탈취 성공!`; } else cM=`\n👿 방어됨. 카드 스틸 실패.`;
+                            if(sc.length>0){ const st=sc[Math.floor(Math.random()*sc.length)]; d.deck=d.deck.filter(c=>c.instanceId!==st.instanceId); if(d.defDeck)d.defDeck=d.defDeck.map(c=>(c&&c.instanceId===st.instanceId)?null:c); d.lostCardName=getCardBaseInfo(st.templateId).name; st.instanceId=Date.now()+Math.random().toString(); st.atkBuff=0; st.enhance=0; myCards.push(st); cM=`\n👿 상대의 [${d.lostCardName}] 탈취 성공!`; } else cM=`\n👿 방어됨. 카드 스틸 실패.`;
                         } else if(rs.useCap) userCapTickets--;
                         d.robbed=true; d.stolenMoney=(d.stolenMoney||0)+sG; d.robberName=currentUser.displayName; await set(ref(db, `users/${rs.target.uid}`), d);
                         alert(`🎉 약탈! (+${sG}G)${sI}${cM}`); sendSystemMessage(`🔥 [${currentUser.displayName}] 약탈 성공!`);
@@ -828,15 +792,15 @@
     };
 
     window.startExplore = () => {
-        if(exploreCount>=10) return alert(`탐험 횟수 고갈! AI 4연승 필요!`); if(exploreCards.filter(c=>c).length<3) return alert("3명 선택 요망.");
+        if(exploreCount>=10) return alert(`탐험 고갈! AI 4연승 필요!`); if(exploreCards.filter(c=>c).length<3) return alert("3명 셋팅 요망.");
         let lS=exploreCards.reduce((s,c)=>s+(grades[c.grade].exp),0); const b=document.getElementById('explore-btn'), r=document.getElementById('explore-result'); b.disabled=true; b.textContent="탐험 중..."; r.innerHTML=`수색 중...`;
         setTimeout(()=>{
             exploreCount++; b.disabled=false; b.textContent=`탐험 출발! (잔여: ${10-exploreCount}회)`;
             if(Math.random()<Math.max(0.02,0.25-(lS*0.01))){
-                const lC=exploreCards[Math.floor(Math.random()*3)]; if(potions>0){ potions--; alert(`🚨 물약 보호!`); } else{ myCards=myCards.filter(c=>c.instanceId!==lC.instanceId); r.innerHTML=`<span style="color:#ff3366;">🚨 대원 파괴됨</span>`; alert("🚨 기습으로 잃음."); }
+                const lC=exploreCards[Math.floor(Math.random()*3)]; if(potions>0){ potions--; alert(`🚨 물약 방어!`); } else{ myCards=myCards.filter(c=>c.instanceId!==lC.instanceId); r.innerHTML=`<span style="color:#ff3366;">🚨 대원 파괴됨</span>`; alert("🚨 기습으로 잃음."); }
             }else{
                 let gG=400+(lS*40)+Math.floor(Math.random()*100); money+=gG; let fI=[];
-                for(let j=0;j<(1+Math.floor(lS/5));j++){ if(Math.random()<0.7){ let dR=Math.random(); if(lS>=12&&dR<0.05){ userCapTickets++; fI.push("👿포획"); } else if(lS>=10&&dR<0.15){ rateUpTickets++; fI.push("✨확률권"); } else if(lS>=8&&dR<0.20){ upgItems++; fI.push("⏫등급업"); } else if(dR<0.40){ winTickets++; fI.push("🏆승리"); } else if(dR<0.60){ capTickets++; fI.push("🪤AI포획"); } else if(dR<0.80){ expTickets++; fI.push("🌟경험치"); } else{ fusionScrolls++; fI.push("✨부적"); } } }
+                for(let j=0;j<(1+Math.floor(lS/5));j++){ if(Math.random()<0.7){ let dR=Math.random(); if(lS>=12&&dR<0.05){ userCapTickets++; fI.push("👿포획"); } else if(lS>=10&&dR<0.15){ rateUpTickets++; fI.push("✨확률권"); } else if(lS>=8&&dR<0.20){ upgItems++; fI.push("⏫등급업"); } else if(dR<0.40){ winTickets++; fI.push("🏆승리"); } else if(dR<0.60){ capTickets++; fI.push("🪤AI포획"); } else if(dR<0.80){ expTickets++; fI.push("🌟경험"); } else{ fusionScrolls++; fI.push("✨부적"); } } }
                 exploreCards.forEach(c=>{c.exp=(c.exp||0)+40; if(c.exp>=(c.level||1)*100){c.level++;c.exp=0;}}); r.innerHTML=`<span style="color:#26ff00;">🎉 성공 (+${gG}G)</span><br>${fI.length>0?`[${fI.join(', ')}]`:""}`;
             }
             exploreCards=[null,null,null]; for(let i=1;i<=3;i++) setSlotHTML(document.getElementById(`explore-slot${i}`),null,`대원${i}`); updateUI(); renderMyCards(); saveUserData();

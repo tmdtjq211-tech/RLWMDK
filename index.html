@@ -3,162 +3,374 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>포토 카드 배틀 - V35 배포 안정화 에디션</title>
-    <link rel="stylesheet" href="./style.css">
+    <title>포토 카드 배틀 - V35 라이트 판타지 에디션</title>
+    
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-    <div id="login-overlay">
-        <h1 style="font-size: 2.2rem; color: #ff006e; font-style: italic; margin-bottom: 10px;">초강력 멀티 배틀</h1>
-        <p style="color:#aaa; font-size:0.9rem; margin-bottom:30px;">V35: 배포 최적화 & 완벽 생태계!</p>
-        <button class="google-btn" onclick="window.loginWithGoogle()">🌐 Google 계정 연동</button>
-        <button class="guest-btn" onclick="window.loginAsGuest()">📱 기기 연동 (게스트 시작)</button>
+<div id="login-overlay" style="background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);">
+    <div style="text-align: center; margin-bottom: 40px; animation: fadeIn 1s;">
+        <h1 style="font-size: 2.8rem; color: #fff; font-weight: 900; margin-bottom: 5px; text-shadow: 0 4px 15px rgba(0,0,0,0.1);">CARD BATTLE</h1>
+        <p style="color:#fff; font-size:1.1rem; font-weight:700; opacity: 0.9; margin-top:0;">V35 LIGHT EDITION</p>
+    </div>
+    <button class="btn-primary" onclick="window.loginWithGoogle()" style="width: 80%; max-width: 320px; padding: 18px; font-size: 1.1rem; border-radius: 30px; margin-bottom: 15px; background: #fff; color: #4285F4; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">🌐 Google 계정으로 시작</button>
+    <button class="btn-dark" onclick="window.loginAsGuest()" style="width: 80%; max-width: 320px; padding: 18px; font-size: 1.1rem; border-radius: 30px; background: rgba(0,0,0,0.2); backdrop-filter: blur(5px);">📱 게스트로 바로 시작</button>
+</div>
+
+<div id="notification-banner" onclick="window.clearNotification()"></div>
+
+<header id="main-header">
+    <div class="header-top">
+        <div style="color:var(--text-main);">👑 <span id="player-name" style="color:var(--primary-color);">유저</span>님의 덱</div>
+        <button onclick="window.logout()" class="btn-light" style="padding:6px 12px; font-size:0.75rem; border-radius:20px;">로그아웃</button>
+    </div>
+    <div class="stats-bar">
+        <div class="money">💰 <span id="money">1000</span></div>
+        <div style="color:var(--ss); font-size: 0.95rem; font-weight:800;">🛡️ <span id="potion-count">0</span></div>
+        <div style="color:var(--accent-pink); font-size: 0.95rem; font-weight:800;">💊 <span id="atk-potion-count">0</span></div>
+        <div style="flex-grow: 1;"></div>
+        <button class="chat-btn btn-light" onclick="window.openChat()" style="color:var(--primary-color); padding: 8px 12px; font-size: 0.8rem;">💬 채팅</button>
+        <button class="mail-btn btn-light" onclick="window.openMailbox()" style="color:var(--accent-pink); padding: 8px 12px; font-size: 0.8rem; position: relative;">📬 우편 <span id="mail-badge" class="mail-badge">N</span></button>
+    </div>
+</header>
+
+<div class="tabs">
+    <div class="tab active" onclick="window.switchTab(0)">🛒 상점</div>
+    <div class="tab" onclick="window.switchTab(1)">🗂️ 덱</div>
+    <div class="tab" onclick="window.switchTab(2)">🧪 합성</div>
+    <div class="tab text-blue" onclick="window.switchTab(3)">🤖 AI</div>
+    <div class="tab text-pink" onclick="window.switchTab(4)">🔥 PvP</div>
+    <div class="tab text-purple" onclick="window.switchTab(5)">🗺️ 탐험</div>
+    <div class="tab text-gold" onclick="window.switchTab(6)">🏆 특수</div>
+    <div class="tab" id="tab-gm" onclick="window.switchTab(7)" style="display:none; color:var(--ssr); font-weight:900;">👑 GM</div>
+</div>
+
+<div id="section-0" class="section active">
+    <div class="panel" style="border: 2px solid #ecc94b; background: #fffff8;">
+        <h2 class="text-gold">🎁 영웅 소환 (51종)</h2>
+        <div style="background:#fff; padding:15px; border-radius:15px; margin-bottom:15px; border:1px solid #f6e05e; box-shadow: 0 4px 6px rgba(236,201,75,0.1);">
+            <label style="color:#b7791f; font-weight:800; display:block; margin-bottom:10px; font-size:0.95rem;">✨ SSS 확률강화 (보유: <span id="rateup-cnt">0</span>장)</label>
+            <div style="display:flex; justify-content:center; align-items:center; gap:10px;">
+                <button onclick="window.adjustRateUp(-1)" class="btn-light" style="padding:8px 15px; border-radius:10px;">-</button>
+                <input type="number" id="use-rate-up" min="0" value="0" readonly style="width:60px; text-align:center; font-size:1.2rem; font-weight:bold; background:#fefcbf; border-color:#f6e05e; color:#744210;">
+                <button onclick="window.adjustRateUp(1)" class="btn-light" style="padding:8px 15px; border-radius:10px;">+</button>
+            </div>
+            <div style="color:var(--a); margin-top:10px; font-size:0.85rem; font-weight:bold;">(SSS 확률 +<span id="rateup-pct">0</span>%)</div>
+        </div>
+        <div style="display:flex; gap:10px;">
+            <button onclick="window.pullGacha(1)" class="btn-light" style="flex:1; padding:15px;">1회 소환<br><span style="color:var(--text-muted); font-size:0.8rem; font-weight:normal;">100G</span></button>
+            <button onclick="window.pullGacha(10)" class="btn-gold" style="flex:2; padding:15px; font-size:1.1rem;">✨ 10회 연속 소환<br><span style="font-size:0.85rem; font-weight:normal;">1000G</span></button>
+        </div>
     </div>
 
-    <div id="notification-banner" onclick="window.clearNotification()"></div>
-
-    <header id="main-header">
-        <div style="font-weight: bold; font-size: 1rem; width: 100%; display:flex; justify-content:space-between; align-items:center; margin-bottom: 5px;">
-            <div>👑 <span id="player-name">유저</span>님의 덱</div>
-            <button onclick="window.logout()" style="background:#555; padding:5px 10px; font-size:0.75rem;">로그아웃</button>
+    <div class="panel">
+        <h3 class="text-blue" style="margin-bottom: 15px;">🛒 아이템 상점</h3>
+        <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 10px;">
+            <button onclick="window.buyItem('shield', 200)" class="btn-primary" style="flex: 1 1 30%;">🛡️ 방어약(200)</button>
+            <button onclick="window.buyItem('attack', 300)" class="btn-pink" style="flex: 1 1 30%;">💊 강화제(300)</button>
+            <button onclick="window.buyItem('scroll', 300)" style="background:#ed8936; color:#fff; flex: 1 1 30%;">✨ 부적(300)</button>
+            <button onclick="window.buyItem('capture', 4000)" class="btn-purple" style="flex: 1 1 45%;">🪤 AI포획(4k)</button>
+            <button onclick="window.buyItem('skip', 1500)" class="btn-light" style="flex: 1 1 45%;">⏩ 스킵권(1.5k)</button>
+            <button onclick="window.buyItem('rateup', 1000)" class="btn-gold" style="flex: 1 1 100%;">✨ SSS 확률강화권 구매 (1000G)</button>
         </div>
-        <div class="stats-bar" style="width: 100%;">
-            <div class="money">💰 <span id="money">1000</span></div>
-            <div style="color:#00f2ff; font-size: 0.85rem;">🛡️<span id="potion-count">0</span></div>
-            <div style="color:#ff3366; font-size: 0.85rem;">💊<span id="atk-potion-count">0</span></div>
-            <button class="chat-btn" onclick="window.openChat()" style="background:#004d40; border-color:#009688;">💬 채팅</button>
-            <button class="mail-btn" onclick="window.openMailbox()">📬 우편 <span id="mail-badge" class="mail-badge">N</span></button>
-        </div>
-    </header>
-
-    <div class="tabs">
-        <div class="tab active" onclick="window.switchTab(0)">상점</div>
-        <div class="tab" onclick="window.switchTab(1)">컬렉션</div>
-        <div class="tab" onclick="window.switchTab(2)">합성</div>
-        <div class="tab" onclick="window.switchTab(3)" style="color:#00f2ff;">🤖AI</div>
-        <div class="tab" onclick="window.switchTab(4)" style="color:#ff006e;">🔥PvP</div>
-        <div class="tab" onclick="window.switchTab(5)" style="color:#8338ec;">탐험</div>
-        <div class="tab" onclick="window.switchTab(6)" style="color:#ffea00;">🏆특수</div>
-        <div class="tab" id="tab-gm" onclick="window.switchTab(7)" style="display:none; background:#ff00e5; color:white; font-weight:900;">👑GM</div>
     </div>
+</div>
 
-    <div id="section-0" class="section active">
-        <div class="gacha-box" style="border-color: #ffea00;">
-            <h2 style="font-size: 1.2rem; margin-top:0;">🎁 영웅 뽑기 (51종)</h2>
-            <div style="background:#000; padding:10px; border-radius:8px; margin-bottom:12px; border:1px solid #333;">
-                <label style="color:#ffea00; font-weight:bold; display:block; margin-bottom:5px; font-size:0.85rem;">✨ SSS 확률강화권 (보유: <span id="rateup-cnt">0</span>장)</label>
-                <div style="display:flex; justify-content:center; align-items:center; gap:10px;">
-                    <button onclick="window.adjustRateUp(-1)" style="background:#333; padding:5px 12px;">-</button>
-                    <input type="number" id="use-rate-up" min="0" value="0" readonly style="width:40px; text-align:center; background:#000; color:#fff; border:1px solid #555; padding:6px; font-size:1rem; border-radius:4px;">
-                    <button onclick="window.adjustRateUp(1)" style="background:#333; padding:5px 12px;">+</button>
+<div id="section-1" class="section">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:#fff; padding:15px; border-radius:16px; border:1px solid var(--panel-border); box-shadow:0 2px 10px rgba(0,0,0,0.02);">
+        <h2 style="margin:0; font-size:1.2rem;">🗂️ 내 덱 (<span id="card-count" class="text-gold">0</span>장)</h2>
+        <button id="sell-mode-btn" onclick="window.toggleSellMode()" class="btn-light" style="padding:8px 15px; font-size:0.85rem; border-radius:20px;">선택 판매: OFF</button>
+    </div>
+    
+    <div id="sell-actions" style="display:none; background:#fff5f5; border: 1px solid #fc8181; padding:15px; border-radius:16px; margin-bottom:15px; align-items:center; justify-content:space-between;">
+        <span style="font-size:0.95rem; font-weight:bold; color:#c53030;">선택된 카드: <span id="sel-sell-cnt">0</span>장</span>
+        <button onclick="window.execSelectSell()" class="btn-pink" style="padding:10px 20px; border-radius:10px;">판매 실행</button>
+    </div>
+    
+    <div style="display:flex; justify-content:center; gap:8px; margin-bottom:15px;">
+        <button onclick="window.bulkSell('C')" class="btn-light" style="flex:1; font-size:0.8rem;">C 일괄판매</button>
+        <button onclick="window.bulkSell('B')" style="background:#ed8936; color:#fff; flex:1; font-size:0.8rem;">B 일괄판매</button>
+        <button onclick="window.bulkSell('A')" style="background:#48bb78; color:#fff; flex:1; font-size:0.8rem;">A 일괄판매</button>
+    </div>
+    <div class="grid" id="my-deck-grid"></div>
+</div>
+
+<div id="section-2" class="section">
+    <div class="panel">
+        <h2 class="text-purple">🧪 카드 융합소</h2>
+        <p style="font-size:0.85rem; color:var(--ssr); font-weight:bold; margin-bottom:20px;">⚠️ 상위 등급 도전! (SSS 1%, SSR 0.5%)</p>
+        
+        <div style="display:flex; justify-content:center; gap:15px; align-items:center; margin: 25px 0;">
+            <div id="fusion-slot1" class="pvp-slot" style="width:40%; max-width:120px;" onclick="window.openCardSelector('fusion', 1)"><div class="slot-add-icon">+</div>재료 1</div>
+            <div style="font-size: 2.5rem; font-weight: 900; color:#cbd5e1;">+</div>
+            <div id="fusion-slot2" class="pvp-slot" style="width:40%; max-width:120px;" onclick="window.openCardSelector('fusion', 2)"><div class="slot-add-icon">+</div>재료 2</div>
+        </div>
+        
+        <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom:10px;">
+            <button onclick="window.executeFusion(false)" class="btn-light" style="flex: 1; padding:15px;">일반 융합</button>
+            <button onclick="window.executeFusion(true)" style="background:#ed8936; color:#fff; flex: 1; padding:15px;">✨ 부적 융합 (+25%)</button>
+        </div>
+    </div>
+    
+    <div class="panel" style="border: 2px solid #48bb78; background: #f0fff4;">
+        <h3 style="color: #2f855a; margin-bottom: 15px;">⚡ 시스템 자동 융합</h3>
+        <button onclick="window.batchFusion()" style="background:#38a169; color:white; width: 100%; padding:15px; font-size:1.05rem; box-shadow:0 4px 10px rgba(56,161,105,0.3);">전체 연쇄 합성 시작 (확률 +20%)</button>
+    </div>
+</div>
+
+<div id="section-3" class="section">
+    <div class="panel">
+        <h2 class="text-blue">🤖 AI 시뮬레이터 (<span id="ai-win-ui">0</span>승)</h2>
+        <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:15px;">🔥 현재 연승: <span id="ai-streak-ui" class="text-gold" style="font-size:1.1rem; font-weight:900;">0</span> / 4</p>
+        
+        <div class="item-toggle-container">
+            <label class="item-toggle" style="border-color:var(--primary-color);"><input type="checkbox" id="use-ai-cap"> 🪤 AI 포획 모듈 (<span id="ai-cap-cnt" class="text-blue">0</span>)</label>
+        </div>
+        
+        <div class="vs-board">
+            <div style="width: 100%;">
+                <div style="font-size:0.85rem; color:var(--text-main); margin-bottom:8px; font-weight:bold;">내 전투 덱</div>
+                <div class="pvp-deck">
+                    <div id="ai-atk-slot1" class="pvp-slot" onclick="window.openCardSelector('ai', 1)"><div class="slot-add-icon">+</div>선택 1</div>
+                    <div id="ai-atk-slot2" class="pvp-slot" onclick="window.openCardSelector('ai', 2)"><div class="slot-add-icon">+</div>선택 2</div>
                 </div>
-                <div style="color:#26ff00; margin-top:5px; font-size:0.8rem; font-weight:bold;">(SSS 확률 +<span id="rateup-pct">0</span>%)</div>
             </div>
-            <div style="display:flex; gap:10px;">
-                <button onclick="window.pullGacha(1)" style="flex:1; padding:12px; background:#444;">1회 뽑기<br>(100G)</button>
-                <button onclick="window.pullGacha(10)" style="flex:2; padding:12px; background:#ffea00; color:#000; font-size:1.1rem;">✨ 10회 연속 뽑기<br>(1000G)</button>
+            
+            <div style="font-size: 1.5rem; color:#cbd5e1; font-weight:900; margin: 15px 0;">VS</div>
+            
+            <div style="width: 100%;">
+                <div style="font-size:0.85rem; color:var(--primary-color); margin-bottom:8px; font-weight:bold;">적대적 AI</div>
+                <div class="pvp-deck">
+                    <div id="ai-def-slot1" class="pvp-slot" style="background:#ebf8ff; border-color:#90cdf4;">?</div>
+                    <div id="ai-def-slot2" class="pvp-slot" style="background:#ebf8ff; border-color:#90cdf4;">?</div>
+                </div>
             </div>
         </div>
-        <div class="gacha-box" style="border-color: #00f2ff; display: flex; justify-content: center; flex-wrap: wrap; gap: 8px;">
-            <button onclick="window.buyItem('shield', 200)" style="background: #00f2ff; color: #000; flex: 1 1 30%; font-size:0.8rem;">🛡️방어약(200)</button>
-            <button onclick="window.buyItem('attack', 300)" style="background: #ff3366; flex: 1 1 30%; font-size:0.8rem;">💊강화제(300)</button>
-            <button onclick="window.buyItem('scroll', 300)" style="background: #ff9800; flex: 1 1 30%; font-size:0.8rem;">✨부적(300)</button>
-            <button onclick="window.buyItem('capture', 4000)" style="background: #ff00e5; flex: 1 1 45%; font-size:0.8rem;">🪤AI포획(4k)</button>
-            <button onclick="window.buyItem('skip', 1500)" style="background: #fff; color:#000; flex: 1 1 45%; font-size:0.8rem;">⏩스킵권(1.5k)</button>
-            <button onclick="window.buyItem('rateup', 1000)" style="background: #ffea00; color:#000; flex: 1 1 100%; font-size:0.85rem;">✨ SSS 확률강화권 구매 (1000G)</button>
-        </div>
+        <button onclick="window.startAIPvP()" class="btn-primary" style="width: 100%; padding: 15px; margin-top:20px; font-size:1.1rem;">전투 시뮬레이션 가동</button>
     </div>
+</div>
 
-    <div id="section-1" class="section">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <h2 style="font-size: 1.1rem; margin:0;">🗂️ 내 덱 (<span id="card-count">0</span>장)</h2>
-            <button id="sell-mode-btn" onclick="window.toggleSellMode()" style="background:#444; padding:6px 10px; font-size:0.8rem;">선택 판매: OFF</button>
+<div id="section-4" class="section">
+    <div class="panel" style="background:#fffff8; border-color:#f6e05e;">
+        <h3 class="text-gold" style="font-size:1.2rem;">👑 아레나 챔피언 도전</h3>
+        <div class="item-toggle-container" style="margin-top:15px;">
+            <label class="item-toggle"><input type="checkbox" id="use-win-ticket-arena"> 🏆 강제 승리 (<span id="win-t-cnt-arena">0</span>)</label>
+            <label class="item-toggle"><input type="checkbox" id="use-user-capture-arena"> 👿 영웅 포획 (<span id="user-cap-cnt-arena">0</span>)</label>
         </div>
-        <div id="sell-actions" style="display:none; background:#ff3366; padding:10px; border-radius:8px; margin-bottom:10px;">
-            <span style="font-size:0.8rem; font-weight:bold;">선택: <span id="sel-sell-cnt">0</span>장</span>
-            <button onclick="window.execSelectSell()" style="background:#000; color:#ff3366; margin-left:10px; padding:5px 15px;">선택 팔기</button>
-        </div>
-        <div style="display:flex; justify-content:center; gap:5px; margin-bottom:10px;">
-            <button onclick="window.bulkSell('C')" style="background:#555; padding:8px; font-size:0.8rem; flex:1;">C 일괄판매</button>
-            <button onclick="window.bulkSell('B')" style="background:#ff9800; padding:8px; font-size:0.8rem; flex:1;">B 일괄판매</button>
-            <button onclick="window.bulkSell('A')" style="background:#26ff00; padding:8px; font-size:0.8rem; color:#000; flex:1;">A 일괄판매</button>
-        </div>
-        <div class="grid" id="my-deck-grid"></div>
-    </div>
-
-    <div id="section-2" class="section">
-        <h2 style="font-size: 1.1rem; margin-top:0;">🧪 카드 합성소</h2>
-        <div style="display:flex; justify-content:center; gap:8px; align-items:center; margin: 15px 0;">
-            <div id="fusion-slot1" class="pvp-slot" onclick="window.openCardSelector('fusion', 1)"><div class="slot-add-icon">+</div>재료1</div>
-            <div style="font-size: 1.5rem; font-weight: bold; color:#555;">+</div>
-            <div id="fusion-slot2" class="pvp-slot" onclick="window.openCardSelector('fusion', 2)"><div class="slot-add-icon">+</div>재료2</div>
-        </div>
-        <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom:15px;">
-            <button onclick="window.executeFusion(false)" style="background:#555; flex: 1;">수동 합성</button>
-            <button onclick="window.executeFusion(true)" style="background:#ff9800; flex: 1;">✨ 부적 합성(+25%)</button>
-        </div>
-        <button onclick="window.batchFusion()" style="background:#4CAF50; width: 100%;">⚡ 일괄 자동 합성 시작 (+20% 확률업)</button>
-    </div>
-
-    <div id="section-3" class="section"> </div>
-    <div id="section-4" class="section"> </div>
-    <div id="section-5" class="section"> </div>
-    <div id="section-6" class="section"> </div>
-
-    <div id="section-7" class="section">
-        <h2 style="font-size: 1.5rem; margin-top:0; color:#ff00e5;">🛠️ 개발자(GM) 콘솔</h2>
-        <button onclick="window.openGmUserList()" style="background:#009688; width: 100%; padding:12px; margin-bottom:10px;">전체 유저 DB & 접속 확인 🔍</button>
-        <button onclick="window.applyGmBuff()" style="background:#ffea00; color:#000; width:100%; padding:15px; font-size:1.1rem;">⚡ GM 무한 버프 (100만 골드)</button>
-    </div>
-
-    <div id="zoom-modal" class="modal-overlay" onclick="window.closeModal('zoom-modal')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div id="zoom-container"></div>
-            <div id="zoom-actions"></div>
-            <button onclick="window.closeModal('zoom-modal')" style="background:#555; width:100%; margin-top:15px;">닫기</button>
-        </div>
-    </div>
-
-    <div id="card-select-modal" class="modal-overlay" onclick="window.closeModal('card-select-modal')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <h3 id="card-select-title" style="margin-top:0;">장착할 카드 선택</h3>
-            <div id="selector-grid" class="grid"></div>
-            <button onclick="window.closeModal('card-select-modal')" style="background:#555; width:100%; margin-top:15px;">취소</button>
-        </div>
-    </div>
-
-    <div id="global-chat-modal" class="modal-overlay" onclick="window.closeModal('global-chat-modal')">
-        <div class="modal-content" style="max-width:450px;" onclick="event.stopPropagation()">
-            <h3 style="margin:0 0 10px 0; color:#00f2ff;">💬 채팅방</h3>
-            <div id="chat-container"></div>
-            <div style="display:flex; gap:5px;"><input type="text" id="chat-input" placeholder="메시지..."><button onclick="window.sendChat()">전송</button></div>
-        </div>
-    </div>
-
-    <div id="live-battle-modal" class="modal-overlay">
-        <div class="modal-content" style="border:2px solid #ff006e;">
-            <h2 style="margin-top:0; color:#ff006e;">⚔️ 전투 중계</h2>
-            <div id="live-battle-log"></div>
-            <button id="live-battle-close" style="width:100%; display:none;" onclick="window.closeLiveBattle()">결과 확인</button>
-        </div>
-    </div>
-
-    <div id="gacha-modal" class="modal-overlay" onclick="window.closeModal('gacha-modal')">
-        <h2 style="color:#fff;">🎉 획득! 🎉</h2>
-        <div id="gacha-result-container"></div>
-        <button onclick="window.closeModal('gacha-modal')" style="margin-top:15px;">닫기</button>
-    </div>
-
-    <div id="mailbox-modal" class="modal-overlay" onclick="window.closeModal('mailbox-modal')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <h3 style="margin:0;">📬 우편함</h3>
-                <button onclick="window.claimAllMails()" style="background:#ffea00; color:#000; font-size:0.8rem;">모두수령</button>
+        
+        <div class="vs-board" style="background:#fff;">
+            <div style="width: 100%;">
+                <div class="pvp-deck">
+                    <div id="atk-slot1" class="pvp-slot" onclick="window.openCardSelector('pvp', 1)"><div class="slot-add-icon">+</div>공격 1</div>
+                    <div id="atk-slot2" class="pvp-slot" onclick="window.openCardSelector('pvp', 2)"><div class="slot-add-icon">+</div>공격 2</div>
+                    <div id="atk-slot3" class="pvp-slot" onclick="window.openCardSelector('pvp', 3)"><div class="slot-add-icon">+</div>공격 3</div>
+                </div>
             </div>
-            <div id="mail-list-container"></div>
+            <div style="font-size: 1.5rem; color:#f6e05e; font-weight:900; margin: 15px 0;">VS</div>
+            <div style="width: 100%;">
+                <div style="color:#b7791f; font-size: 0.95rem; margin-bottom:8px; font-weight:bold;" id="defender-name-ui">챔피언 탐색 중...</div>
+                <div class="pvp-deck">
+                    <div id="def-slot1" class="pvp-slot" style="background:#fffff8; border-color:#f6e05e;">?</div>
+                    <div id="def-slot2" class="pvp-slot" style="background:#fffff8; border-color:#f6e05e;">?</div>
+                    <div id="def-slot3" class="pvp-slot" style="background:#fffff8; border-color:#f6e05e;">?</div>
+                </div>
+            </div>
+        </div>
+        <button onclick="window.startArenaPvP()" class="btn-gold" style="width: 100%; padding: 15px; margin-top:15px; font-size:1.1rem;">아레나 입장</button>
+    </div>
+
+    <div class="panel">
+        <h3 class="text-blue">🛡️ 베이스캠프 방어 덱</h3>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:15px;">설정하지 않으면 무방비 상태가 됩니다.</p>
+        <div class="pvp-deck">
+            <div id="def-setup-slot1" class="pvp-slot" onclick="window.openCardSelector('defense', 1)"><div class="slot-add-icon">+</div>방어 1</div>
+            <div id="def-setup-slot2" class="pvp-slot" onclick="window.openCardSelector('defense', 2)"><div class="slot-add-icon">+</div>방어 2</div>
+            <div id="def-setup-slot3" class="pvp-slot" onclick="window.openCardSelector('defense', 3)"><div class="slot-add-icon">+</div>방어 3</div>
         </div>
     </div>
 
-    <script type="module" src="./script.js"></script>
+    <div class="panel">
+        <h3 class="text-pink">⚔️ 유저 레이더 (약탈)</h3>
+        <div id="user-list-container" style="max-height:250px; overflow-y:auto; background:#f8fafc; border:1px solid var(--panel-border); border-radius:12px; padding:15px; text-align:left;">
+            <div style="color:var(--text-muted); text-align:center; padding:20px;">네트워크 탐색 중...</div>
+        </div>
+    </div>
+</div>
+
+<div id="section-5" class="section">
+    <div class="panel">
+        <h2 class="text-purple">🗺️ 미지의 파견 탐험대</h2>
+        <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:20px;">10회 소진 시 AI 연승을 통해 충전하세요.</p>
+        
+        <div class="vs-board" style="background:#faf5ff; border-color:#d6bcfa;">
+            <div class="pvp-deck">
+                <div id="explore-slot1" class="pvp-slot" onclick="window.openCardSelector('explore', 1)"><div class="slot-add-icon">+</div>대원 1</div>
+                <div id="explore-slot2" class="pvp-slot" onclick="window.openCardSelector('explore', 2)"><div class="slot-add-icon">+</div>대원 2</div>
+                <div id="explore-slot3" class="pvp-slot" onclick="window.openCardSelector('explore', 3)"><div class="slot-add-icon">+</div>대원 3</div>
+            </div>
+        </div>
+        
+        <div id="explore-result" style="font-size: 1rem; margin: 15px 0; font-weight: bold; min-height: 40px; color:#805ad5; display:flex; align-items:center; justify-content:center;">결과 대기 중...</div>
+        
+        <button id="explore-btn" onclick="window.startExplore()" class="btn-purple" style="width: 100%; padding: 15px; font-size:1.1rem;">
+            탐험 출발! <span style="font-weight:normal; font-size:0.9rem;">(잔여 <span id="exp-cnt-ui">10</span>회)</span>
+        </button>
+    </div>
+</div>
+
+<div id="section-6" class="section">
+    <div class="panel" style="background:#fff5f5; border-color:#feb2b2;">
+        <h3 class="text-pink" style="font-size:1.2rem;">🔥 하드코어 탐험 구역</h3>
+        <p style="font-size:0.85rem; color:var(--text-main); line-height:1.5;">방어 아이템 적용 불가.<br><span style="color:#e53e3e; font-weight:bold;">30% 확률로 대원 1명 영구 파괴!</span><br>생존 시 고급 보상 100% 획득.</p>
+        
+        <div class="vs-board" style="background:#fff; margin: 20px 0;">
+            <div class="pvp-deck">
+                <div id="hc-slot1" class="pvp-slot" onclick="window.openCardSelector('hardcore', 1)"><div class="slot-add-icon">+</div>대원 1</div>
+                <div id="hc-slot2" class="pvp-slot" onclick="window.openCardSelector('hardcore', 2)"><div class="slot-add-icon">+</div>대원 2</div>
+                <div id="hc-slot3" class="pvp-slot" onclick="window.openCardSelector('hardcore', 3)"><div class="slot-add-icon">+</div>대원 3</div>
+            </div>
+        </div>
+        <button id="hc-btn" onclick="window.startHardcoreExplore()" class="btn-pink" style="width:100%; padding:15px; font-size:1.1rem;">목숨 걸고 파견 (고위험)</button>
+    </div>
+    
+    <div class="panel" style="background:#ebf8ff; border-color:#90cdf4;">
+        <h3 class="text-blue" style="font-size:1.2rem;">👑 16강 비주얼 토너먼트</h3>
+        <p style="font-size:0.85rem; color:var(--text-main); line-height:1.5;">20분마다 오픈되는 최강자전.<br>내 입장권: <span id="tourn-ticket-ui" class="text-gold" style="font-weight:900; font-size:1.1rem;">3</span>장 | 우승: <span id="tourn-win-cnt" class="text-gold">0</span>회</p>
+        
+        <div style="font-size:0.95rem; font-weight:800; color:#2b6cb0; margin:15px 0; background:#fff; padding:12px; border-radius:12px;" id="tourn-next-info">
+            진행 시간 계산 중...
+        </div>
+        
+        <div style="display:flex; justify-content:center; margin-bottom:15px;">
+            <button onclick="window.skipTournament()" class="btn-light" style="font-size:0.85rem; padding:10px 20px; border-radius:30px; font-weight:bold;">⏩ 4분 스킵 (<span id="skip-cnt-ui">0</span>개)</button>
+        </div>
+
+        <div style="background:#fff; border:1px solid #90cdf4; border-radius:16px; padding:15px; margin-bottom:20px;">
+            <div style="font-size:0.95rem; margin-bottom:10px; font-weight:bold; color:#3182ce;">서버 접속 대기열 (<span id="tourn-curr-cnt">0</span>/16)</div>
+            <div id="tourn-queue-list" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; max-height:180px; overflow-y:auto; padding:5px;"></div>
+        </div>
+
+        <div class="vs-board" style="border:none; background:transparent; padding:0; margin-bottom:20px;">
+            <div class="pvp-deck">
+                <div id="tn-slot1" class="pvp-slot" style="width:40%; max-width:120px; background:#fff;" onclick="window.openCardSelector('tourn', 1)"><div class="slot-add-icon">+</div>출전 엔트</div>
+            </div>
+        </div>
+        <button id="tn-btn" onclick="window.joinTournament()" class="btn-primary" style="width:100%; padding:15px; font-size:1.1rem;">참가 등록 (입장권 소모)</button>
+        
+        <div id="tn-log" class="battle-log-container" style="display:none; color:#2d3748; height:250px; margin-top:20px; background:#fff; text-align:center;"></div>
+    </div>
+</div>
+
+<div id="section-7" class="section">
+    <div class="panel">
+        <h2 style="color:var(--ssr);">🛠️ 시스템 관리자</h2>
+        <button onclick="window.openGmUserList()" style="background:#4a5568; color:white; width:100%; padding:15px; border-radius:12px; margin-bottom: 15px;">전체 유저 DB 조회 🔍</button>
+        <button onclick="window.applyGmBuff()" class="btn-gold" style="width:100%; padding:15px;">⚡ GM 자원 버프 (100만 G)</button>
+    </div>
+</div>
+
+<div id="card-select-modal" class="modal-overlay" onclick="window.closeModal('card-select-modal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3 style="margin:0; color:var(--text-main); font-size:1.2rem;" id="card-select-title">카드 장착</h3>
+            <button onclick="window.closeModal('card-select-modal')" class="btn-light" style="padding:8px 15px; border-radius:20px; font-size:0.85rem;">닫기</button>
+        </div>
+        <div id="selector-grid" class="grid" style="padding:20px; overflow-y:auto; max-height:60vh; align-content:flex-start; margin-top:0;"></div>
+    </div>
+</div>
+
+<div id="live-battle-modal" class="modal-overlay" style="z-index:10005;">
+    <div class="modal-content" style="max-width: 400px; padding: 25px; box-sizing:border-box;">
+        <h2 style="margin-top:0; color:var(--text-main); text-align:center; font-size:1.6rem; font-weight:900;">⚔️ BATTLE LIVE</h2>
+        <div id="live-battle-log" class="battle-log-container" style="height:350px; background:#f8fafc; margin-bottom:20px;"></div>
+        <button id="live-battle-close" class="btn-primary" style="width:100%; padding:15px; display:none; font-size:1.1rem; border-radius:12px;" onclick="window.closeLiveBattle()">결과 확인</button>
+    </div>
+</div>
+
+<div id="gacha-modal" class="modal-overlay" onclick="window.closeModal('gacha-modal')">
+    <h2 style="color:#fff; margin-bottom:25px; font-size:2.5rem; text-shadow: 0 4px 15px rgba(0,0,0,0.3); font-weight:900;">🎉 REWARD 🎉</h2>
+    <div id="gacha-result-container" style="display:flex; justify-content:center; flex-wrap:wrap; gap:12px; max-height:60vh; overflow-y:auto; padding: 10px; width: 100%; max-width: 600px;"></div>
+    <button onclick="window.closeModal('gacha-modal')" style="background:#fff; color:#2d3748; margin-top:25px; padding:15px 40px; font-size:1.1rem; border-radius:30px; font-weight:bold; box-shadow:0 4px 15px rgba(0,0,0,0.2);">확인</button>
+</div>
+
+<div id="attack-setup-modal" class="modal-overlay" onclick="window.closeModal('attack-setup-modal')">
+    <div class="modal-content" style="padding: 25px; box-sizing:border-box;" onclick="event.stopPropagation()">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3 style="color:var(--text-main); margin:0; font-size:1.3rem;" id="attack-target-name">목표 설정</h3>
+            <button onclick="window.closeModal('attack-setup-modal')" class="btn-light" style="padding:8px 15px; border-radius:20px;">취소</button>
+        </div>
+        <div class="item-toggle-container">
+            <label class="item-toggle"><input type="checkbox" id="use-win-ticket-plunder"> 🏆 강제 승리 (<span id="win-t-cnt-plunder">0</span>)</label>
+            <label class="item-toggle"><input type="checkbox" id="use-user-capture-plunder"> 👿 영웅 포획 (<span id="user-cap-cnt-plunder">0</span>)</label>
+        </div>
+        <div style="margin:20px 0; background:#f8fafc; padding:15px; border-radius:16px; border:1px solid var(--panel-border);">
+            <div style="font-size:0.9rem; color:var(--text-main); margin-bottom:10px; font-weight:bold;">나의 타격대</div>
+            <div class="pvp-deck">
+                <div id="plunder-atk-slot1" class="pvp-slot" onclick="window.openCardSelector('plunder', 1)"><div class="slot-add-icon">+</div>선택 1</div>
+                <div id="plunder-atk-slot2" class="pvp-slot" onclick="window.openCardSelector('plunder', 2)"><div class="slot-add-icon">+</div>선택 2</div>
+                <div id="plunder-atk-slot3" class="pvp-slot" onclick="window.openCardSelector('plunder', 3)"><div class="slot-add-icon">+</div>선택 3</div>
+            </div>
+        </div>
+        <div style="margin:20px 0; background:#fff5f5; padding:15px; border-radius:16px; border:1px solid #fed7d7;">
+            <div style="color:#c53030; font-size:0.9rem; margin-bottom:10px; font-weight:bold;">타겟 방어 시스템 (속성)</div>
+            <div class="pvp-deck">
+                <div id="enemy-def-slot1" class="pvp-slot" style="background:#fff;">?</div>
+                <div id="enemy-def-slot2" class="pvp-slot" style="background:#fff;">?</div>
+                <div id="enemy-def-slot3" class="pvp-slot" style="background:#fff;">?</div>
+            </div>
+        </div>
+        <button onclick="window.startPlunderPvP()" class="btn-pink" style="width:100%; padding:15px; font-size:1.1rem;">침투 개시!</button>
+    </div>
+</div>
+
+<div id="global-chat-modal" class="modal-overlay" onclick="window.closeModal('global-chat-modal')">
+    <div class="modal-content" style="height:80vh; max-height:600px; padding: 0;" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3 style="margin:0; color:var(--primary-color); font-size:1.3rem;">💬 서버 통신 채널</h3>
+            <button onclick="window.closeModal('global-chat-modal')" class="btn-light" style="padding:8px 15px; border-radius:20px;">닫기</button>
+        </div>
+        <div style="padding: 20px; flex: 1; display: flex; flex-direction: column; overflow: hidden;">
+            <div id="chat-container" style="flex:1; background:#f8fafc; border:1px solid var(--panel-border); border-radius:16px; overflow-y:auto; padding:15px; display:flex; flex-direction:column; gap:10px; margin-bottom:15px;"></div>
+            <div style="display:flex; gap:8px;">
+                <input type="text" id="chat-input" placeholder="메시지 입력..." style="flex:1; padding:12px 15px; border-radius:12px;" onkeypress="if(event.key==='Enter') window.sendChat()">
+                <button onclick="window.sendChat()" class="btn-primary" style="border-radius:12px; padding: 0 25px;">전송</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="mailbox-modal" class="modal-overlay" onclick="window.closeModal('mailbox-modal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3 style="margin:0; color:var(--text-main); font-size:1.2rem;">📬 우편함</h3>
+            <div style="display:flex; gap:8px;">
+                <button onclick="window.claimAllMails()" class="btn-gold" style="padding:8px 15px; font-size:0.85rem; border-radius:20px;">모두 수령</button>
+                <button onclick="window.closeModal('mailbox-modal')" class="btn-light" style="padding:8px 15px; font-size:0.85rem; border-radius:20px;">닫기</button>
+            </div>
+        </div>
+        <div id="mail-list-container" style="padding:20px; overflow-y:auto; max-height:60vh; text-align:left; background:#f8fafc;"></div>
+    </div>
+</div>
+
+<div id="zoom-modal" class="modal-overlay" onclick="window.closeModal('zoom-modal')">
+    <div id="zoom-container" style="width:100%; display:flex; justify-content:center;" onclick="event.stopPropagation()"></div>
+    <div id="zoom-actions" style="margin-top:20px; z-index:201; width:100%; max-width:320px; display:flex; gap:10px; justify-content:center;" onclick="event.stopPropagation()"></div>
+</div>
+
+<div id="gm-user-modal" class="modal-overlay" onclick="window.closeModal('gm-user-modal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3 style="margin:0; color:var(--text-main); font-size:1.2rem;" id="gm-user-modal-title">데이터베이스</h3>
+            <button onclick="window.closeModal('gm-user-modal')" class="btn-light" style="padding:8px 15px; border-radius:20px;">닫기</button>
+        </div>
+        <div id="gm-user-list-container" style="padding:20px; overflow-y:auto; max-height:60vh; text-align:left; display:none; background:#f8fafc;"></div>
+        <div id="gm-user-detail-container" style="padding:20px; overflow-y:auto; max-height:60vh; text-align:left; display:none; background:#f8fafc;"></div>
+    </div>
+</div>
+
+<script type="module" src="js/main.js"></script>
 </body>
 </html>

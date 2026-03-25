@@ -51,3 +51,17 @@ export const grades = {
 };
 
 export const gradeOrder = ['C','B','A','S','SS','SSS','SSR','SSX'];
+export function getRandomStats(grade){
+    let hp, atk, def;
+    switch(grade){
+        case 'C': hp=100+Math.random()*120; atk=15+Math.random()*20; def=5+Math.random()*10; break;
+        case 'B': hp=200+Math.random()*250; atk=30+Math.random()*40; def=12+Math.random()*18; break;
+        case 'A': hp=400+Math.random()*500; atk=60+Math.random()*90; def=25+Math.random()*35; break;
+        case 'S': hp=800+Math.random()*1000; atk=130+Math.random()*120; def=50+Math.random()*50; break;
+        case 'SS': hp=1600+Math.random()*2000; atk=220+Math.random()*180; def=90+Math.random()*70; break;
+        case 'SSS': hp=3200+Math.random()*2800; atk=350+Math.random()*250; def=140+Math.random()*110; break;
+        case 'SSR': hp=5000+Math.random()*3000; atk=600+Math.random()*300; def=250+Math.random()*150; break;
+        case 'SSX': hp=10000+Math.random()*5000; atk=1200+Math.random()*500; def=500+Math.random()*300; break;
+    }
+    return { hp:Math.floor(hp), atk:Math.floor(atk), def:Math.floor(def) };
+}

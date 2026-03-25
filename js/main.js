@@ -1172,3 +1172,25 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebas
         if(document.getElementById('skip-cnt-ui')) document.getElementById('skip-cnt-ui').textContent = skips;
         let rU=document.getElementById('use-rate-up'); if(rU&&parseInt(rU.value)>rateUpTickets) rU.value=rateUpTickets; if(document.getElementById('rateup-pct')&&rU) document.getElementById('rateup-pct').textContent=(parseInt(rU.value)||0)*2;
     }
+// 🔥 V35 하이브리드 통합 에디션: GM 우편 발송 로직 추가
+window.sendGmMail = () => {
+    const target = document.getElementById('gm-target-user').value;
+    const title = document.getElementById('gm-mail-title').value;
+    const gold = document.getElementById('gm-mail-gold').value || 0;
+    const rateup = document.getElementById('gm-mail-rateup').value || 0;
+    const cardGrade = document.getElementById('gm-mail-card-grade').value;
+
+    if (!title) {
+        alert("우편 제목을 입력해주세요!");
+        return;
+    }
+
+    // 여기에 실제 서버/DB로 우편 데이터를 전송하는 로직이 들어갑니다.
+    console.log(`[우편발송] 대상:${target}, 제목:${title}, 골드:${gold}, 확률권:${rateup}, 카드등급:${cardGrade}`);
+    alert(`[서버 전체 공지] "${title}" 우편 발송 완료! 🚀`);
+    
+    // 발송 후 입력 폼 초기화
+    document.getElementById('gm-mail-title').value = '';
+    document.getElementById('gm-mail-gold').value = '';
+    document.getElementById('gm-mail-rateup').value = '';
+};

@@ -164,18 +164,24 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
     padding-bottom: 30px !important; 
 }
 /* =========================================================
-   🔥 덱/전투 슬롯 내부 카드 딱 맞게 밀착 패치 🔥
+   🔥 덱/전투 슬롯 내부 카드 완벽 밀착 (Absolute 강제 고정) 🔥
    ========================================================= */
 
-.pvp-slot .card {
-    width: 100% !important;
-    height: 100% !important;
-    box-sizing: border-box !important; /* 핵심! 테두리 두께 때문에 밀리는 현상 방지 */
-    margin: 0 !important;
-    border-radius: 8px !important; /* 파란색 바깥 테두리 둥글기에 핏하게 맞춤 */
+/* 슬롯(파란 상자)을 기준으로 잡고 빈틈 제거 */
+.pvp-slot.filled {
+    position: relative !important; 
+    padding: 0 !important;
+    overflow: hidden !important; 
 }
 
-/* (보너스) 만약 캐릭터 머리가 윗부분에 잘려 보인다면 이 코드도 추가하세요 */
-.card img {
-    object-position: top center !important; /* 이미지를 위쪽 기준으로 정렬해서 머리 잘림 방지 */
+/* 카드(빨간/노란 상자)를 슬롯의 12시 방향부터 100% 꽉 채움 */
+.pvp-slot .card {
+    position: absolute !important; 
+    top: 0 !important; 
+    left: 0 !important; 
+    width: 100% !important; 
+    height: 100% !important; 
+    margin: 0 !important; 
+    box-sizing: border-box !important;
+    border-radius: inherit !important; /* 부모(파란상자)의 둥글기를 그대로 따라감 */
 }

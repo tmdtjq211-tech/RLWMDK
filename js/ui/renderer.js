@@ -63,3 +63,70 @@ export function showRobbedBanner(cardName, gold, robber){
     banner.style.display='block'; 
     setTimeout(()=>banner.style.display='none',7000); 
 }
+// 🌟 카드 선택창 열기 함수 (HTML에서 접근 가능하도록 window에 등록)
+window.openCardSelector = (type, slot) => {
+    state.currentSelector = { type, slot }; // 현재 어떤 모드(PvP, 스테이지 등)의 몇 번 슬롯인지 저장
+    
+    const modal = document.getElementById('card-select-modal');
+    const grid = document.getElementById('selector-grid');
+    const title = document.getElementById('card-select-title');
+    
+    if (!modal || !grid) return;
+
+    // 타이틀 변경
+    const typeNames = {
+        'pvp': '아레나 공격',
+        'defense': '아레나 방어',
+        'tourn': '토너먼트/스테이지',
+        'ai': 'AI 대전',
+        'fusion': '카드 합성',
+        'explore': '탐험대',
+        'hardcore': '하드코어',
+        'plunder': '약탈 공격'
+    };
+    title.textContent = `[${typeNames[type] || '카드'}] ${slot}번 슬롯 장착`;
+
+    // 내 카드 목록 렌더링
+    grid.innerHTML = '';
+    
+    // 잠금 안 된 카드나 선택 가능한 카드들 나열
+    state.myCards.forEach(card => {
+        const cardDiv = document.createElement('div');
+        cardDiv.innerHTML = createCardHTML(card); // 기존에 정의된 createCardHTML 사용
+        
+        // 카드 클릭 시 장착 로직
+        cardDiv.onclick = () => {
+            window.equipCard(card); 
+            window.closeModal('card-select-modal');
+        };
+        grid.appendChild(cardDiv);
+    });
+
+    modal.style.display = 'flex';
+};
+
+// 🌟 선택한 카드 실제 장착 로직
+window.equipCard = (card) => {
+    const { type, slot } = state.currentSelector;
+    const idx = slot - 1;
+
+    // 각 모드별 덱 배열에 카드 할당
+    if (type === 'pvp') state.pvpAttackDeck[idx] = card;
+    else if (type === 'defense') state.defDeck[idx] = card;
+    else if (type === 'tourn') state.pvpAttackDeck[idx] = card; // 스테이지는 아레나 덱 공유
+    else if (type === 'ai') state.aiAttackDeck[idx] = card;
+    else if (type === 'fusion') state.fusionSlots[idx] = card;
+    else if (type === 'explore') state.exploreCards[idx] = card;
+    else if (type === 'hardcore') state.hcAttackDeck[idx] = card;
+    else if (type === 'plunder') state.plunderAttackDeck[idx] = card;
+
+    // UI 업데이트 (메인 UI 갱신 함수 호출)
+    if (window.updateUI) window.updateUI();
+    alert(`${slot}번 슬롯에 장착 완료!`);
+};
+
+// 🌟 모달 닫기 함수
+window.closeModal = (id) => {
+    const modal = document.getElementById(id);
+    if (modal) modal.style.display = 'none';
+};

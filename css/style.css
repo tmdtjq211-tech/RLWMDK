@@ -1,243 +1,47 @@
-/* === 전체 테마 색상 정의 (밝고 화사한 판타지 톤) === */
-:root { 
-    --ssx: #ff007f; /* 가장 높은 등급은 화려한 마젠타 */
-    --ssr: #e53e3e; /* 레드 */
-    --sss: #d69e2e; /* 골드 */
-    --ss: #3182ce; /* 블루 */
-    --s: #805ad5; /* 퍼플 */
-    --a: #38a169; /* 그린 */
-    --b: #dd6b20; /* 오렌지 */
-    --c: #a0aec0; /* 그레이 */
-    
-    --bg-base: #f0f4f8; /* 부드러운 라이트 블루/그레이 배경 */
-    --panel-bg: #ffffff;
-    --panel-border: #e2e8f0;
-    --primary-color: #4299e1; /* 메인 스카이블루 */
-    --accent-pink: #ed64a6;
-    
-    --text-main: #2d3748;
-    --text-muted: #718096;
+/* 하단 검은색 배경 정보 영역 */
+.card-info-box {
+    background-color: #1a1a1a;
+    color: white;
+    /* 위아래 패딩을 동일하게 설정하여 완벽한 중앙 정렬을 돕습니다. */
+    padding: 30px 20px; /* 기존 25px -> 30px로 늘리고 위아래 동일 */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 가로 중앙 정렬 */
+    justify-content: center; /* 세로 중앙 정렬 */
+    /* 필요하다면 최소 높이를 명시적으로 설정할 수도 있습니다. */
+    /* min-height: 120px; */
 }
 
-/* === 기본 설정 === */
-body { 
-    margin: 0; 
-    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-    background-attachment: fixed;
-    color: var(--text-main); 
-    font-family: 'Pretendard', sans-serif; 
-    text-align: center; 
-    padding-bottom: 90px; 
-    overflow-x: hidden; 
-}
-
-/* === 상단 헤더 (깨끗한 화이트 패널) === */
-header { 
-    background: rgba(255, 255, 255, 0.95); 
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    padding: 15px 20px; 
-    position: sticky; top: 0; z-index: 100; 
-    border-bottom: 1px solid var(--panel-border); 
-    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-}
-.header-top { font-weight: 800; font-size: 1.05rem; width: 100%; display:flex; justify-content:space-between; align-items:center; }
-.header-top span { color: var(--primary-color); }
-.stats-bar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: center; width: 100%; }
-.money { font-size: 1.15rem; color: #b7791f; font-weight: 900; }
-
-/* === 하단 탭 내비게이션 (산뜻한 알약 디자인) === */
-.tabs { 
-    display: flex; justify-content: space-between; gap: 6px; 
-    position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
-    width: 95%; max-width: 600px; 
-    background: rgba(255, 255, 255, 0.95); 
-    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-    padding: 8px; box-sizing: border-box; 
-    z-index: 90; border: 1px solid var(--panel-border); 
-    border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-}
-.tab { 
-    padding: 12px 4px; background: transparent; border-radius: 20px; 
-    cursor: pointer; font-weight: 700; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-    font-size: 0.75rem; flex: 1; color: var(--text-muted);
+/* 닉네임 텍스트 */
+.player-nickname {
+    font-size: 1.1rem;
+    font-weight: bold;
+    /* 하단 마진을 조금 줄여 능력치와 더 가깝게 만듭니다. */
+    margin-bottom: 10px; /* 기존 15px -> 10px로 줄임 */
     text-align: center;
 }
-.tab.active { 
-    background: var(--primary-color); 
-    color: white; box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
-    transform: translateY(-2px);
+
+/* 능력치 텍스트 그룹 */
+.player-stats-group {
+    display: flex;
+    gap: 10px; /* 능력치 간의 여백 */
+    font-size: 0.9rem;
+    text-align: center;
+    /* 하단 여백이 있다면 제거하여 중앙 정렬에 영향을 주지 않도록 합니다. */
+    margin-bottom: 0;
 }
 
-/* === 섹션 컨테이너 === */
-.section { display: none; padding: 20px 15px; max-width: 800px; margin: 0 auto; box-sizing: border-box; animation: fadeIn 0.4s ease-out; }
-.section.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-/* === 공통 박스 스타일 (깨끗한 카드 패널) === */
-.panel {
-    background: var(--panel-bg);
-    border: 1px solid var(--panel-border);
-    border-radius: 20px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.03);
-}
-h2 { font-size: 1.3rem; margin-top: 0; margin-bottom: 15px; font-weight: 800; letter-spacing: -0.5px; color: var(--text-main); }
-h3 { font-size: 1.1rem; margin-top: 0; font-weight: 700; color: var(--text-main); }
-
-/* === 버튼 디자인 (부드럽고 둥근 스타일) === */
-button { 
-    padding: 12px 18px; border: none; border-radius: 12px; 
-    background: #e2e8f0; color: var(--text-main); font-weight: 700; 
-    cursor: pointer; transition: all 0.2s; font-size: 0.9rem; 
-    -webkit-tap-highlight-color: transparent;
-    font-family: inherit;
-}
-button:active { transform: scale(0.95); filter: brightness(0.95); } 
-button:disabled { background: #edf2f7; color: #a0aec0; cursor: not-allowed; transform: none; box-shadow: none; }
-
-/* 버튼 색상 유틸리티 */
-.btn-primary { background: var(--primary-color); color: white; box-shadow: 0 4px 10px rgba(66,153,225,0.3); }
-.btn-pink { background: var(--accent-pink); color: white; box-shadow: 0 4px 10px rgba(237,100,166,0.3); }
-.btn-gold { background: #ecc94b; color: #744210; box-shadow: 0 4px 10px rgba(236,201,75,0.4); border: 1px solid #d69e2e; }
-.btn-purple { background: #9f7aea; color: white; box-shadow: 0 4px 10px rgba(159,122,234,0.3); }
-.btn-light { background: #f7fafc; border: 1px solid var(--panel-border); color: var(--text-main); }
-.btn-dark { background: #4a5568; color: white; }
-
-/* === 카드 그리드 및 카드 디자인 === */
-.grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); /* 카드가 너무 작아져 글씨가 잘리지 않게 최소 너비 확장 */
-    gap: 12px; 
-    margin-top: 15px; 
+/* 개별 능력치 스타일 */
+.player-stat {
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
-.card { 
-    position: relative; border-radius: 12px; background: #fff; 
-    border: 3px solid #e2e8f0; overflow: hidden; aspect-ratio: 2/3; 
-    display: flex; flex-direction: column; cursor: pointer; 
-    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+.player-stat.hp .stat-label { color: #26ff00; } /* HP 색상 */
+.player-stat.df .stat-label { color: #a0a0a0; } /* DF 색상 */
+.player-stat.at .stat-label { color: #ff3366; } /* AT 색상 */
+
+.stat-value {
+    font-weight: bold;
 }
-.card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
-.card:active { transform: scale(0.92); }
-
-/* 이미지 잘림 방지 (cover -> contain 으로 변경하여 전체 이미지가 나오게 함) */
-.card img { 
-    width: 100%; 
-    height: 100%; 
-    object-fit: contain; /* 비율 유지하며 이미지 다 보여주기 */
-    background-color: #f7fafc; /* 남는 빈 공간을 채워줄 밝은 배경색 */
-    pointer-events: none; 
-}
-
-/* === 자바스크립트가 넣는 텍스트(능력치 등) 강제 보정 (밝은 테마용) === */
-.card > div {
-    z-index: 10;
-}
-/* 카드 상단 능력치 등 텍스트 (흰 바탕에 안 보이는 현상 해결) */
-.card > div[style*="top"] {
-    color: #1a202c !important; /* 글씨를 아주 진한 남색으로 강제 변경 */
-    text-shadow: 
-        -1px -1px 0 #fff,  
-         1px -1px 0 #fff,
-        -1px  1px 0 #fff,
-         1px  1px 0 #fff,
-         0px  2px 4px rgba(0,0,0,0.4) !important; /* 흰색 두꺼운 테두리와 그림자로 무조건 보이게 함 */
-    font-weight: 900 !important;
-    font-size: 0.9rem !important; /* 모바일에서 텍스트가 넘치지 않도록 적절히 조절 */
-    white-space: nowrap;
-}
-
-/* 카드 하단 이름표 등 텍스트 (길어서 잘리는 현상 해결) */
-.card > div[style*="bottom"] {
-    width: 90% !important; /* 너비를 약간 줄여서 카드 밖으로 나가지 않게 함 */
-    left: 5% !important;   /* 가운데 정렬 유지 */
-    white-space: nowrap; 
-    overflow: hidden; 
-    text-overflow: ellipsis; /* 글자가 너무 길면 '...'으로 처리 */
-    font-size: 0.8rem !important;
-}
-
-/* 등급 표기 (SS, SSS 등) */
-.card-grade { 
-    position: absolute; bottom: 4px; right: 6px; font-size: 1.4rem; font-weight: 900; font-style: italic; 
-    -webkit-text-stroke: 1.5px #fff; z-index: 12; 
-    pointer-events: none;
-}
-
-/* 등급별 화사한 테두리 색상 */
-.card.ssx { border-color: var(--ssx); box-shadow: 0 0 15px rgba(255,0,127,0.3); }
-.card.ssr { border-color: var(--ssr); }
-.card.sss { border-color: var(--sss); } 
-.card.ss { border-color: var(--ss); } .card.s { border-color: var(--s); } 
-.card.a { border-color: var(--a); } .card.b { border-color: var(--b); } .card.c { border-color: var(--c); }
-
-.card.selected { border: 4px solid var(--primary-color); box-shadow: 0 0 0 4px rgba(66,153,225,0.2); transform: scale(0.95); }
-.locked-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2.5rem; text-shadow: 0 2px 10px rgba(255,255,255,0.8); z-index: 5; }
-
-/* === PvP 및 덱 슬롯 보드 === */
-.vs-board { 
-    display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; 
-    background: #f8fafc; padding: 20px 10px; border-radius: 16px; 
-    margin-top: 15px; border: 1px solid var(--panel-border); gap: 10px; 
-}
-.pvp-deck { display: flex; gap: 8px; width: 100%; justify-content: center; }
-.pvp-slot { 
-    width: 30%; max-width: 90px; aspect-ratio: 2/3; 
-    border: 2px dashed #cbd5e1; border-radius: 12px; 
-    display: flex; flex-direction: column; align-items: center; justify-content: center; 
-    font-size: 0.8rem; font-weight: 700; background: #fff; 
-    cursor: pointer; position: relative; color: var(--text-muted); transition: all 0.2s; 
-}
-.pvp-slot:hover { border-color: var(--primary-color); color: var(--primary-color); background: #ebf8ff; }
-.pvp-slot.filled { border-style: solid; color: var(--text-main); border-width: 2px; } 
-.slot-add-icon { font-size: 1.8rem; margin-bottom: 5px; color: inherit; pointer-events: none;}
-
-/* === 입력창 & 토글 === */
-input[type="number"], input[type="text"], select {
-    background: #fff; color: var(--text-main); border: 1px solid var(--panel-border);
-    padding: 10px; border-radius: 10px; font-family: inherit; font-size: 1rem;
-    outline: none; transition: border 0.2s; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-}
-input:focus, select:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(66,153,225,0.2); }
-
-.item-toggle-container { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
-.item-toggle { display: flex; align-items: center; gap: 8px; background: #fff; padding: 10px 15px; border-radius: 12px; cursor: pointer; font-size: 0.85rem; border: 1px solid var(--panel-border); transition: all 0.2s; font-weight: 700; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
-.item-toggle:hover { border-color: #cbd5e1; }
-.item-toggle input { transform: scale(1.2); cursor: pointer; margin: 0; accent-color: var(--primary-color); }
-
-/* === 모달 & 오버레이 === */
-.modal-overlay { 
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-    background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
-    display: none; z-index: 10000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; 
-    animation: fadeIn 0.2s ease-out;
-}
-.modal-content {
-    background: #ffffff; width: 95%; max-width: 450px; border-radius: 24px; 
-    display: flex; flex-direction: column; border: none; 
-    box-shadow: 0 25px 50px rgba(0,0,0,0.15); overflow: hidden;
-}
-.modal-header { padding: 20px; border-bottom: 1px solid var(--panel-border); display: flex; justify-content: space-between; align-items: center; background: #f8fafc;}
-
-/* === 기타 UI 요소 === */
-#notification-banner { background: var(--accent-pink); color: white; padding: 15px; font-weight: 800; cursor: pointer; font-size: 1rem; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; box-sizing: border-box; text-align: center; box-shadow: 0 4px 15px rgba(237,100,166,0.4);}
-
-.battle-log-container { background: #f8fafc; padding: 15px; margin: 15px 0; height: 150px; overflow-y: auto; text-align: left; font-size: 0.85rem; color: var(--text-main); border-radius: 12px; border: 1px solid var(--panel-border); line-height: 1.6; }
-
-.mail-badge { position: absolute; top: -6px; right: -6px; font-size: 0.7rem; background: #e53e3e; color: white; border-radius: 50%; width: 18px; height: 18px; display: none; align-items: center; justify-content: center; font-weight: 900;}
-
-/* 스크롤바 커스텀 */
-::-webkit-scrollbar { width: 8px; } 
-::-webkit-scrollbar-track { background: transparent; } 
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; } 
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-/* 색상 유틸 */
-.text-blue { color: var(--ss); }
-.text-pink { color: var(--accent-pink); }
-.text-gold { color: #b7791f; }
-.text-purple { color: var(--s); }

@@ -1,47 +1,135 @@
-/* 하단 검은색 배경 정보 영역 */
-.card-info-box {
-    background-color: #1a1a1a;
-    color: white;
-    /* 위아래 패딩을 동일하게 설정하여 완벽한 중앙 정렬을 돕습니다. */
-    padding: 30px 20px; /* 기존 25px -> 30px로 늘리고 위아래 동일 */
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* 가로 중앙 정렬 */
-    justify-content: center; /* 세로 중앙 정렬 */
-    /* 필요하다면 최소 높이를 명시적으로 설정할 수도 있습니다. */
-    /* min-height: 120px; */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
+:root {
+    --primary-color: #4299e1;
+    --accent-pink: #ed64a6;
+    --bg-color: #f7fafc;
+    --text-main: #2d3748;
+    --text-muted: #a0aec0;
+    --panel-border: #e2e8f0;
+    --ssx: #ffffff; 
+    --ssr: #e53e3e; 
+    --ss: #3182ce; 
+    --s: #9f7aea;
+    --a: #38a169;
 }
 
-/* 닉네임 텍스트 */
-.player-nickname {
-    font-size: 1.1rem;
-    font-weight: bold;
-    /* 하단 마진을 조금 줄여 능력치와 더 가깝게 만듭니다. */
-    margin-bottom: 10px; /* 기존 15px -> 10px로 줄임 */
-    text-align: center;
+/* === 기본 및 레이아웃 === */
+html, body {
+    margin: 0; padding: 0; background: var(--bg-color); color: var(--text-main); font-family: 'Pretendard', sans-serif; height: 100vh; overflow: hidden; display: flex; flex-direction: column;
 }
 
-/* 능력치 텍스트 그룹 */
-.player-stats-group {
-    display: flex;
-    gap: 10px; /* 능력치 간의 여백 */
-    font-size: 0.9rem;
-    text-align: center;
-    /* 하단 여백이 있다면 제거하여 중앙 정렬에 영향을 주지 않도록 합니다. */
-    margin-bottom: 0;
+#login-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999;
 }
 
-/* 개별 능력치 스타일 */
-.player-stat {
-    display: flex;
-    align-items: center;
-    gap: 4px;
+#notification-banner {
+    display: none; background: #ff3366; color: white; padding: 15px; text-align: center; position: fixed; top: 0; width: 100%; z-index: 10000; font-weight: bold;
 }
 
-.player-stat.hp .stat-label { color: #26ff00; } /* HP 색상 */
-.player-stat.df .stat-label { color: #a0a0a0; } /* DF 색상 */
-.player-stat.at .stat-label { color: #ff3366; } /* AT 색상 */
-
-.stat-value {
-    font-weight: bold;
+header {
+    background: #fff; padding: 15px; border-bottom: 1px solid var(--panel-border); z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.02);
 }
+.header-top, .stats-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px; }
+
+.tabs { display: flex; background: #fff; border-bottom: 2px solid var(--panel-border); overflow-x: auto; white-space: nowrap; padding: 0 5px; }
+.tab { padding: 15px 20px; font-weight: 700; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; }
+.tab.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+.text-blue { color: #3182ce; } .text-pink { color: #d53f8c; } .text-purple { color: #805ad5; } .text-gold { color: #d69e2e; }
+
+/* 핵심 스크롤 방지용 컨테이너 */
+.main-container { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 80px; box-sizing: border-box; }
+.section { display: none; animation: fadeIn 0.3s; }
+.section.active { display: block; }
+
+.panel { background: #fff; border: 1px solid var(--panel-border); border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+
+/* === 버튼 스타일 === */
+button { font-family: 'Pretendard', sans-serif; border: none; cursor: pointer; font-weight: bold; border-radius: 12px; transition: 0.1s; padding: 10px; }
+button:active { transform: scale(0.97); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary { background: var(--primary-color); color: white; }
+.btn-pink { background: var(--accent-pink); color: white; }
+.btn-purple { background: #805ad5; color: white; }
+.btn-gold { background: linear-gradient(135deg, #f6e05e, #d69e2e); color: #fff; box-shadow: 0 4px 10px rgba(214,158,46,0.3); }
+.btn-light { background: #edf2f7; color: #4a5568; }
+.btn-dark { background: #2d3748; color: #fff; }
+
+/* === 배틀 및 덱 그리드 관련 === */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; justify-items: center; }
+.vs-board { border: 2px dashed var(--panel-border); border-radius: 16px; padding: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; background: #f8fafc; }
+.pvp-deck { display: flex; justify-content: center; gap: 10px; width: 100%; }
+.pvp-slot { width: 30%; max-width: 90px; aspect-ratio: 2/3; border: 2px dashed #cbd5e1; border-radius: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 0.8rem; color: #a0aec0; cursor: pointer; background: #fff; transition: 0.2s; overflow: hidden; padding: 2px; }
+.pvp-slot.filled { border-style: solid; border-color: var(--primary-color); background: #ebf8ff; padding: 0; }
+.slot-add-icon { font-size: 1.5rem; font-weight: bold; color: #cbd5e1; margin-bottom: 5px; }
+.battle-log-container { background:#f8fafc; border:1px solid var(--panel-border); border-radius:12px; padding:15px; overflow-y:auto; text-align:left; font-size:0.85rem; line-height:1.6; }
+
+/* === 카드 생성 UI 관련 === */
+.card { width: 100%; height: 100%; background: #222; border-radius: 8px; position: relative; overflow: hidden; display: flex; flex-direction: column; border: 2px solid #555; transition: transform 0.2s; cursor: pointer; }
+.card img { width: 100%; height: 100%; object-fit: cover; }
+.card-grade { position: absolute; top: 5px; left: 5px; font-weight: 900; text-shadow: 1px 1px 3px #000; font-size: 0.9rem; }
+.locked-icon { position: absolute; top: 5px; right: 5px; font-size: 1rem; z-index: 5; text-shadow: 0 0 5px #000; }
+.card.selected { border-color: #ff3366 !important; box-shadow: 0 0 15px #ff3366; transform: scale(0.95); opacity: 0.8; }
+
+/* 등급별 테두리 색상 */
+.card.ssx { border-color: #ffffff; box-shadow: 0 0 10px #ffffff; }
+.card.ssr { border-color: #ff3333; box-shadow: 0 0 8px #ff3333; }
+.card.sss { border-color: #ffea00; box-shadow: 0 0 8px #ffea00; }
+.card.ss { border-color: #00f2ff; } .card.s { border-color: #ff00e5; }
+.card.a { border-color: #26ff00; } .card.b { border-color: #ff9800; } .card.c { border-color: #a0a0a0; }
+
+.tourn-card-mini { width: 40px; height: 50px; border-radius: 4px; border: 2px solid; position: relative; overflow: hidden; }
+.tourn-card-mini img { width: 100%; height: 100%; object-fit: cover; }
+.tourn-card-mini-grade { position: absolute; top: 1px; left: 2px; font-size: 0.5rem; font-weight: bold; text-shadow: 1px 1px 2px #000; }
+.tourn-match-row { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 8px; background: rgba(255,255,255,0.1); padding: 5px; border-radius: 8px; }
+
+/* 🔥 문제 해결: 카드를 클릭했을 때 뜨는 상세 모달(.zoom-card) 사이즈 강제 고정 및 폰트 오버라이드 🔥 */
+.zoom-card { 
+    width: 280px !important;     /* PC 화면에서도 카드가 무한정 커지지 않도록 폭 고정 */
+    height: 420px !important;    /* 2:3 비율에 맞게 높이 고정 */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+    cursor: default; 
+    margin: 0 auto;              /* 중앙 정렬 */
+}
+
+/* JS 안에 하드코딩된 깨알 같은 글씨를 CSS로 강제로 키워줍니다 (!important 사용) */
+.zoom-card div[style*="font-size:0.7rem"],
+.zoom-card div[style*="font-size: 0.7rem"] {
+    font-size: 1.1rem !important;
+    margin-bottom: 8px !important;
+}
+
+.zoom-card div[style*="font-size:0.65rem"],
+.zoom-card div[style*="font-size: 0.65rem"] {
+    font-size: 1.05rem !important;
+    padding-bottom: 5px !important;
+}
+
+.zoom-card div[style*="font-size:0.6rem"],
+.zoom-card div[style*="font-size: 0.6rem"] {
+    font-size: 0.9rem !important;
+}
+
+/* === 모달 및 기타 UI === */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(5px); flex-direction: column; }
+.modal-content { background: #fff; width: 90%; max-width: 450px; border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.2); max-height: 90vh; }
+.modal-header { padding: 20px; border-bottom: 1px solid var(--panel-border); display: flex; justify-content: space-between; align-items: center; background: #fff; flex-shrink: 0; }
+
+.item-toggle-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
+.item-toggle { background: #ebf8ff; border: 1px solid #90cdf4; color: #2b6cb0; padding: 8px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+
+.mail-item { background: #fff; border: 1px solid var(--panel-border); border-radius: 12px; padding: 15px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+.mail-badge { background: #e53e3e; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; position: absolute; top: -5px; right: -5px; display: none; }
+
+.gm-input { width: 100%; padding: 12px 15px; border: 1px solid var(--panel-border); border-radius: 10px; box-sizing: border-box; font-family: 'Pretendard', sans-serif; font-size: 0.95rem; }
+.gm-input:focus { outline: none; border-color: #d53f8c; box-shadow: 0 0 0 2px rgba(213,63,140,0.2); }
+
+.online-dot { display: inline-block; width: 8px; height: 8px; background: #26ff00; border-radius: 50%; margin-right: 5px; }
+.offline-dot { display: inline-block; width: 8px; height: 8px; background: #ff3366; border-radius: 50%; margin-right: 5px; }
+
+.chat-msg { margin-bottom: 10px; font-size: 0.9rem; }
+.chat-msg.me { text-align: right; color: var(--primary-color); font-weight: bold; }
+.chat-msg.system { text-align: center; color: var(--accent-pink); font-size: 0.8rem; font-weight: bold; background: #fff5f5; padding: 5px; border-radius: 8px; }
+.chat-name { font-weight: bold; color: #4a5568; font-size: 0.75rem; margin-bottom: 2px; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

@@ -133,3 +133,33 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .chat-name { font-weight: bold; color: #4a5568; font-size: 0.75rem; margin-bottom: 2px; }
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+/* =========================================================
+   🔥 줌 모달(카드 상세창) 잘림 방지 및 스크롤 활성화 패치 🔥
+   ========================================================= */
+
+/* 1. 팝업창 자체에 스크롤을 만들어줍니다 */
+#zoom-modal {
+    justify-content: flex-start !important; /* 중앙 고정을 풀고 위에서부터 차곡차곡 배치 */
+    overflow-y: auto !important;            /* 💡 핵심: 세로 스크롤 허용! */
+    padding: 50px 0 !important;             /* 스크롤 했을 때 위아래 숨쉴 틈(여백) 확보 */
+}
+
+/* 2. 카드나 버튼이 찌그러지지 않도록 보호 */
+#zoom-container, #zoom-actions {
+    flex-shrink: 0 !important; 
+}
+
+/* 3. 모니터 높이가 낮아도 안 잘리게 카드 사이즈를 유동적으로 조절 */
+.zoom-card {
+    height: 45vh !important;       /* 모니터(브라우저) 전체 높이의 45%까지만 커지게 제한 */
+    min-height: 280px !important;  /* 아무리 작아져도 280px 이하로는 안 작아짐 */
+    max-height: 400px !important;  /* 아무리 커져도 400px 이상 안 커짐 */
+    width: auto !important;        /* 높이에 맞춰서 너비는 2:3 비율로 자동 셋팅 */
+    aspect-ratio: 2 / 3 !important; 
+    margin: 0 auto !important;
+}
+
+/* 버튼 구역 아래쪽 여백 살짝 추가 */
+#zoom-actions {
+    padding-bottom: 30px !important; 
+}

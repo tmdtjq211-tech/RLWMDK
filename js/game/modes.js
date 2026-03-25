@@ -103,3 +103,78 @@ window.startExplore = () => {
         state.exploreCards=[null,null,null]; for(let i=1;i<=3;i++) setSlotHTML(document.getElementById(`explore-slot${i}`),null,`대원${i}`); window.updateUI(); window.renderMyCards(); window.saveUserData();
     }, 2000); 
 };
+// 🔥 [신규] 무한 스테이지 모드 실행 함수
+window.startStageBattle = async () => {
+    // 1. 상태 체크 및 내 영웅 확인 (1번 슬롯 재활용)
+    if (state.isBattling) return;
+    const myHero = state.pvpAttackDeck[0]; // 아레나 1번 슬롯 영웅 출전 (원하는 슬롯으로 변경 가능)
+    if (!myHero) return alert("전투에 나갈 영웅 1명을 아레나 1번 슬롯에 배치해주세요!");
+
+    state.isBattling = true;
+    
+    // 2. UI 초기화 (로그 창 열기)
+    document.getElementById('live-battle-modal').style.display = 'flex';
+    document.getElementById('live-battle-log').innerHTML = '';
+    let pLog = document.getElementById('pvp-log'); // 기존 pvp-log 엘리먼트 활용
+    if (pLog) pLog.innerHTML = '';
+    document.getElementById('live-battle-close').style.display = 'none';
+
+    // 3. 적 생성 로직 (10단계부터 2마리)
+    const currentStage = state.userStage || 1; // state에 userStage가 없으면 1부터 시작
+    const enemyCount = currentStage >= 10 ? 2 : 1;
+    const enemies = [];
+
+    await printLog('pvp-log', `🚩 스테이지 ${currentStage} 도전 시작!`, "#ffea00", 600);
+
+    // 적 스탯 결정 (단계별로 강해짐)
+    for (let i = 0; i < enemyCount; i++) {
+        const difficulty = 1 + (currentStage * 0.15); // 15%씩 복리 강화
+        const randomTid = Math.floor(Math.random() * 51) + 1;
+        
+        enemies.push({
+            templateId: randomTid,
+            grade: currentStage > 15 ? 'SSS' : (currentStage > 7 ? 'S' : 'B'),
+            level: currentStage,
+            hp: Math.floor(150 * difficulty),
+            atk: Math.floor(30 * difficulty),
+            def: Math.floor(15 * difficulty)
+        });
+    }
+
+    // 4. 연속 전투 실행
+    let winCount = 0;
+    for (let i = 0; i < enemies.length; i++) {
+        await printLog('pvp-log', `⚔️ 적 ${i + 1}번 등장! (${enemies[i].grade}급)`, "#ff4444", 800);
+        
+        // 기존 전투 시뮬레이션 호출
+        let result = await runLiveSimulation(myHero, enemies[i], 'pvp-log', i + 1);
+        
+        if (result) {
+            winCount++;
+            await delay(500);
+        } else {
+            break; // 한 번이라도 지면 중단
+        }
+    }
+
+    // 5. 결과 처리 및 보상
+    await printLog('pvp-log', '--- 전투 종료 ---', "#fff", 0);
+    
+    if (winCount === enemyCount) {
+        alert(`🎉 스테이지 ${currentStage} 클리어!`);
+        state.userStage = (state.userStage || 1) + 1;
+        const rewardGold = currentStage * 200;
+        state.money += rewardGold;
+        await printLog('pvp-log', `💰 보상 획득: ${rewardGold}G`, "#26ff00", 0);
+    } else {
+        alert(`💀 스테이지 ${currentStage} 패배...`);
+        await printLog('pvp-log', `실패: ${winCount}/${enemyCount} 처치`, "#ff3366", 0);
+    }
+
+    document.getElementById('live-battle-close').style.display = 'block';
+    state.isBattling = false;
+
+    // UI 갱신 및 데이터 저장
+    if (window.updateUI) window.updateUI();
+    if (window.saveUserData) window.saveUserData();
+};
